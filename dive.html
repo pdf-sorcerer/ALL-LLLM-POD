@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALL-LLM Pod | Codec Ladder Analysis</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --green: #76b900;
+            --green-dim: rgba(118, 185, 0, 0.12);
+            --bg: #f9f9f9;
+            --surface: #ffffff;
+            --border: #e4e4e4;
+            --code-bg: #0d1117;
+            --text: #111;
+            --muted: #666;
+            --diff: #d11;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            font-family: Inter, system-ui;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 24px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 36px;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            margin-top: 48px;
+            margin-bottom: 16px;
+            font-size: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 13px;
+            background: white;
+        }
+
+        .tab.active {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 14px;
+            table-layout: fixed;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--border);
+            background: var(--green-dim);
+        }
+
+        tbody td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td:nth-child(n+4),
+        th:nth-child(n+4) {
+            text-align: center;
+        }
+
+        .time {
+            color: var(--muted);
+            white-space: nowrap
+        }
+
+        .divider {
+            border-left: 3px solid var(--border)
+        }
+
+        .check {
+            color: var(--green);
+            font-weight: 600
+        }
+
+        .diff {
+            color: var(--diff);
+            font-weight: 500
+        }
+
+        .codec-table {
+            display: none
+        }
+
+        .codec-table.active {
+            display: table-row-group
+        }
+
+        .miss {
+            color: #999
+        }
+
+        .codeblock {
+            margin-top: 32px;
+            background: var(--code-bg);
+            color: #c9d1d9;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre;
+        }
+
+        /* NeMo table speaker pill styling */
+        .spk {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .spk-00 {
+            background: rgba(118, 185, 0, 0.15);
+            color: #3a5c00;
+        }
+
+        .spk-01 {
+            background: rgba(0, 120, 215, 0.12);
+            color: #004d8c;
+        }
+
+        .spk-02 {
+            background: rgba(180, 60, 200, 0.12);
+            color: #7a1a8c;
+        }
+
+        .spk-03 {
+            background: rgba(200, 100, 0, 0.12);
+            color: #7a3d00;
+        }
+
+        .spk-null {
+            color: #bbb;
+            font-style: italic;
+            font-size: 12px;
+        }
+
+        .nemo-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .too-short {
+            color: #aaa;
+            font-style: italic;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="panel">
+
+            <h1>Codec Ladder Comparison</h1>
+
+            <div class="tabs">
+                <div class="tab active" data-target="mp3">MP3</div>
+                <div class="tab" data-target="wav">WAV</div>
+                <div class="tab" data-target="aac">AAC</div>
+                <div class="tab" data-target="ogg">OGG</div>
+                <div class="tab" data-target="m4a">M4A</div>
+            </div>
+
+            <table>
+                <colgroup>
+                    <col style="width:120px">
+                    <col style="width:160px">
+                    <col style="width:280px">
+                    <col style="width:90px">
+                    <col style="width:90px">
+                    <col style="width:90px">
+                    <col style="width:90px">
+                    <col style="width:90px">
+                    <col style="width:90px">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Canonical Speaker</th>
+                        <th>Canonical Phrase</th>
+                        <th class="divider">32k</th>
+                        <th>64k</th>
+                        <th>96k</th>
+                        <th>128k</th>
+                        <th>160k</th>
+                        <th>320k</th>
+                    </tr>
+                </thead>
+
+                <!-- MP3 -->
+                <tbody id="mp3" class="codec-table active">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider diff">He can't do that.</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider diff">That's his voice.</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                        <td class="check">✓</td>
+                    </tr>
+                </tbody>
+
+                <!-- WAV -->
+                <tbody id="wav" class="codec-table">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="divider check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—(too short)</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                </tbody>
+
+                <!-- AAC -->
+                <tbody id="aac" class="codec-table">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—(too short)</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                </tbody>
+
+                <!-- OGG -->
+                <tbody id="ogg" class="codec-table">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider check">✓</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider miss">—(too short)</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                </tbody>
+
+                <!-- M4A -->
+                <tbody id="m4a" class="codec-table">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="codeblock">
+                Canonical phrase: "That's just bullying."
+
+                32k anomalies
+                • MP3 → "He can't do that."
+                • MP3 → "That's his voice."
+                • AAC / M4A → "That's his bullying."
+
+                Observation
+                Semantic substitutions appear only under extreme compression (32 kbps).
+            </div>
+
+            <h2>NeMo Speaker Classification</h2>
+            <div class="nemo-tabs">
+                <div class="tab active" data-nemo-target="nemo-mp3">MP3</div>
+                <div class="tab" data-nemo-target="nemo-wav">WAV</div>
+                <div class="tab" data-nemo-target="nemo-aac">AAC</div>
+                <div class="tab" data-nemo-target="nemo-ogg">OGG</div>
+                <div class="tab" data-nemo-target="nemo-m4a">M4A</div>
+            </div>
+
+            <table>
+                <colgroup>
+                    <col style="width:110px">
+                    <col style="width:100px">
+                    <col style="width:200px">
+                    <col style="width:110px">
+                    <col style="width:110px">
+                    <col style="width:110px">
+                    <col style="width:110px">
+                    <col style="width:110px">
+                    <col style="width:110px">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Canonical</th>
+                        <th>Phrase</th>
+                        <th class="divider">32k</th>
+                        <th>64k</th>
+                        <th>96k</th>
+                        <th>128k</th>
+                        <th>160k</th>
+                        <th>320k</th>
+                    </tr>
+                </thead>
+                <tbody id="nemo-mp3" class="codec-table active">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider miss">—</td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class="too-short">too short</td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider miss">—</td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class="miss">—</td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                    </tr>
+                </tbody>
+                <tbody id="nemo-wav" class="codec-table">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                    </tr>
+                </tbody>
+                <tbody id="nemo-aac" class="codec-table">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class="miss">—</td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                    </tr>
+                </tbody>
+                <tbody id="nemo-ogg" class="codec-table">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                    </tr>
+                </tbody>
+                <tbody id="nemo-m4a" class="codec-table">
+                    <tr>
+                        <td class="time">21.1–24.3</td>
+                        <td>friedberg</td>
+                        <td>Oh, my God.</td>
+                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                    </tr>
+                    <tr>
+                        <td class="time">25.3–26.1</td>
+                        <td>friedberg</td>
+                        <td>He's not even here.</td>
+                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">26.2–26.7</td>
+                        <td>friedberg</td>
+                        <td>You can't do that.</td>
+                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.4–28.9</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.8–28.4</td>
+                        <td>gerstner</td>
+                        <td>Oh my god.</td>
+                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class="miss">—</td>
+                        <td class="miss">—</td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">27.5–29.7</td>
+                        <td>friedberg</td>
+                        <td>That's just bullying.</td>
+                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
+                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
+                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
+                    </tr>
+                    <tr>
+                        <td class="time">29.8–30.1</td>
+                        <td>friedberg</td>
+                        <td>It's awful.</td>
+                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                        <td class="too-short">too short</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <script>
+        // Codec ladder tabs
+        const tabs = document.querySelectorAll(".tab[data-target]")
+        const tables = document.querySelectorAll(".codec-table[id^='mp3'], .codec-table[id='wav'], .codec-table[id='aac'], .codec-table[id='ogg'], .codec-table[id='m4a']")
+        tabs.forEach(tab => {
+            tab.onclick = () => {
+                tabs.forEach(t => t.classList.remove("active"))
+                tables.forEach(t => t.classList.remove("active"))
+                tab.classList.add("active")
+                document.getElementById(tab.dataset.target).classList.add("active")
+            }
+        })
+
+        // NeMo tabs
+        const nemoTabs = document.querySelectorAll(".tab[data-nemo-target]")
+        const nemoTables = document.querySelectorAll(".codec-table[id^='nemo-']")
+        nemoTabs.forEach(tab => {
+            tab.onclick = () => {
+                nemoTabs.forEach(t => t.classList.remove("active"))
+                nemoTables.forEach(t => t.classList.remove("active"))
+                tab.classList.add("active")
+                document.getElementById(tab.getAttribute("data-nemo-target")).classList.add("active")
+            }
+        })
+    </script>
+
+</body>
+
+</html>
