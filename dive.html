@@ -4,1116 +4,552 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALL-LLM Pod | Codec Ladder Analysis</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <title>ALL-LLM Pod | The Ghost in the Audio</title>
+
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
         :root {
             --green: #76b900;
-            --green-dim: rgba(118, 185, 0, 0.12);
+            --green-dim: rgba(118, 185, 0, .10);
+            --red-dim: rgba(204, 51, 51, .08);
             --bg: #f9f9f9;
             --surface: #ffffff;
             --border: #e4e4e4;
-            --code-bg: #0d1117;
-            --text: #111;
-            --muted: #666;
-            --diff: #d11;
+            --text: #1a1a1a;
+            --muted: #6b6b6b;
+            --faint: #aaaaaa;
+            --nav-width: 220px;
         }
 
         * {
-            box-sizing: border-box
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
+            font-family: 'Inter', sans-serif;
             background: var(--bg);
-            font-family: Inter, system-ui;
             color: var(--text);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 24px;
-        }
-
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 36px;
-        }
-
-        h1 {
-            font-size: 30px;
-            margin-bottom: 24px;
-        }
-
-        h2 {
-            margin-top: 48px;
-            margin-bottom: 16px;
-            font-size: 20px;
-        }
-
-        .tabs {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            min-height: 100vh;
         }
 
-        .tab {
-            padding: 8px 14px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 13px;
-            background: white;
+        nav {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: var(--nav-width);
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 0;
+            overflow-y: auto;
         }
 
-        .tab.active {
-            background: var(--green);
-            color: white;
-            border-color: var(--green);
+        .nav-logo {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--green);
+            padding: 0 24px 28px;
+            border-bottom: 1px solid var(--border);
+            text-decoration: none;
+            display: block;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 14px;
-            table-layout: fixed;
+        .nav-section-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--faint);
+            padding: 20px 24px 8px;
         }
 
-        thead th {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 2px solid var(--border);
+        .nav-item {
+            display: block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 7px 24px;
+            border-left: 2px solid transparent;
+            transition: .15s;
+        }
+
+        .nav-item:hover {
+            color: var(--text);
+            background: var(--bg);
+            border-left-color: var(--border);
+        }
+
+        .nav-item.active {
+            color: var(--green);
+            border-left-color: var(--green);
             background: var(--green-dim);
         }
 
-        tbody td {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border);
+        .nav-footer {
+            margin-top: auto;
+            padding: 20px 24px 0;
+            border-top: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--faint);
         }
 
-        td:nth-child(n+4),
-        th:nth-child(n+4) {
+        main {
+            flex: 1;
+            padding: 56px 64px 120px;
+            max-width: 860px;
+        }
+
+        .page-eyebrow {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.02em;
+            margin-bottom: 18px;
+        }
+
+        .lead {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #3a3a3a;
+            max-width: 620px;
+            margin-bottom: 24px;
+        }
+
+        .section-heading {
+            margin-top: 52px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .body-text {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #3a3a3a;
+            max-width: 620px;
+            margin-bottom: 24px;
+        }
+
+        .body-list {
+            max-width: 620px;
+            margin-bottom: 24px;
+            padding-left: 18px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #3a3a3a;
+        }
+
+        .body-list li {
+            margin-bottom: 8px;
+        }
+
+        .evidence-table {
+            max-width: 620px;
+            margin: 24px 0 36px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+        }
+
+        .evidence-row {
+            display: grid;
+            grid-template-columns: 56px 90px 1fr 130px 110px;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .evidence-row:last-child {
+            border-bottom: none;
+        }
+
+        .evidence-header {
+            background: var(--bg);
+            color: var(--faint);
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .evidence-row div:nth-child(1),
+        .evidence-row div:nth-child(4),
+        .evidence-row div:nth-child(5) {
             text-align: center;
         }
 
-        .time {
-            color: var(--muted);
-            white-space: nowrap
+        .evidence-row.row-friedberg {
+            background: var(--green-dim);
         }
 
-        .divider {
-            border-left: 3px solid var(--border)
+        .evidence-row.row-friedberg .cell-error {
+            background: var(--red-dim);
+            color: #cc3333;
+            margin: -12px -8px;
+            padding: 12px 8px;
         }
 
-        .check {
-            color: var(--green);
-            font-weight: 600
+        .evidence-row.row-red {
+            background: var(--red-dim);
+            color: #cc3333;
         }
 
-        .diff {
-            color: var(--diff);
-            font-weight: 500
+        .evidence-row.row-green {
+            background: var(--green-dim);
         }
 
-        .codec-table {
-            display: none
+        .resolution-table {
+            max-width: 620px;
+            margin: 24px 0;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
         }
 
-        .codec-table.active {
-            display: table-row-group
-        }
-
-        .miss {
-            color: #999
-        }
-
-        .codeblock {
-            margin-top: 32px;
-            background: var(--code-bg);
-            color: #c9d1d9;
-            padding: 20px;
-            border-radius: 6px;
-            font-family: "IBM Plex Mono", monospace;
-            font-size: 13px;
-            line-height: 1.7;
-            white-space: pre;
-        }
-
-        /* NeMo table speaker pill styling */
-        .spk {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-        }
-
-        .spk-00 {
-            background: rgba(118, 185, 0, 0.15);
-            color: #3a5c00;
-        }
-
-        .spk-01 {
-            background: rgba(0, 120, 215, 0.12);
-            color: #004d8c;
-        }
-
-        .spk-02 {
-            background: rgba(180, 60, 200, 0.12);
-            color: #7a1a8c;
-        }
-
-        .spk-03 {
-            background: rgba(200, 100, 0, 0.12);
-            color: #7a3d00;
-        }
-
-        .spk-null {
-            color: #bbb;
-            font-style: italic;
-            font-size: 12px;
-        }
-
-        .nemo-tabs {
-            display: flex;
+        .resolution-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1.6fr;
             gap: 12px;
-            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            align-items: start;
         }
 
-        .too-short {
-            color: #aaa;
-            font-style: italic;
-            font-size: 0.8em;
+        .resolution-row:last-child {
+            border-bottom: none;
+        }
+
+        .resolution-header {
+            background: var(--bg);
+            color: var(--faint);
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .resolution-row.row-resolved {
+            background: var(--green-dim);
+        }
+
+        .resolution-row.row-unresolved {
+            background: var(--red-dim);
+            color: #cc3333;
+        }
+
+        .resolution-row.row-open {
+            background: #fffbf0;
+        }
+
+        .footer {
+            margin-top: 80px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--faint);
+        }
+
+        /* ACCORDION FIX */
+
+        .accordion {
+            max-width: 620px;
+            margin: 32px 0;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+        }
+
+        .accordion-header {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--faint);
+            padding: 10px 16px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion details {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion details:last-child {
+            border-bottom: none;
+        }
+
+        .accordion summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text);
+            border-left: 3px solid transparent;
+            transition: .15s;
+            list-style: none;
+        }
+
+        .accordion summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .accordion summary:hover {
+            background: var(--bg);
+            border-left-color: var(--green);
+        }
+
+        .accordion details[open] summary {
+            border-left-color: var(--green);
+            color: var(--green);
+        }
+
+        .chevron {
+            font-size: 10px;
+            color: var(--faint);
+            transition: transform .2s;
+        }
+
+        details[open] .chevron {
+            transform: rotate(180deg);
+        }
+
+        .accordion-body {
+            padding: 12px 16px 16px 19px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            line-height: 1.75;
+            color: #3a3a3a;
+            border-top: 1px solid var(--border);
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="panel">
 
-            <h1>Codec Ladder Comparison</h1>
+    <nav>
+        <a class="nav-logo" href="entry.html">ALL-LLM Pod</a>
 
-            <div class="tabs">
-                <div class="tab active" data-target="mp3">MP3</div>
-                <div class="tab" data-target="wav">WAV</div>
-                <div class="tab" data-target="aac">AAC</div>
-                <div class="tab" data-target="ogg">OGG</div>
-                <div class="tab" data-target="m4a">M4A</div>
-            </div>
+        <span class="nav-section-label">Overview</span>
 
-            <table>
-                <colgroup>
-                    <col style="width:120px">
-                    <col style="width:160px">
-                    <col style="width:280px">
-                    <col style="width:90px">
-                    <col style="width:90px">
-                    <col style="width:90px">
-                    <col style="width:90px">
-                    <col style="width:90px">
-                    <col style="width:90px">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Canonical Speaker</th>
-                        <th>Canonical Phrase</th>
-                        <th class="divider">32k</th>
-                        <th>64k</th>
-                        <th>96k</th>
-                        <th>128k</th>
-                        <th>160k</th>
-                        <th>320k</th>
-                    </tr>
-                </thead>
+        <a class="nav-item" href="nt_1.html">What is this?</a>
+        <a class="nav-item" href="nt_2.html">How it got built</a>
+        <a class="nav-item active" href="nt_3.html">The ghost in the audio</a>
+        <a class="nav-item" href="nt_4.html">Where it stands</a>
 
-                <!-- MP3 -->
-                <tbody id="mp3" class="codec-table active">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider diff">He can't do that.</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider diff">That's his voice.</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                        <td class="check">✓</td>
-                    </tr>
-                </tbody>
-
-                <!-- WAV -->
-                <tbody id="wav" class="codec-table">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="divider check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—(too short)</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                </tbody>
-
-                <!-- AAC -->
-                <tbody id="aac" class="codec-table">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—(too short)</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                </tbody>
-
-                <!-- OGG -->
-                <tbody id="ogg" class="codec-table">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider check">✓</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider miss">—(too short)</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                </tbody>
-
-                <!-- M4A -->
-                <tbody id="m4a" class="codec-table">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="codeblock">
-                Canonical phrase: "That's just bullying."
-
-                32k anomalies
-                • MP3 → "He can't do that."
-                • MP3 → "That's his voice."
-                • AAC / M4A → "That's his bullying."
-
-                Observation
-                Semantic substitutions appear only under extreme compression (32 kbps).
-            </div>
-
-            <h2>NeMo Speaker Classification</h2>
-            <div class="nemo-tabs">
-                <div class="tab active" data-nemo-target="nemo-mp3">MP3</div>
-                <div class="tab" data-nemo-target="nemo-wav">WAV</div>
-                <div class="tab" data-nemo-target="nemo-aac">AAC</div>
-                <div class="tab" data-nemo-target="nemo-ogg">OGG</div>
-                <div class="tab" data-nemo-target="nemo-m4a">M4A</div>
-            </div>
-
-            <table>
-                <colgroup>
-                    <col style="width:110px">
-                    <col style="width:100px">
-                    <col style="width:200px">
-                    <col style="width:110px">
-                    <col style="width:110px">
-                    <col style="width:110px">
-                    <col style="width:110px">
-                    <col style="width:110px">
-                    <col style="width:110px">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Canonical</th>
-                        <th>Phrase</th>
-                        <th class="divider">32k</th>
-                        <th>64k</th>
-                        <th>96k</th>
-                        <th>128k</th>
-                        <th>160k</th>
-                        <th>320k</th>
-                    </tr>
-                </thead>
-                <tbody id="nemo-mp3" class="codec-table active">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider miss">—</td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class="too-short">too short</td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider miss">—</td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class="miss">—</td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                    </tr>
-                </tbody>
-                <tbody id="nemo-wav" class="codec-table">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                    </tr>
-                </tbody>
-                <tbody id="nemo-aac" class="codec-table">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class="miss">—</td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                    </tr>
-                </tbody>
-                <tbody id="nemo-ogg" class="codec-table">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider "><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                    </tr>
-                </tbody>
-                <tbody id="nemo-m4a" class="codec-table">
-                    <tr>
-                        <td class="time">21.1–24.3</td>
-                        <td>friedberg</td>
-                        <td>Oh, my God.</td>
-                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                    </tr>
-                    <tr>
-                        <td class="time">25.3–26.1</td>
-                        <td>friedberg</td>
-                        <td>He's not even here.</td>
-                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">26.2–26.7</td>
-                        <td>friedberg</td>
-                        <td>You can't do that.</td>
-                        <td class="divider "><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.4–28.9</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.8–28.4</td>
-                        <td>gerstner</td>
-                        <td>Oh my god.</td>
-                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class="miss">—</td>
-                        <td class="miss">—</td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">27.5–29.7</td>
-                        <td>friedberg</td>
-                        <td>That's just bullying.</td>
-                        <td class="divider "><span class="spk spk-03">SPEAKER_03</span></td>
-                        <td class=""><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                        <td class=""><span class="spk spk-02">SPEAKER_02</span></td>
-                        <td class=""><span class="spk spk-01">SPEAKER_01</span></td>
-                    </tr>
-                    <tr>
-                        <td class="time">29.8–30.1</td>
-                        <td>friedberg</td>
-                        <td>It's awful.</td>
-                        <td class="divider "><span class="spk spk-00">SPEAKER_00</span></td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                        <td class="too-short">too short</td>
-                    </tr>
-                </tbody>
-            </table>
-
+        <div class="nav-footer">
+            ← <a href="entry.html" style="color:var(--faint);text-decoration:none;">technical path</a>
         </div>
+    </nav>
+
+    <main>
+
+        <p class="page-eyebrow">03 / Forensics</p>
+        <h1>Ghosts in the Audio</h1>
+
+        <p class="lead">
+            <strong>Ghosts</strong> Ghosts are short speech segments the transcription pipeline failed to record. Misclassifications are segments it
+            recorded but attributed to the wrong person. Both failures are common in short-form audio — segments under five seconds.
+            Forty-three percent of All-In utterances fall below that threshold. <br><br>
+            Neither failure announces itself. Omissions and misattributed quotes pass into training data silently, corrupting the
+            persona corpus. The two cases below illustrate the failure mode. The architecture that produced them is the larger
+            problem.
+        </p>
+
+
+                <div class="accordion">
+                
+                    <div class="accordion-header">Useful analogies of ghost audio & misclassification </div>
+                
+                    <details>
+                        <summary>
+                            Ghost Audio — Crimson Tide (movie)
+                            <span class="chevron">&#9660;</span>
+                        </summary>
+                
+                        <div class="accordion-body">
+                            <strong>Movie</strong>: In the 1995 movie 'Crimson Tide', the USS Alabama receives an emergency action message (EAM), which is text-based, ordering a nuclear launch. A second EAM arrives immediately
+                            after — and cuts off mid-message because the ship loses its radio while under attack. <br><br>The crew spends the rest of the film
+                            talking about the missing half of the second EAM and what to do while the radio is under repair.   
+                        </div>
+
+                        <div class="accordion-body" style="padding-left: 32px;">
+                            <strong>Audio Pipeline:</strong> Friedberg and Gerstner's ghost audio ("Oh, my God") was not captured in recent
+                            runs, but an earlier transcript run confirmed something had been there. Pivoting to the movie: this would be as if the second EAM was transmitted in full, but the submarine's radio was scanning too broad a band — and the narrow VLF signal fell through undetected.
+                        </div>
+
+                        <div class="accordion-body" style="padding-left: 32px;">
+                            <strong>Key Difference</strong>: Visibility. Crimson Tide, everyone knows the second message exists and it's incomplete. My pipeline? I got lucky.
+                        </div>
+                    </details>
+                
+                    <details>
+                        <summary>
+                            Misclassification — Cold War (1983)
+                            <span class="chevron">&#9660;</span>
+                        </summary>
+                    
+                        <div class="accordion-body">
+                            <strong>Cold War:</strong> In 1983, a Soviet early-warning satellite detected a launch of US ICBMs. Ground radar
+                            showed nothing. Instead of retaliating, Stanislav Petrov waited, reasoning that a real first strike would involve
+                            hundreds of missiles — not the five the satellite was reporting. He was right. The satellite had misinterpreted sunlight reflecting off clouds as a
+                            launch.
+                        </div>
+
+            
+                        <div class="accordion-body" style="padding-left: 32px;">
+                            <strong>Audio Pipeline:</strong> NeMo's voice classifier builds speaker profiles through embeddings, which
+                            mature in accuracy as the episode progresses. <br><br>When Friedberg spoke at 21 seconds, the model had paper-thin data
+                            to make an assignment. It assigned Friedberg's voice to the closest available centroid and moved on.
+                            Confidently. The transcript shows "Gerstner", other times it shows "Chamath." It never shows "Friedberg." No flag, no warning, no asterisk.
+                        </div>
+                    
+                        <div class="accordion-body" style="padding-left: 32px;">
+                            <strong>Key Difference:</strong> Petrov had an instinct to distrust a confident system — and we're alive today because of it. <br><br>
+                            
+                            The classifier can't reason like a human. By the time NeMo gathered sufficient audio to classify reliably, the early labels were already fixed. The classifier didn't go back to edit.
+                        </div>
+
+                  
+</details>
+
+<details>
+    <summary>
+        Misclassification — Boeing MCAS (2018)
+        <span class="chevron">&#9660;</span>
+    </summary>
+
+    <div class="accordion-body">
+        <strong>Background:</strong> Boeing's 737 MAX included a new flight control system called Maneuvering Characteristics Augmentation System (MCAS), designed to correct
+        for the aircraft's rushed engineering that created a tendency for the plane to pitch upward under certain conditions. 
+        
+        <br><BR>MCAS took input from a single sensor. Should that sensor fail, MCAS took authority over the airplane and put it into a dive. Pilots fought to regain control, but MCAS repeatedly re-engaged and overpowered
+        them. 346 people died across two crashes.
     </div>
 
-    <script>
-        // Codec ladder tabs
-        const tabs = document.querySelectorAll(".tab[data-target]")
-        const tables = document.querySelectorAll(".codec-table[id^='mp3'], .codec-table[id='wav'], .codec-table[id='aac'], .codec-table[id='ogg'], .codec-table[id='m4a']")
-        tabs.forEach(tab => {
-            tab.onclick = () => {
-                tabs.forEach(t => t.classList.remove("active"))
-                tables.forEach(t => t.classList.remove("active"))
-                tab.classList.add("active")
-                document.getElementById(tab.dataset.target).classList.add("active")
-            }
-        })
+    <div class="accordion-body" style="padding-left: 32px;">
+        <strong>Audio Pipeline:</strong> NeMo's early-episode embeddings are that single sensor. One data source,
+        immature, given full authority over speaker assignment. The classifier doesn't cross-check against a second
+        input or flag low confidence. It commits and moves on.
+    </div>
 
-        // NeMo tabs
-        const nemoTabs = document.querySelectorAll(".tab[data-nemo-target]")
-        const nemoTables = document.querySelectorAll(".codec-table[id^='nemo-']")
-        nemoTabs.forEach(tab => {
-            tab.onclick = () => {
-                nemoTabs.forEach(t => t.classList.remove("active"))
-                nemoTables.forEach(t => t.classList.remove("active"))
-                tab.classList.add("active")
-                document.getElementById(tab.getAttribute("data-nemo-target")).classList.add("active")
-            }
-        })
-    </script>
+    <div class="accordion-body" style="padding-left: 32px;">
+        <strong>Key Difference:</strong> Boeing's failure had a body count. A mislabeled training set has a quality
+        count — quieter, slower, and easier to miss. The mechanism is the same: single input, high confidence, no
+        verification loop, errors that compound downstream.
+    </div>
+</details>
+                
+                </div>
 
+        <div class="section-heading">
+            <h2>Evidence</h2>
+        </div>
+
+        <div class="evidence-table">
+            <div class="evidence-row evidence-header">
+                <div>Time</div>
+                <div>Speaker</div>
+                <div>Line</div>
+                <div>Audible / Recovered</div>
+                <div>Labeled As</div>
+            </div>
+
+            <div class="evidence-row row-friedberg">
+                <div>21.4s</div>
+                <div>Friedberg</div>
+                <div>"Oh, my God."</div>
+                <div>yes / yes</div>
+                <div class="cell-error">Gerstner</div>
+            </div>
+
+            <div class="evidence-row row-red">
+                <div>27.4s</div>
+                <div>Gerstner</div>
+                <div>"Oh, my God."</div>
+                <div>no / no</div>
+                <div>—</div>
+            </div>
+
+            <div class="evidence-row row-green">
+                <div>51s</div>
+                <div>Gerstner</div>
+                <div>"Where is JCal?"</div>
+                <div>yes / —</div>
+                <div>Gerstner</div>
+            </div>
+        </div>
+
+        <ul class="body-list">
+            <li>Friedberg's line at 21.4 seconds appeared in an earlier transcript but vanished in later runs. The
+                segment was eventually recovered.</li>
+            <li>Once recovered, NeMo classified Friedberg's voice as Brad Gerstner, despite Gerstner not being clearly
+                audible until roughly the 51-second mark.</li>
+            <li>Gerstner's own "Oh, my God" at 27.4 seconds is essentially inaudible in the audio track and was
+                discovered only by manually reviewing the video.</li>
+        </ul>
+
+
+<div class="section-heading">
+    <h2>Why Did This Happen?</h2>
+</div>
+<p class="body-text">WhisperX performs transcription in batches. When the batch size is large, short utterances
+    surrounded by laughter, cross-talk, or music can fall below decoding confidence and disappear. Reducing the batch
+    size changes the acoustic context and allows the segment to surface.</p>
+<p class="body-text">Speaker classification introduces the second failure mode. Early in an episode, NeMo has minimal
+    information about each speaker's voice. When Friedberg speaks at 21 seconds, the model has not yet heard a clear,
+    audible example of Brad Gerstner. The system assigned Friedberg's voice to the closest available cluster — which at
+    the time was Brad Gerstner. Cosine similarity showed the segment is closest to Friedberg's voice.</p>
+<p class="body-text">As the episode advances, speaker embeddings mature and cluster representation shifts — however, the
+    earlier mislabeling is never revisited. The transcript appears complete. The pipeline exits cleanly. The
+    misattribution remains hidden.</p>
+<div class="section-heading">
+    <h2>Implications for Training Data</h2>
+</div>
+<p class="body-text">Every misattributed line becomes training data. Speaker attribution errors rarely surface as
+    failures — the transcript appears correct and the pipeline produces no warnings. Incorrect labels quietly propagate
+    into downstream datasets.</p>
+<p class="body-text">Two-pass diarization addresses part of the problem, and human-in-the-loop labeling can catch
+    residual errors. But the deeper issue is architectural: single-pass diarization on long-form audio is biased against
+    early segments.</p>
+<p class="body-text">The first minute of a three-hour episode is labeled with dramatically less information than the
+    final hour. Across hundreds of episodes, that asymmetry compounds.</p>
+<div class="footer"> Mason Thompson · Berkeley, California </div>
+</main>
 </body>
 
 </html>
