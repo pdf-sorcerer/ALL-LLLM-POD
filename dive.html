@@ -894,7 +894,7 @@
         <p class="body-text">The chart below shows both files across the same window. Around 20–21s, both files drop — a brief moment after Chamath finishes. In the unknown file (green), that drop crosses below the 0.5 threshold. Silero reads it as a pause, cuts a segment boundary, and "Oh, my God" lands at the top of a fresh segment with clean context. In the Libsyn file (blue), the VAD score recovers faster — the score never crosses the threshold. No boundary is cut. The ghost arrives inside a long, dense chunk of speech and Whisper deprioritizes it.</p>
 
         <div style="max-width:620px;margin:24px 0 36px;border:1px solid var(--border);">
-            <img src="compare_vad_scores.png" alt="Silero VAD scores — Libsyn vs unknown file across the ghost window" class="lightbox-img" style="width:100%;display:block;">
+            <img src="images/compare_vad_scores.png" alt="Silero VAD scores — Libsyn vs unknown file across the ghost window" class="lightbox-img" style="width:100%;display:block;">
         </div>
 
         <div class="section-heading">
@@ -934,7 +934,7 @@
         <p class="body-text">The VAD analysis explained why the Libsyn file drops Friedberg's ghost — the score never crossed the non-speech threshold, so no segment boundary was cut, and the ghost arrived inside a long dense chunk where Chamath's voice dominated the attention budget. Knowing the attention architecture was in play, the hypothesis followed naturally: a two-pass system. Pass one transcribes the dominant acoustics as normal. Pass two targets the residual — the audio that remains after the dominant voice is accounted for. Before building it, spectral subtraction was used to confirm the residual signal actually exists. Using Chamath's audio in the preceding window as a noise profile and subtracting it from the ghost window, the remainder shows clear acoustic activity at exactly the timestamps where Friedberg's words appear in the earlier transcript. The signal is there. The pipeline is dropping something real.</p>
 
         <div style="max-width:620px;margin:24px 0 28px;border:1px solid var(--border);">
-            <img src="ghost_viz_friedberg_v2.png" alt="Spectral subtraction residual — waveform, RMS, spectrogram, and F0 across the ghost window" class="lightbox-img" style="width:100%;display:block;">
+            <img src="images/ghost_viz_friedberg_v2.png" alt="Spectral subtraction residual — waveform, RMS, spectrogram, and F0 across the ghost window" class="lightbox-img" style="width:100%;display:block;">
         </div>
 
         <p class="body-text">The two-pass pipeline is implemented in <code style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--bg);padding:1px 5px;border:1px solid var(--border);">whx_ghostHunter_v6_2.py</code>. Pass 1 runs the baseline WhisperX transcription across the full audio. Pass 2 uses Silero VAD to scan each baseline segment for internal dips — moments where speech probability drops, indicating a potential boundary between speakers. At each candidate boundary, a narrow window is re-transcribed with relaxed thresholds, isolating content that the first pass missed. Any new words not present in the baseline are flagged as recovered ghosts.</p>
