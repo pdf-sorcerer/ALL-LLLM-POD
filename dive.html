@@ -599,95 +599,111 @@
             </div>
         </div>
 
-        <div class="accordion">
+        <div class="section-heading" style="margin-top:40px;">
+            <h2>Two Source Files</h2>
+        </div>
 
-            <div class="accordion-header">Useful analogies of ghost audio &amp; misclassification</div>
+        <p class="body-text">The ghost segment appeared in the older transcript but not the newer one — despite the newer file being higher bitrate and sample rate. The difference starts before WhisperX runs. It starts with the file.</p>
 
-            <details>
-                <summary>
-                    Ghost Audio — Crimson Tide (film)
-                    <span class="chevron">&#9660;</span>
-                </summary>
+        <div style="max-width:620px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);margin:0 0 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;">
 
-                <div class="accordion-body">
-                    <strong>Crimson Tide</strong><br>
-                    In the 1995 film <em>Crimson Tide</em>, the submarine USS Alabama receives an Emergency Action
-                    Message (EAM) ordering the launch of nuclear missiles. A second EAM follows but cuts off
-                    mid-transmission when the radio fails.<br><br>
-
-                    The Captain (Gene Hackman) and First Officer (Denzel Washington) interpret the situation
-                    differently. The Captain assumes the prior launch order still stands; the First Officer believes
-                    the second EAM may contain a cancellation. The crew splits into opposing factions along those lines.
-
-                    <div class="accordion-body-l2">
-                        <strong>Audio Pipeline</strong>
-                        Friedberg's "Oh, my God" at 21.4s appeared in an earlier transcript run but was absent in
-                        subsequent runs against the Libsyn file. Attempts to reproduce the conditions that first
-                        surfaced it were unsuccessful. The signal exists in the raw audio — spectral subtraction
-                        confirms it is there — but a reliable pipeline path to recover it has not been found.<br><br>
-
-                        Translated to the film: the Alabama's radio didn't fail. The second EAM was received.
-                        But in the noise of the control room, no one noticed it arrive — and there is no clean
-                        way to play it back.
-
-                        <div class="accordion-body-l3">
-                            <strong>Key Difference — Visibility</strong>
-                            In <em>Crimson Tide</em>, everyone knows a second message exists and that its record is
-                            incomplete. In the audio pipeline, the ghost segment's omission passes silently.
-                            Discovering it required spotting a discrepancy between runs — a needle-in-a-haystack
-                            event given there are half a million such segments across 358 episodes. Confirming
-                            the signal is present required working around the pipeline entirely.
-                        </div>
+            <div style="border-right:1px solid var(--border);">
+                <div style="padding:10px 16px;background:var(--green);color:#fff;">
+                    <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.8;margin-bottom:2px;">Original (YouTube)</div>
+                    <div style="font-size:11px;font-weight:600;letter-spacing:.04em;">"Oh, my God." present</div>
+                </div>
+                <div style="padding:0;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">Size</span><span style="color:var(--text);">46 MB</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">Bitrate</span><span style="color:var(--text);">65 kbps</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">Sample rate</span><span style="color:var(--text);">44,100 Hz</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">True peak</span><span style="color:var(--text);">+2.3 dBTP</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">Crest factor</span><span style="color:var(--text);">28.1 dB</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;gap:8px;">
+                        <span style="color:var(--faint);">VAD @ 20.88s</span><span style="color:var(--green);font-weight:600;">0.48 — dip</span>
                     </div>
                 </div>
-            </details>
+            </div>
 
-
-            <details>
-                <summary>
-                    Misclassification — Boeing MCAS (2018)
-                    <span class="chevron">&#9660;</span>
-                </summary>
-
-                <div class="accordion-body">
-                    <strong>Background</strong><br>
-                    The Boeing 737 MAX introduced a flight-control system called the Maneuvering Characteristics
-                    Augmentation System (MCAS) to counter a pitch-up tendency created by rushed design changes made
-                    to the airplane during development.<br><br>
-
-                    MCAS relied on input from a single angle-of-attack (AoA) sensor, even though two AoA sensors
-                    were installed on the aircraft. When that single sensor produced a faulty reading, MCAS took
-                    control of the plane and put it into a nose-down position. Pilots fought to regain control,
-                    but roughly every ten seconds MCAS re-engaged based on the same bad sensor input. Two crashes
-                    followed. 346 people died.
-
-                    <div class="accordion-body-l2">
-                        <strong>Audio Pipeline</strong>
-                        NeMo's speaker embeddings are analogous to the 737 MAX's single sensor: a low-signal,
-                        low-quality embedding carries the same authority over speaker assignment as a high-signal,
-                        high-quality one.<br><br>
-
-                        The classifier was not designed to cross-check against a second signal or flag low
-                        confidence. Early in an episode, NeMo has heard very little of each speaker. When
-                        Friedberg speaks at 21 seconds, the model has not yet encountered a clear, unambiguous
-                        example of Brad Gerstner — so it assigns Friedberg's voice to the closest available
-                        cluster, which at that moment is Gerstner. The misattribution is never revisited.
-                        Those errors propagate silently downstream, contaminating training data.
-
-                        <div class="accordion-body-l3">
-                            <strong>Key Difference — Consequence</strong>
-                            Boeing's failure had a body count. A mislabeled training set has a quality count —
-                            quieter, slower, and easier to miss. The mechanism is the same: single input, high
-                            confidence, no verification loop, errors that compound downstream.
-                        </div>
+            <div>
+                <div style="padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--border);">
+                    <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:2px;">Libsyn (standardized)</div>
+                    <div style="font-size:11px;font-weight:600;letter-spacing:.04em;color:#cc3333;">"Oh, my God." absent</div>
+                </div>
+                <div style="padding:0;">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">Size</span><span style="color:var(--text);">135 MB</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">Bitrate</span><span style="color:var(--text);">192 kbps</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">Sample rate</span><span style="color:var(--text);">48,000 Hz</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">True peak</span><span style="color:var(--text);">−4.0 dBTP</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;border-bottom:1px solid var(--border);gap:8px;">
+                        <span style="color:var(--faint);">Crest factor</span><span style="color:var(--text);">23.0 dB</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;padding:9px 16px;gap:8px;">
+                        <span style="color:var(--faint);">VAD @ 20.88s</span><span style="color:#cc3333;font-weight:600;">0.86+ — no dip</span>
                     </div>
                 </div>
-            </details>
+            </div>
 
         </div>
 
-        <div class="section-heading">
-            <h2>Evidence from Transcripts</h2>
+        <p class="body-text" style="margin-bottom:40px;">Higher bitrate, higher sample rate — and less content recovered. The Libsyn file's density is what buries the ghost. The lower quality file's dynamics are what surface it.</p>
+
+        <div class="section-heading" style="margin-top:52px;">
+            <h2>WhisperX ASR — Ghost Audio</h2>
+        </div>
+
+        <div style="max-width:620px;border:1px solid var(--border);background:var(--surface);margin:0 0 24px;overflow:hidden;">
+            <div style="background:var(--green);height:3px;width:100%"></div>
+            <div style="padding:20px 20px 18px;display:flex;align-items:center;font-family:'IBM Plex Mono',monospace;">
+
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <span style="font-size:9px;font-weight:600;color:var(--faint);letter-spacing:.08em;">01</span>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 14px;border:1px solid var(--border);background:var(--bg);white-space:nowrap;">Audio</div>
+                    <span style="font-size:9px;color:var(--faint);letter-spacing:.04em;">raw mp3</span>
+                </div>
+
+                <div style="flex:1;height:1px;background:var(--border);margin:0 8px;margin-top:-14px;"></div>
+
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <span style="font-size:9px;font-weight:600;color:var(--green);letter-spacing:.08em;">02</span>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:6px 14px;background:var(--green);white-space:nowrap;">WhisperX ASR</div>
+                    <span style="font-size:9px;color:var(--faint);letter-spacing:.04em;">transcription + WLT</span>
+                </div>
+
+                <div style="flex:1;height:1px;background:var(--border);margin:0 8px;margin-top:-14px;"></div>
+
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <span style="font-size:9px;font-weight:600;color:var(--faint);letter-spacing:.08em;">03</span>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 14px;border:1px solid var(--border);background:var(--bg);white-space:nowrap;">Nvidia NeMo</div>
+                    <span style="font-size:9px;color:var(--faint);letter-spacing:.04em;">speaker diarization</span>
+                </div>
+
+                <div style="flex:1;height:1px;background:var(--border);margin:0 8px;margin-top:-14px;"></div>
+
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <span style="font-size:9px;font-weight:600;color:var(--faint);letter-spacing:.08em;">04</span>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 14px;border:1px solid var(--border);background:var(--bg);white-space:nowrap;">HITL review</div>
+                    <span style="font-size:9px;color:var(--faint);letter-spacing:.04em;">transcript</span>
+                </div>
+
+            </div>
         </div>
 
         <div class="transcript-viewer">
@@ -698,36 +714,42 @@
 
             <div id="transcript-table" class="transcript-view active">
                 <div class="evidence-table">
-                    <div class="evidence-row evidence-header">
+                    <div class="evidence-row evidence-header" style="grid-template-columns:80px 56px 90px 1fr 110px;">
+                        <div>Source</div>
                         <div>Time</div>
                         <div>Speaker</div>
                         <div>Text</div>
-                        <div>Recoverable</div>
-                        <div>Labeled As</div>
+                        <div>In transcript</div>
                     </div>
 
-                    <div class="evidence-row row-friedberg">
-                        <div>21.4s</div>
+                    <div class="evidence-row" style="grid-template-columns:80px 56px 90px 1fr 110px;">
+                        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);font-weight:600;">both</div>
+                        <div>12.0s</div>
+                        <div>Chamath</div>
+                        <div>"Hey, everybody… and the fattest, that's the dumbest."</div>
+                        <div>yes</div>
+                    </div>
+
+                    <div class="evidence-row" style="grid-template-columns:80px 56px 90px 1fr 110px;">
+                        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);font-weight:600;">YouTube</div>
+                        <div>20.49s</div>
                         <div>Friedberg</div>
                         <div>"Oh, my God."</div>
-                        <div>confirmed*</div>
-                        <div class="cell-error">Gerstner</div>
+                        <div>yes</div>
                     </div>
 
-                    <div class="evidence-row row-red">
-                        <div>27.4s</div>
-                        <div>Gerstner</div>
+                    <div class="evidence-row row-red" style="grid-template-columns:80px 56px 90px 1fr 110px;">
+                        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#cc3333;font-weight:600;">Libsyn</div>
+                        <div>20.49s</div>
+                        <div>Friedberg</div>
                         <div>"Oh, my God."</div>
-                        <div>manual edit</div>
-                        <div>—</div>
+                        <div style="color:#cc3333;font-weight:600;">no</div>
                     </div>
 
-                    <div class="evidence-row row-green">
-                        <div>51s</div>
-                        <div>Gerstner</div>
-                        <div>"Where is JCal?"</div>
-                        <div>n/a</div>
-                        <div>Gerstner</div>
+                    <div class="evidence-row" style="grid-template-columns:1fr;background:var(--bg);border-top:1px solid var(--border);">
+                        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);line-height:1.7;">
+                            Friedberg @ 20.49s confirmed in raw audio via spectral subtraction. &nbsp;·&nbsp; Pipeline recovery unresolved on Libsyn file.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -854,39 +876,26 @@
             </div>
         </div>
 
-        <p class="body-text">* "Confirmed" here means the signal is present in the raw audio — verified via spectral
-            subtraction — not that it has been recovered through the pipeline. The earlier transcript that first
-            surfaced this segment could not be reproduced against the Libsyn file.</p>
-
-        <ul class="body-list">
-            <li>Friedberg's line at 21.4 seconds appeared in an earlier transcript but was absent in all subsequent
-                runs. Attempts to reproduce the conditions that first surfaced it were unsuccessful.</li>
-            <li>The signal is confirmed present in the raw audio via spectral subtraction. Why the current pipeline
-                drops it is hypothesized but not reproduced.</li>
-            <li>Once the segment does appear in a transcript, NeMo classifies Friedberg's voice as Brad Gerstner,
-                despite Gerstner not being clearly audible until roughly the 51-second mark.</li>
-            <li>Gerstner's own "Oh, my God" at 27.4 seconds is essentially inaudible and was discovered by watching
-                video. This is Gerstner's first ground-truth spoken segment.</li>
-        </ul>
-
-        <div class="section-heading">
-            <h2>Episode 136 TitaNet Embedding Manifold</h2>
+        <div style="max-width:620px;margin:28px 0 0;padding:14px 18px;border-left:3px solid var(--border);background:var(--surface);font-family:'Inter',sans-serif;font-size:13px;line-height:1.75;color:var(--muted);">
+            <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;">Research note</span>
+            At one point during testing, setting <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--bg);padding:1px 5px;border:1px solid var(--border);">no_speech_threshold = 0.3</code>, <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--bg);padding:1px 5px;border:1px solid var(--border);">log_prob_threshold = -1.0</code>, and <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--bg);padding:1px 5px;border:1px solid var(--border);">batch_size = 8</code> surfaced Friedberg's segment in the Libsyn transcript. The result did not reproduce on subsequent runs. The parameters were logged and are known — the discrepancy remains unexplained.
         </div>
 
-        <p class="body-text">Embeddings are the digital voiceprint of a speaker in 192-dimensional vector space. We can
-            project the first 30 seconds of embeddings onto a hypersphere plane for convenience and watch where they
-            cluster. Each cluster develops into a distinct speaker voiceprint.</p>
-
-        <div class="video-container">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/3qFn2hY91cg"
-                title="E136 First 30 Seconds" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
+        <div class="section-heading" style="margin-top:52px;">
+            <h2>Forensic Signal Analysis</h2>
         </div>
 
-        <p class="body-text">The first 30 seconds of Episode 136 show the audio conditions that create ghost segments
-            and misclassification errors. Friedberg's "Oh, my God" at 21.4 seconds is audible but faint. Gerstner's
-            response at 27.4 seconds is barely perceptible even with video confirmation.</p>
+        <p class="body-text">Chamath Palihapitiya is the dominant voice in this window — and that matters. WhisperX is built on a transformer architecture that distributes attention across the audio it receives. When a window contains a loud, dense primary speaker alongside a brief, quieter interjection, the model allocates most of its attention to the dominant signal. The quieter voice doesn't disappear — it competes, and loses. This is why reducing batch size was a reasonable hypothesis: smaller windows mean less competition per chunk. If Friedberg's reaction lands in its own window with no Chamath to compete with, the model has no choice but to attend to it.</p>
+
+        <p class="body-text">Chamath's four-part riff ends with "And the fattest, that's the dumbest" at 19.9s. Friedberg's reaction, "Oh my God.", follows at 20.49s.</p>
+
+        <p class="body-text">The VAD score is a simple measure: how confident is the model that someone is speaking right now. High score means speech. Low score means silence or near-silence.</p>
+
+        <p class="body-text">The chart below shows both files across the same window. Around 20–21s, both files drop — a brief moment after Chamath finishes. In the unknown file (green), that drop crosses below the 0.5 threshold. Silero reads it as a pause, cuts a segment boundary, and "Oh, my God" lands at the top of a fresh segment with clean context. In the Libsyn file (blue), the VAD score recovers faster — the score never crosses the threshold. No boundary is cut. The ghost arrives inside a long, dense chunk of speech and Whisper deprioritizes it.</p>
+
+        <div style="max-width:620px;margin:24px 0 36px;border:1px solid var(--border);">
+            <img src="compare_vad_scores.png" alt="Silero VAD scores — Libsyn vs unknown file across the ghost window" style="width:100%;display:block;">
+        </div>
 
         <div class="section-heading">
             <h2>Failures and Resolution</h2>
@@ -919,22 +928,45 @@
         </div>
 
         <div class="section-heading">
-            <h2>Forensic Confirmation via Spectral Subtraction</h2>
+            <h2>Two-Pass Recovery</h2>
         </div>
 
-        <p class="body-text">When attempts to reproduce the ghost segment through pipeline tuning failed, a different
-            question became more useful: is the signal actually present in the raw audio, independent of what the
-            pipeline does with it?</p>
+        <p class="body-text">The VAD analysis explained why the Libsyn file drops Friedberg's ghost — the score never crossed the non-speech threshold, so no segment boundary was cut, and the ghost arrived inside a long dense chunk where Chamath's voice dominated the attention budget. Knowing the attention architecture was in play, the hypothesis followed naturally: a two-pass system. Pass one transcribes the dominant acoustics as normal. Pass two targets the residual — the audio that remains after the dominant voice is accounted for. Before building it, spectral subtraction was used to confirm the residual signal actually exists. Using Chamath's audio in the preceding window as a noise profile and subtracting it from the ghost window, the remainder shows clear acoustic activity at exactly the timestamps where Friedberg's words appear in the earlier transcript. The signal is there. The pipeline is dropping something real.</p>
 
-        <p class="body-text">Spectral subtraction uses the dominant speaker's audio immediately before the boundary as
-            a noise profile, then subtracts it from the window where the ghost is expected. What remains — the residual
-            — isolates the weaker signal. Applied to the 19.7–24.7 second window of Episode 136, the residual shows
-            clear acoustic activity at the timestamps where Friedberg's words were recorded in the earlier transcript.
-            The signal is there. The pipeline is dropping it.</p>
+        <div style="max-width:620px;margin:24px 0 28px;border:1px solid var(--border);">
+            <img src="ghost_viz_friedberg_v2.png" alt="Spectral subtraction residual — waveform, RMS, spectrogram, and F0 across the ghost window" style="width:100%;display:block;">
+        </div>
 
-        <p class="body-text">This does not explain why the pipeline drops it, and it does not constitute a recovery.
-            It establishes that the failure is a pipeline problem, not an absence of signal — which is a necessary
-            precondition for any eventual fix.</p>
+        <p class="body-text">The two-pass pipeline is implemented in <code style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--bg);padding:1px 5px;border:1px solid var(--border);">whx_miscreantghostgnome_v6.py</code>. Pass 1 runs the baseline WhisperX transcription across the full audio. Pass 2 uses Silero VAD to scan each baseline segment for internal dips — moments where speech probability drops, indicating a potential boundary between speakers. At each candidate boundary, a narrow window is re-transcribed with relaxed thresholds, isolating content that the first pass missed. Any new words not present in the baseline are flagged as recovered ghosts.</p>
+
+        <pre class="json-display" style="max-width:620px;margin:0 0 36px;border:1px solid var(--border);">#!/usr/bin/env python3
+# whx_miscreantghostgnome.py
+# Pipeline is IDENTICAL to v5.3
+# After all passes complete, whisperx.align() runs once on the
+# merged segment list (baseline + recovered ghosts) and writes
+# word-level timestamps to the final JSON.
+
+# ---- Pass 1 ----
+MODEL_NAME          = "large-v3"
+COMPUTE_TYPE        = "float16"
+BATCH_SIZE          = 8
+VAD_ONSET, VAD_OFFSET = 0.500, 0.363
+
+# ---- Pass 2: Silero VAD scan ----
+MIN_SEGMENT_DURATION   = 8.0
+SILERO_CHUNK           = 512
+VAD_DIP_THRESHOLD      = 0.45
+MIN_DIP_CHUNKS         = 3
+MAX_DIP_CHUNKS         = 50
+MIN_BOUNDARY_SPACING_S = 2.0
+
+# ---- Pass 3: Window transcription ----
+WINDOW_PRE  = 0.5
+WINDOW_POST = 4.5
+WINDOW_VAD_ONSET  = 0.150
+WINDOW_VAD_OFFSET = 0.100
+WINDOW_NO_SPEECH_THRESHOLD = 0.1
+WINDOW_LOGPROB_THRESHOLD   = -2.0</pre>
 
         <div class="section-heading">
             <h2>UMAP Embeddings Manifold</h2>
@@ -966,6 +998,92 @@
             than the final hour. Across hundreds of episodes, that asymmetry compounds.</p>
 
         <div class="footer">Mason Thompson · Berkeley, California</div>
+
+        <div class="accordion" style="margin-top:60px;">
+
+            <div class="accordion-header">Useful analogies of ghost audio &amp; misclassification</div>
+
+            <details>
+                <summary>
+                    Ghost Audio — Crimson Tide (film)
+                    <span class="chevron">&#9660;</span>
+                </summary>
+
+                <div class="accordion-body">
+                    <strong>Crimson Tide</strong><br>
+                    In the 1995 film <em>Crimson Tide</em>, the submarine USS Alabama receives an Emergency Action
+                    Message (EAM) ordering the launch of nuclear missiles. A second EAM follows but cuts off
+                    mid-transmission when the radio fails.<br><br>
+
+                    The Captain (Gene Hackman) and First Officer (Denzel Washington) interpret the situation
+                    differently. The Captain assumes the prior launch order still stands; the First Officer believes
+                    the second EAM may contain a cancellation. The crew splits into opposing factions along those lines.
+
+                    <div class="accordion-body-l2">
+                        <strong>Audio Pipeline</strong>
+                        Friedberg's "Oh, my God" at 21.4s appeared in an earlier transcript run but was absent in
+                        subsequent runs against the Libsyn file. Attempts to reproduce the conditions that first
+                        surfaced it were unsuccessful. The signal exists in the raw audio — spectral subtraction
+                        confirms it is there — but a reliable pipeline path to recover it has not been found.<br><br>
+
+                        Translated to the film: the Alabama's radio didn't fail. The second EAM was received.
+                        But in the noise of the control room, no one noticed it arrive — and there is no clean
+                        way to play it back.
+
+                        <div class="accordion-body-l3">
+                            <strong>Key Difference — Visibility</strong>
+                            In <em>Crimson Tide</em>, everyone knows a second message exists and that its record is
+                            incomplete. In the audio pipeline, the ghost segment's omission passes silently.
+                            Discovering it required spotting a discrepancy between runs — a needle-in-a-haystack
+                            event given there are half a million such segments across 358 episodes. Confirming
+                            the signal is present required working around the pipeline entirely.
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details>
+                <summary>
+                    Misclassification — Boeing MCAS (2018)
+                    <span class="chevron">&#9660;</span>
+                </summary>
+
+                <div class="accordion-body">
+                    <strong>Background</strong><br>
+                    The Boeing 737 MAX introduced a flight-control system called the Maneuvering Characteristics
+                    Augmentation System (MCAS) to counter a pitch-up tendency created by rushed design changes made
+                    to the airplane during development.<br><br>
+
+                    MCAS relied on input from a single angle-of-attack (AoA) sensor, even though two AoA sensors
+                    were installed on the aircraft. When that single sensor produced a faulty reading, MCAS took
+                    control of the plane and put it into a nose-down position. Pilots fought to regain control,
+                    but roughly every ten seconds MCAS re-engaged based on the same bad sensor input. Two crashes
+                    followed. 346 people died.
+
+                    <div class="accordion-body-l2">
+                        <strong>Audio Pipeline</strong>
+                        NeMo's speaker embeddings are analogous to the 737 MAX's single sensor: a low-signal,
+                        low-quality embedding carries the same authority over speaker assignment as a high-signal,
+                        high-quality one.<br><br>
+
+                        The classifier was not designed to cross-check against a second signal or flag low
+                        confidence. Early in an episode, NeMo has heard very little of each speaker. When
+                        Friedberg speaks at 21 seconds, the model has not yet encountered a clear, unambiguous
+                        example of Brad Gerstner — so it assigns Friedberg's voice to the closest available
+                        cluster, which at that moment is Gerstner. The misattribution is never revisited.
+                        Those errors propagate silently downstream, contaminating training data.
+
+                        <div class="accordion-body-l3">
+                            <strong>Key Difference — Consequence</strong>
+                            Boeing's failure had a body count. A mislabeled training set has a quality count —
+                            quieter, slower, and easier to miss. The mechanism is the same: single input, high
+                            confidence, no verification loop, errors that compound downstream.
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+        </div>
     </main>
 
     <script>
