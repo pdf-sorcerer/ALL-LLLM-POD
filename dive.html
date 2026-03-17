@@ -504,7 +504,6 @@
             margin: 24px 0 36px;
             position: relative;
             padding-bottom: 56.25%;
-            /* 16:9 aspect ratio */
             height: 0;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -544,19 +543,20 @@
         <h1>Ghosts in the Audio</h1>
 
         <p class="lead">
-            Modern transcription pipelines produce transcripts that look clean, structured,
-            and complete. But they are not infallable: error can pass silently onto the transcript and remain there
+            ASR transcription technology is capable of producing high-qualiuty transcripts that are clean, structured,
+            and look complete enough to engender complacency. They are not infallible; a couple classes error can pass silently onto the transcript and remain there
             unless detected manually.
-            <br><br>
 
-            <strong>1. Ghost Audio</strong> — speech missing from the transcript. Creates gaps in coherence.<br>
-            <strong>2. Misclassification</strong> — speech assigned to the wrong person. Corrupts training data.<br>
+
+            
+            <br><br>
+            <strong>1. Ghost Audio</strong> — speech was heard, but not found on the transcript. Omitted from training data.<br>
+            <strong>2. Misclassification</strong> — speech assigned to the wrong speaker. Corrupts persona training data.<br>
         </p>
         <p class="lead">
-            Both errors are common in short-form audio, which is about five-seconds or less. 43% of All-In Podcast
-            segments fall below this
-            threshold. The examples describe below in 'Evidence from Transcripts' illustrate the failure mode. The
-            architecture that produced them is the larger problem.
+            Both errors are common in short-form conversational audio, whcih is what All-In Podcast is. In fact, 43% of the N speaker
+            segments fall below this threshold. Convention encourages dropping those segments wholesale. I wanted to try another way. 
+            The examples described below in 'Evidence from Transcripts' illustrate the failure mode. The architecture that produced them is the larger problem (and one worth solving). 
         </p>
 
         <div class="accordion">
@@ -572,36 +572,31 @@
                 <div class="accordion-body">
                     <strong>Crimson Tide</strong><br>
                     In the 1995 film <em>Crimson Tide</em>, the submarine USS Alabama receives an Emergency Action
-                    Message (EAM) ordering the
-                    launch of nuclear missiles. A second EAM follows but cuts off mid-transmission when the radio
-                    fails.<br><br>
+                    Message (EAM) ordering the launch of nuclear missiles. A second EAM follows but cuts off
+                    mid-transmission when the radio fails.<br><br>
 
                     The Captain (Gene Hackman) and First Officer (Denzel Washington) interpret the situation
-                    differently. The Captain
-                    assumes the prior launch order still stands; the First Officer believes the second EAM may contain a
-                    cancellation.
-                    The crew splits into opposing factions along those lines.
+                    differently. The Captain assumes the prior launch order still stands; the First Officer believes
+                    the second EAM may contain a cancellation. The crew splits into opposing factions along those lines.
 
                     <div class="accordion-body-l2">
                         <strong>Audio Pipeline</strong>
-                        Friedberg's ghost audio at 21.4s ("Oh, my God") did not appear in recent pipeline runs, but an
-                        earlier
-                        transcript confirms the segment once existed. The root cause: the pipeline evolved to processed
-                        larger
-                        chunks of audio (16 minute windows), which crowded out fainter and shorter voices.<br><br>
+                        Friedberg's "Oh, my God" at 21.4s appeared in an earlier transcript run but was absent in
+                        subsequent runs against the Libsyn file. Attempts to reproduce the conditions that first
+                        surfaced it were unsuccessful. The signal exists in the raw audio — spectral subtraction
+                        confirms it is there — but a reliable pipeline path to recover it has not been found.<br><br>
 
-                        Translated to the film: imagine the Alabama's radio never failed, but while the crew rushed to
-                        action stations
-                        to prepare for ICBM launch, the second EAM was received — and simply went unnoticed.
+                        Translated to the film: the Alabama's radio didn't fail. The second EAM was received.
+                        But in the noise of the control room, no one noticed it arrive — and there is no clean
+                        way to play it back.
 
                         <div class="accordion-body-l3">
                             <strong>Key Difference — Visibility</strong>
                             In <em>Crimson Tide</em>, everyone knows a second message exists and that its record is
-                            incomplete. In the audio
-                            pipeline, the ghost segment's omission passes silently. Discovering it required spotting a
-                            discrepancy
-                            between runs — a needle-in-a-haystack event given there are half a million such segments
-                            across 358 episodes.
+                            incomplete. In the audio pipeline, the ghost segment's omission passes silently.
+                            Discovering it required spotting a discrepancy between runs — a needle-in-a-haystack
+                            event given there are half a million such segments across 358 episodes. Confirming
+                            the signal is present required working around the pipeline entirely.
                         </div>
                     </div>
                 </div>
@@ -617,40 +612,33 @@
                 <div class="accordion-body">
                     <strong>Background</strong><br>
                     The Boeing 737 MAX introduced a flight-control system called the Maneuvering Characteristics
-                    Augmentation System (MCAS)
-                    to counter a pitch-up tendency created by rushed design changes made to the airplane during
-                    development.<br><br>
+                    Augmentation System (MCAS) to counter a pitch-up tendency created by rushed design changes made
+                    to the airplane during development.<br><br>
 
-                    MCAS relied on input from a single angle-of-attack (AoA) sensor, even though two AoA sensors were
-                    installed on the
-                    aircraft. When that single sensor produced a faulty reading, MCAS took control of the plane and put
-                    it into a nose-down
-                    position. Pilots fought to regain control, but roughly every ten seconds MCAS re-engaged based on
-                    the same bad sensor
-                    input. Two crashes followed. 346 people died.
+                    MCAS relied on input from a single angle-of-attack (AoA) sensor, even though two AoA sensors
+                    were installed on the aircraft. When that single sensor produced a faulty reading, MCAS took
+                    control of the plane and put it into a nose-down position. Pilots fought to regain control,
+                    but roughly every ten seconds MCAS re-engaged based on the same bad sensor input. Two crashes
+                    followed. 346 people died.
 
                     <div class="accordion-body-l2">
                         <strong>Audio Pipeline</strong>
-                        NeMo's embeddings are analogous to the 737 MAX's single sensor: a low-signal, low-quality
-                        embedding carries the same
-                        authority over speaker assignment as a high-signal, high-quality one.<br><br>
+                        NeMo's speaker embeddings are analogous to the 737 MAX's single sensor: a low-signal,
+                        low-quality embedding carries the same authority over speaker assignment as a high-signal,
+                        high-quality one.<br><br>
 
-                        The classifier was not designed to cross-check against a second signal or flag low confidence.
-                        At the time, I
-                        hadn't built the pipeline to handle this case — largely because NeMo's voice classification
-                        works extremely well under
-                        normal conditions.<br><br>
-
-                        Like MCAS, the pipeline trusted a single input with full authority, occasionally crediting the
-                        wrong person with an idea.
+                        The classifier was not designed to cross-check against a second signal or flag low
+                        confidence. Early in an episode, NeMo has heard very little of each speaker. When
+                        Friedberg speaks at 21 seconds, the model has not yet encountered a clear, unambiguous
+                        example of Brad Gerstner — so it assigns Friedberg's voice to the closest available
+                        cluster, which at that moment is Gerstner. The misattribution is never revisited.
                         Those errors propagate silently downstream, contaminating training data.
 
                         <div class="accordion-body-l3">
                             <strong>Key Difference — Consequence</strong>
-                            Boeing's failure had a body count. A mislabeled training set has a quality count — quieter,
-                            slower, and easier to miss.
-                            The mechanism is the same: single input, high confidence, no verification loop, errors that
-                            compound downstream.
+                            Boeing's failure had a body count. A mislabeled training set has a quality count —
+                            quieter, slower, and easier to miss. The mechanism is the same: single input, high
+                            confidence, no verification loop, errors that compound downstream.
                         </div>
                     </div>
                 </div>
@@ -682,7 +670,7 @@
                         <div>21.4s</div>
                         <div>Friedberg</div>
                         <div>"Oh, my God."</div>
-                        <div>yes</div>
+                        <div>confirmed*</div>
                         <div class="cell-error">Gerstner</div>
                     </div>
 
@@ -826,21 +814,29 @@
             </div>
         </div>
 
+        <p class="body-text">* "Confirmed" here means the signal is present in the raw audio — verified via spectral
+            subtraction — not that it has been recovered through the pipeline. The earlier transcript that first
+            surfaced this segment could not be reproduced against the Libsyn file.</p>
+
         <ul class="body-list">
-            <li>Friedberg's line at 21.4 seconds appeared in an earlier transcript but vanished in later runs. The
-                segment was eventually recovered.</li>
-            <li>Once recovered, NeMo classified Friedberg's voice as Brad Gerstner, despite Gerstner not being clearly
-                audible until roughly the 51-second mark.</li>
+            <li>Friedberg's line at 21.4 seconds appeared in an earlier transcript but was absent in all subsequent
+                runs. Attempts to reproduce the conditions that first surfaced it were unsuccessful.</li>
+            <li>The signal is confirmed present in the raw audio via spectral subtraction. Why the current pipeline
+                drops it is hypothesized but not reproduced.</li>
+            <li>Once the segment does appear in a transcript, NeMo classifies Friedberg's voice as Brad Gerstner,
+                despite Gerstner not being clearly audible until roughly the 51-second mark.</li>
             <li>Gerstner's own "Oh, my God" at 27.4 seconds is essentially inaudible and was discovered by watching
-                video. This is Gerstner's first 'ground-truth' spoken segment.</li>
+                video. This is Gerstner's first ground-truth spoken segment.</li>
         </ul>
 
         <div class="section-heading">
             <h2>Episode 136 TitaNet Embedding Manifold</h2>
         </div>
 
-        <p class="body-text">Embeddings are the digital voiceprint of a speaker in 192-dimensional vector space. We can project the first 30-seconds of embeddings 
-            onto a hypersphere plane for convenience and watch where they cluster. Each cluster develops into a distinct speaker voiceprint.
+        <p class="body-text">Embeddings are the digital voiceprint of a speaker in 192-dimensional vector space. We can
+            project the first 30 seconds of embeddings onto a hypersphere plane for convenience and watch where they
+            cluster. Each cluster develops into a distinct speaker voiceprint.</p>
+
         <div class="video-container">
             <iframe width="560" height="315" src="https://www.youtube.com/embed/3qFn2hY91cg"
                 title="E136 First 30 Seconds" frameborder="0"
@@ -848,9 +844,9 @@
                 allowfullscreen></iframe>
         </div>
 
-        <p class="body-text">The first 30 seconds of Episode 136 show the audio conditions that create the ghost
-            segments and misclassification errors. Friedberg's "Oh, my God" at 21.4 seconds is audible but faint.
-            Gerstner's response at 27.4 seconds is barely perceptible even with video confirmation.</p>
+        <p class="body-text">The first 30 seconds of Episode 136 show the audio conditions that create ghost segments
+            and misclassification errors. Friedberg's "Oh, my God" at 21.4 seconds is audible but faint. Gerstner's
+            response at 27.4 seconds is barely perceptible even with video confirmation.</p>
 
         <div class="section-heading">
             <h2>Failures and Resolution</h2>
@@ -859,16 +855,15 @@
         <div class="resolution-table">
             <div class="resolution-row resolution-header">
                 <div>Failure</div>
-                <div>Resolution</div>
-                <div>Why it works</div>
+                <div>Status</div>
+                <div>Notes</div>
             </div>
-            <div class="resolution-row row-resolved">
+            <div class="resolution-row row-open">
                 <div>Friedberg speaks — words not transcribed</div>
+                <div>Unresolved</div>
                 <div>
-                    Batch size 32 → 8
-                </div>
-                <div>
-                    Smaller chunk size gives more weight to weaker signals
+                    Signal confirmed in raw audio via spectral subtraction. Pipeline suppression mechanism
+                    is hypothesized but could not be reproduced against the Libsyn file.
                 </div>
             </div>
             <div class="resolution-row row-open">
@@ -878,66 +873,72 @@
             </div>
             <div class="resolution-row row-unresolved">
                 <div>Gerstner speaks — unrecoverable under any settings</div>
-                <div>manual edit</div>
+                <div>Manual edit</div>
                 <div>—</div>
             </div>
         </div>
 
         <div class="section-heading">
-            <h2>UMAP Embeddings Manifold </h2>
+            <h2>Forensic Confirmation via Spectral Subtraction</h2>
         </div>
-        <p class="body-text">WhisperX performs transcription in batches. When the batch size is large, short utterances
-            surrounded by laughter, cross-talk, or music can fall below decoding confidence and disappear. Reducing the
-            batch
-            size changes the acoustic context and allows the segment to surface.</p>
-        <p class="body-text">Speaker classification introduces the second failure mode. Early in an episode, NeMo has
-            minimal
-            information about each speaker's voice. When Friedberg speaks at 21 seconds, the model has not yet heard a
-            clear,
-            audible example of Brad Gerstner. The system assigned Friedberg's voice to the closest available cluster —
-            which at
-            the time was Brad Gerstner. Cosine similarity showed the segment is closest to Friedberg's voice.</p>
+
+        <p class="body-text">When attempts to reproduce the ghost segment through pipeline tuning failed, a different
+            question became more useful: is the signal actually present in the raw audio, independent of what the
+            pipeline does with it?</p>
+
+        <p class="body-text">Spectral subtraction uses the dominant speaker's audio immediately before the boundary as
+            a noise profile, then subtracts it from the window where the ghost is expected. What remains — the residual
+            — isolates the weaker signal. Applied to the 19.7–24.7 second window of Episode 136, the residual shows
+            clear acoustic activity at the timestamps where Friedberg's words were recorded in the earlier transcript.
+            The signal is there. The pipeline is dropping it.</p>
+
+        <p class="body-text">This does not explain why the pipeline drops it, and it does not constitute a recovery.
+            It establishes that the failure is a pipeline problem, not an absence of signal — which is a necessary
+            precondition for any eventual fix.</p>
+
+        <div class="section-heading">
+            <h2>UMAP Embeddings Manifold</h2>
+        </div>
+
+        <p class="body-text">Speaker classification introduces a second, independent failure mode. Early in an episode,
+            NeMo has minimal information about each speaker's voice. When Friedberg speaks at 21 seconds, the model has
+            not yet heard a clear, audible example of Brad Gerstner. The system assigned Friedberg's voice to the
+            closest available cluster — which at the time was Brad Gerstner. Cosine similarity confirmed the segment
+            is actually closest to Friedberg's voice.</p>
+
         <p class="body-text">As the episode advances, speaker embeddings mature and cluster representation shifts —
-            however, the
-            earlier mislabeling is never revisited. The transcript appears complete. The pipeline exits cleanly. The
-            misattribution remains hidden.</p>
+            however, the earlier mislabeling is never revisited. The transcript appears complete. The pipeline exits
+            cleanly. The misattribution remains hidden.</p>
 
         <div class="section-heading">
             <h2>Implications for Training Data</h2>
         </div>
+
         <p class="body-text">Every misattributed line becomes training data. Speaker attribution errors rarely surface
-            as
-            failures — the transcript appears correct and the pipeline produces no warnings. Incorrect labels quietly
-            propagate
-            into downstream datasets.</p>
+            as failures — the transcript appears correct and the pipeline produces no warnings. Incorrect labels quietly
+            propagate into downstream datasets.</p>
+
         <p class="body-text">Two-pass diarization addresses part of the problem, and human-in-the-loop labeling can
-            catch
-            residual errors. But the deeper issue is architectural: single-pass diarization on long-form audio is biased
-            against
-            early segments.</p>
-        <p class="body-text">The first minute of a three-hour episode is labeled with dramatically less information than
-            the
-            final hour. Across hundreds of episodes, that asymmetry compounds.</p>
+            catch residual errors. But the deeper issue is architectural: single-pass diarization on long-form audio
+            is biased against early segments.</p>
+
+        <p class="body-text">The first minute of a three-hour episode is labeled with dramatically less information
+            than the final hour. Across hundreds of episodes, that asymmetry compounds.</p>
 
         <div class="footer">Mason Thompson · Berkeley, California</div>
     </main>
 
     <script>
         function showTranscriptView(viewType) {
-            // Hide all views
             document.querySelectorAll('.transcript-view').forEach(view => {
                 view.classList.remove('active');
             });
 
-            // Remove active from all tabs
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // Show selected view
             document.getElementById('transcript-' + viewType).classList.add('active');
-
-            // Set active tab
             event.target.classList.add('active');
         }
     </script>
