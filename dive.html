@@ -543,21 +543,61 @@
         <h1>Ghosts in the Audio</h1>
 
         <p class="lead">
-            ASR transcription technology is capable of producing high-qualiuty transcripts that are clean, structured,
-            and look complete enough to engender complacency. They are not infallible; a couple classes error can pass silently onto the transcript and remain there
+            Modern transcription pipelines produce transcripts that look clean, structured,
+            and complete. But they are not infallible — error can pass silently onto the transcript and remain there
             unless detected manually.
-
-
-            
-            <br><br>
-            <strong>1. Ghost Audio</strong> — speech was heard, but not found on the transcript. Omitted from training data.<br>
-            <strong>2. Misclassification</strong> — speech assigned to the wrong speaker. Corrupts persona training data.<br>
         </p>
+
         <p class="lead">
-            Both errors are common in short-form conversational audio, whcih is what All-In Podcast is. In fact, 43% of the N speaker
-            segments fall below this threshold. Convention encourages dropping those segments wholesale. I wanted to try another way. 
-            The examples described below in 'Evidence from Transcripts' illustrate the failure mode. The architecture that produced them is the larger problem (and one worth solving). 
+            <strong>1. Ghost Audio</strong> <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-left:4px">step 02 — WhisperX</span><br>
+            Speech is present in the raw audio but missing from the transcript. The words existed. The pipeline dropped them. Training data never sees them.
+            <br><br>
+            <strong>2. Misclassification</strong> <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-left:4px">step 03 — NeMo</span><br>
+            Speech is transcribed correctly but assigned to the wrong speaker. The words are there. The voice is wrong. Training data learns the wrong persona.
         </p>
+
+        <p class="lead">
+            Both errors are common in short-form conversational audio — speaker turns lasting under five seconds, which make up 43% of All-In Podcast content. Community convention is to drop all segments under that threshold, mostly because it's worse to train a model on bad data because errors compound downstream. But also because forensic work to review this content is energy and time intensive.
+        </p>
+
+        <hr style="border:none;border-top:1px solid var(--border);max-width:620px;margin:32px 0;">
+
+        <div style="max-width:620px;border:1px solid var(--border);background:var(--surface);margin:0 0 32px;overflow:hidden;">
+            <div style="background:var(--green);height:3px;width:100%"></div>
+            <div style="padding:20px 20px 18px;display:flex;align-items:center;font-family:'IBM Plex Mono',monospace;">
+
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <span style="font-size:9px;font-weight:600;color:var(--green);letter-spacing:.08em;">01</span>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#fff;padding:6px 14px;background:var(--green);white-space:nowrap;">Audio</div>
+                    <span style="font-size:9px;color:var(--faint);letter-spacing:.04em;">raw mp3</span>
+                </div>
+
+                <div style="flex:1;height:1px;background:var(--border);margin:0 8px;margin-top:-14px;"></div>
+
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <span style="font-size:9px;font-weight:600;color:var(--faint);letter-spacing:.08em;">02</span>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 14px;border:1px solid var(--border);background:var(--bg);white-space:nowrap;">WhisperX ASR</div>
+                    <span style="font-size:9px;color:var(--faint);letter-spacing:.04em;">transcription + WLT</span>
+                </div>
+
+                <div style="flex:1;height:1px;background:var(--border);margin:0 8px;margin-top:-14px;"></div>
+
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <span style="font-size:9px;font-weight:600;color:var(--faint);letter-spacing:.08em;">03</span>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 14px;border:1px solid var(--border);background:var(--bg);white-space:nowrap;">Nvidia NeMo</div>
+                    <span style="font-size:9px;color:var(--faint);letter-spacing:.04em;">speaker diarization</span>
+                </div>
+
+                <div style="flex:1;height:1px;background:var(--border);margin:0 8px;margin-top:-14px;"></div>
+
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <span style="font-size:9px;font-weight:600;color:var(--faint);letter-spacing:.08em;">04</span>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 14px;border:1px solid var(--border);background:var(--bg);white-space:nowrap;">HITL review</div>
+                    <span style="font-size:9px;color:var(--faint);letter-spacing:.04em;">transcript</span>
+                </div>
+
+            </div>
+        </div>
 
         <div class="accordion">
 
