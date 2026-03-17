@@ -894,7 +894,7 @@
         <p class="body-text">The chart below shows both files across the same window. Around 20–21s, both files drop — a brief moment after Chamath finishes. In the unknown file (green), that drop crosses below the 0.5 threshold. Silero reads it as a pause, cuts a segment boundary, and "Oh, my God" lands at the top of a fresh segment with clean context. In the Libsyn file (blue), the VAD score recovers faster — the score never crosses the threshold. No boundary is cut. The ghost arrives inside a long, dense chunk of speech and Whisper deprioritizes it.</p>
 
         <div style="max-width:620px;margin:24px 0 36px;border:1px solid var(--border);">
-            <img src="images/compare_vad_scores.png" alt="Silero VAD scores — Libsyn vs unknown file across the ghost window" style="width:100%;display:block;">
+            <img src="compare_vad_scores.png" alt="Silero VAD scores — Libsyn vs unknown file across the ghost window" class="lightbox-img" style="width:100%;display:block;">
         </div>
 
         <div class="section-heading">
@@ -934,14 +934,16 @@
         <p class="body-text">The VAD analysis explained why the Libsyn file drops Friedberg's ghost — the score never crossed the non-speech threshold, so no segment boundary was cut, and the ghost arrived inside a long dense chunk where Chamath's voice dominated the attention budget. Knowing the attention architecture was in play, the hypothesis followed naturally: a two-pass system. Pass one transcribes the dominant acoustics as normal. Pass two targets the residual — the audio that remains after the dominant voice is accounted for. Before building it, spectral subtraction was used to confirm the residual signal actually exists. Using Chamath's audio in the preceding window as a noise profile and subtracting it from the ghost window, the remainder shows clear acoustic activity at exactly the timestamps where Friedberg's words appear in the earlier transcript. The signal is there. The pipeline is dropping something real.</p>
 
         <div style="max-width:620px;margin:24px 0 28px;border:1px solid var(--border);">
-            <img src="images/ghost_viz_friedberg_v2.png" alt="Spectral subtraction residual — waveform, RMS, spectrogram, and F0 across the ghost window" style="width:100%;display:block;">
+            <img src="ghost_viz_friedberg_v2.png" alt="Spectral subtraction residual — waveform, RMS, spectrogram, and F0 across the ghost window" class="lightbox-img" style="width:100%;display:block;">
         </div>
 
-        <p class="body-text">The two-pass pipeline is implemented in <code style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--bg);padding:1px 5px;border:1px solid var(--border);">whx_miscreantghostgnome_v6.py</code>. Pass 1 runs the baseline WhisperX transcription across the full audio. Pass 2 uses Silero VAD to scan each baseline segment for internal dips — moments where speech probability drops, indicating a potential boundary between speakers. At each candidate boundary, a narrow window is re-transcribed with relaxed thresholds, isolating content that the first pass missed. Any new words not present in the baseline are flagged as recovered ghosts.</p>
+        <p class="body-text">The two-pass pipeline is implemented in <code style="font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--bg);padding:1px 5px;border:1px solid var(--border);">whx_ghostHunter_v6_2.py</code>. Pass 1 runs the baseline WhisperX transcription across the full audio. Pass 2 uses Silero VAD to scan each baseline segment for internal dips — moments where speech probability drops, indicating a potential boundary between speakers. At each candidate boundary, a narrow window is re-transcribed with relaxed thresholds, isolating content that the first pass missed. Any new words not present in the baseline are flagged as recovered ghosts.</p>
 
         <pre class="json-display" style="max-width:620px;margin:0 0 36px;border:1px solid var(--border);">#!/usr/bin/env python3
-# whx_miscreantghostgnome.py
-# Pipeline is IDENTICAL to v5.3
+# whx_ghostHunter_v6_2.py
+#
+# v6.2: WLT on all transcribed content
+# Pipeline is IDENTICAL to v6.1.
 # After all passes complete, whisperx.align() runs once on the
 # merged segment list (baseline + recovered ghosts) and writes
 # word-level timestamps to the final JSON.
@@ -1086,6 +1088,52 @@ WINDOW_LOGPROB_THRESHOLD   = -2.0</pre>
         </div>
     </main>
 
+    <style>
+        .lightbox-img {
+            cursor: zoom-in;
+            transition: opacity .15s;
+        }
+        .lightbox-img:hover {
+            opacity: .88;
+        }
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.88);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        #lightbox.open {
+            display: flex;
+        }
+        #lightbox img {
+            max-width: 92vw;
+            max-height: 92vh;
+            object-fit: contain;
+            box-shadow: 0 8px 48px rgba(0,0,0,.6);
+        }
+        #lightbox-close {
+            position: fixed;
+            top: 20px;
+            right: 28px;
+            color: #fff;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            opacity: .6;
+            pointer-events: none;
+        }
+    </style>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <span id="lightbox-close">esc to close</span>
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
     <script>
         function showTranscriptView(viewType) {
             document.querySelectorAll('.transcript-view').forEach(view => {
@@ -1099,6 +1147,30 @@ WINDOW_LOGPROB_THRESHOLD   = -2.0</pre>
             document.getElementById('transcript-' + viewType).classList.add('active');
             event.target.classList.add('active');
         }
+
+        function openLightbox(src, alt) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-img').alt = alt || '';
+            document.getElementById('lightbox').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('img.lightbox-img').forEach(function(img) {
+                img.addEventListener('click', function() {
+                    openLightbox(this.src, this.alt);
+                });
+            });
+        });
     </script>
 
 </body>
