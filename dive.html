@@ -838,42 +838,51 @@
     
         Here's an example of both failure modes, using movies.</p>
 
-        <!-- ── 2x2 FAILURE MODE TABLE ── -->
-        <div
-            style="max-width:620px;border:1px solid var(--border);margin:0 0 32px;font-family:'IBM Plex Mono',monospace;font-size:11px;overflow:hidden;">
+<main id="main-content">
 
-            <!-- header row -->
-            <div
-                style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);background:var(--bg);">
-                <div style="padding:10px 16px;border-right:1px solid var(--border);">
-                    <span
-                        style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);">01
-                        — Speaker Misclassification</span>
-                    <div style="margin-top:4px;font-size:11px;color:var(--muted);line-height:1.6;"></div>
-                </div>
-                <div style="padding:10px 16px;">
-                    <span
-                        style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);">02
-                        — Ghost Audio</span>
-                    <div style="margin-top:4px;font-size:11px;color:var(--muted);line-height:1.6;">.</div>
-                </div>
+    <p class="page-eyebrow">03 / Forensics</p>
+    <h1>Ghosts in the Audio</h1>
+
+    <p class="lead">I built an AI audio pipeline to generate transcripts from the All-In Podcast — transcripts that would go through a labeling process and become training data for host persona chatbots.</p>
+
+    <p class="lead">Significant forensic care went into HITL tooling and heuristics to guard against common AI mistakes, particularly speaker misclassification — speech wrongly attributed to the wrong person. The most consequential failure mode arrived late, after switching from low-quality YouTube rips to higher-quality episode files from Libsyn. I've coined it ghost audio: speech that goes untranscribed, creating gaps in conversational dialogue. The model learns to respond to fragmented, incomplete information. It doesn't know what it missed. Neither do you, unless you catch it.</p>
+
+    <!-- ── 2x2 FAILURE MODE TABLE ── -->
+    <div style="max-width:620px;border:1px solid var(--border);margin:0 0 32px;font-family:'IBM Plex Mono',monospace;font-size:11px;overflow:hidden;">
+
+        <!-- header row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);background:var(--bg);">
+            <div style="padding:10px 16px;border-right:1px solid var(--border);">
+                <span style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);">01 — Ghost Audio</span>
+                <div style="margin-top:4px;font-size:11px;color:var(--muted);line-height:1.6;">Speech present in audio. Missing from transcript.</div>
             </div>
-
-            <!-- video row -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;">
-                <div style="border-right:1px solid var(--border);background:var(--surface);">
-                    <video src="YOUR_GITHUB_VIDEO_URL_HERE" controls
-                        style="width:100%;display:block;border:none;"></video>
-                </div>
-                <div style="background:var(--surface);">
-                    <video src="YOUR_GITHUB_VIDEO_URL_HERE" controls
-                        style="width:100%;display:block;border:none;"></video>
-                </div>
+            <div style="padding:10px 16px;">
+                <span style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);">02 — Misclassification</span>
+                <div style="margin-top:4px;font-size:11px;color:var(--muted);line-height:1.6;">Speech transcribed. Attributed to wrong speaker.</div>
             </div>
-
         </div>
 
-        <hr class="divider">
+        <!-- video row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;">
+            <div style="border-right:1px solid var(--border);background:var(--surface);">
+                <video
+                    src="misclassification.mp4"
+                    controls
+                    style="width:100%;display:block;border:none;"
+                ></video>
+            </div>
+            <div style="background:var(--surface);">
+                <video
+                    src="ghost_audio.mp4"
+                    controls
+                    style="width:100%;display:block;border:none;"
+                ></video>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="divider">
 
         <!-- ── PIPELINE ── -->
         <div class="pipeline" id="section-problem">
