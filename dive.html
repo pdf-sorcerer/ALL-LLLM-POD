@@ -877,19 +877,18 @@
 
     <p class="step-label">1 — Voice Activity Detection (VAD)</p>
 
-    <p>Silero VAD measures how confident the model is that someone is speaking — higher means speech, lower means
-        silence, 0.50 is the threshold. Both files show a dip below 0.50 at t=20.1s with a rebound at t=21.4s. But they
-        diverge after that.</p>
-
+   <p>Question: 'Can AI "hear" Friedberg's ghost segment? I used external Silero VAD measures how confident the model is that someone is speaking. Scores are in probability of speech: high means active speech, low means silence, 0.50 is the threshold. 
+    
+<p>Silero VAD is <em>stateful</em>, meaning Its score is influenced by what it has just finished hearing. Four separate runs were made from T=20 to T=30, each produced different curves. Mode 3 (cold start) is what I'll use going forward, because it shows the YouTube file having a voice activity dip around 20.4s; which is close to Friedberg's ghost segment. At the time I figured WhisperX created a speaker boundry there; but jokes on me - the entire segment 0-3xs is one segment.</p>   
+     
 <img src="https://masedawg1.github.io/all_llm_pod/1_vad_dif.png">
 
     <p>The YouTube file shows discrete voice boundaries within [21.4–21.8], [21.85–22.4], [22.4–…]. The Libsyn file
         treats everything from t=21.4s onward as one continuous six-second segment. No boundaries, no dips below
-        threshold.
-        Friedberg's ghost was being absorbed into a larger, more crowded audio region of his own voice where it was
+        threshold. The early hypothesis was that Friedberg's ghost was being absorbed into a larger, more crowded audio region of his own voice where it was
         out-competed.</p>
 
-    <p>My hunch: what if we map the dominant audio on the first run, and map everything that remains on a second?</p>
+    <p>Follow-up work revealed that WhisperX treated t=1 to t=31 as one segment.</p>
 
     <p><span class="modal-trigger" data-img="vad_compare_final.png"
             data-text="Both files dip below 0.50 at t=20.1s and rebound at t=21.4s. After that they diverge: Libsyn treats everything as one continuous segment; YouTube shows discrete boundaries at [21.4–21.8], [21.85–22.4], [22.4–…]. The granularity difference is what allowed YouTube to surface the ghost.">VAD
@@ -897,10 +896,11 @@
 
     <p class="step-label">2 — Spectral Subtraction</p>
 
-    <p>WhisperX uses a transformer attention architecture. Dominant audio in a segment draws more attention, and the
-        longer the segment is the more surface area attention has to distribute itself over. If the quiet voice sits
-        inside
-        a long dominant segment, it loses.</p>
+    <p>WhisperX uses a transformer attention architecture, meaning dominant speech will draw more attention and quit utterances like Friedberg and Gerstner's ghosts will be out-competed. As it turns out, Transfoerms did pay attention to ghost semgnet - just not much </p>
+
+    <img src="https://masedawg1.github.io/all_llm_pod/attention.png">
+<br> 
+        So, i thought: "why map the domiant audio and and calibrate against it, and take a second pass to pickup the residual?"
 
     <p>A two-pass approach: use the preceding window (Chamath) as a noise profile, subtract it from the ghost window,
         look for
@@ -921,8 +921,7 @@
     <p><em>[placeholder: explain forced alignment]</em></p>
 
     <p>The timestamps for Friedberg's ghost weren't accurate — forced alignment had placed the initial word correctly,
-        but following word-level
-        positions needed manual correction. I verified them in Audacity. With Friedberg's ghost now transcribed, the
+        but following word-level positions needed manual correction. I the timestamps manually in Audacity. With Friedberg's ghost now transcribed, the
         question became: why did v2 work when v3 didn't?</p>
 
     <p><span class="modal-trigger" data-img="ghost_viz_friedberg_v2_corrected.png"
