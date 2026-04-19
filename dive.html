@@ -126,6 +126,40 @@
             margin-top: 32px;
         }
 
+        /* inline figures — image fits column, click to enlarge in modal */
+        .inline-figure {
+            max-width: 620px;
+            margin: 24px 0 28px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .inline-figure img {
+            display: block;
+            width: 100%;
+            height: auto;
+            cursor: zoom-in;
+        }
+
+        .inline-figure figcaption {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--faint);
+            padding: 10px 14px;
+            border-top: 1px solid var(--border);
+            background: var(--bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inline-figure figcaption .hint {
+            color: var(--green);
+        }
+
         /* file compare */
         .file-compare {
             max-width: 620px;
@@ -537,7 +571,7 @@
 
         #modal-box {
             background: var(--surface);
-            max-width: 680px;
+            max-width: 1200px;
             width: 100%;
             border: 1px solid var(--border);
             overflow: hidden;
@@ -547,7 +581,7 @@
         #modal-img {
             width: 100%;
             display: block;
-            max-height: 420px;
+            max-height: 85vh;
             object-fit: contain;
             background: var(--bg);
         }
@@ -879,9 +913,17 @@
 
    <p>Question: 'Can AI "hear" Friedberg's ghost segment? I used external Silero VAD measures how confident the model is that someone is speaking. Scores are in probability of speech: high means active speech, low means silence, 0.50 is the threshold. 
     
-<p>Silero VAD is <em>stateful</em>, meaning Its score is influenced by what it has just finished hearing. Four separate runs were made from T=20 to T=30, each produced different curves. Mode 3 (cold start) is what I'll use going forward, because it shows the YouTube file having a voice activity dip around 20.4s; which is close to Friedberg's ghost segment. At the time I figured WhisperX created a speaker boundry there; but jokes on me - the entire segment 0-3xs is one segment.</p>   
-     
-<img src="https://masedawg1.github.io/all_llm_pod/1_vad_dif.png">
+<p>Silero VAD is <em>stateful</em>, meaning Its score is influenced by what it has just finished hearing. Four separate runs were made from T=20 to T=30, each produced different curves. Mode 3 (cold start) is what I'll use going forward, because it shows the YouTube file having a voice activity dip around 20.4s; which is close to Friedberg's ghost segment. At the time I figured WhisperX created a speaker boundry there; but jokes on me - the entire segment 0-3xs is one segment.</p>
+
+    <figure class="inline-figure">
+        <img src="https://masedawg1.github.io/all_llm_pod/1_vad_dif.png"
+             alt="Silero VAD comparison, Libsyn vs YouTube"
+             onclick="openModal(this.src, '', '')">
+        <figcaption>
+            <span>Fig. 1 — Silero VAD, Libsyn vs YouTube</span>
+            <span class="hint">click to enlarge</span>
+        </figcaption>
+    </figure>
 
     <p>The YouTube file shows discrete voice boundaries within [21.4–21.8], [21.85–22.4], [22.4–…]. The Libsyn file
         treats everything from t=21.4s onward as one continuous six-second segment. No boundaries, no dips below
@@ -898,8 +940,16 @@
 
     <p>WhisperX uses a transformer attention architecture, meaning dominant speech will draw more attention and quit utterances like Friedberg and Gerstner's ghosts will be out-competed. As it turns out, Transfoerms did pay attention to ghost semgnet - just not much </p>
 
-    <img src="https://masedawg1.github.io/all_llm_pod/attention.png">
-<br> 
+    <figure class="inline-figure">
+        <img src="https://masedawg1.github.io/all_llm_pod/attention.png"
+             alt="Whisper cross-attention across decoder steps"
+             onclick="openModal(this.src, '', '')">
+        <figcaption>
+            <span>Fig. 2 — Whisper cross-attention</span>
+            <span class="hint">click to enlarge</span>
+        </figcaption>
+    </figure>
+
         So, i thought: "why map the domiant audio and and calibrate against it, and take a second pass to pickup the residual?"
 
     <p>A two-pass approach: use the preceding window (Chamath) as a noise profile, subtract it from the ghost window,
@@ -1157,8 +1207,13 @@
             }
             if (html) {
                 contentEl.innerHTML = html;
+                contentEl.style.display = 'block';
+            } else if (text) {
+                contentEl.textContent = text;
+                contentEl.style.display = 'block';
             } else {
-                contentEl.textContent = text || '';
+                contentEl.textContent = '';
+                contentEl.style.display = 'none';
             }
             document.getElementById('modal-overlay').classList.add('open');
             document.body.style.overflow = 'hidden';
