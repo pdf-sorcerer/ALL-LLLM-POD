@@ -1008,9 +1008,7 @@
                 <h2>The Discovery</h2>
             </div>
             <p class="body">
-                All-LLM Pod's training data was created from a hodgepodge of All-In videos, clips, and shorts from official YouTube channels. 
-                Organizing and maintaining this content was brain-calorie intensive, so I moved to Libsyn to make life easier. Libsyn is a podcast platform, and they provide a canonial list of episodes, including release dates and a predictable naming convention. It took 
-                the guesswork out of what was an episode, what was redundant (many shorts and clips), and what was out of scope (All-In Summit).
+            All-LLM Pod's training data was created from a hodgepodge of All-In videos, clips, and shorts from official YouTube channels. Organizing and maintaining this content was brain-calorie intensive, so I moved to Libsyn to make life easier. Libsyn is a podcast platform, and they provide a canonial list of episodes, including release dates and a predictable naming convention. It took the guesswork out of what was an episode, what was redundant (many shorts and clips), and what was out of scope (All-In Summit).
             </p>
             <p class="body">
                 Before committing my PC to a day of GPU-intensive work, I loaded both transcripts of Episode 136 (v1 YouTube & v2 Libsyn)
@@ -1252,9 +1250,7 @@
                 <h2>Cross-Attention</h2>
             </div>
             <p class="body">
-                Whisper's decoder distributes attention across the audio at each
-                generation step. Plotting cross-attention weights for the 20–30s
-                window:
+                The v1 transcripts were created with WhisperX, which uses CTranslate2 for its decoder and I was unable to open it up and extract logits from it. So, I swapped to Whisper's native decoder to see where it was spending its attention in the ghost windows:
             </p>
             <figure class="fig">
                 <a href="attention_both_ghosts.png" target="_blank">
@@ -1267,11 +1263,7 @@
             <p class="body">
                 Friedberg's ghost falls into a wide attention valley (~20–22.5s).
                 Gerstner's sits in a narrow gap between two of the strongest
-                attention spikes in the window. Near-zero attention is consistent
-                with the decoder ignoring the region. This explained the symptom —
-                but not why the decoder distributed attention this way on the
-                Libsyn file when the YouTube file got Friedberg right. The
-                mechanism lives further upstream.
+                attention spikes in the window. There is near zero attention paid to both ghosts.
             </p>
 
             <div class="section-heading">
@@ -1279,24 +1271,20 @@
                 <h2>Decoder Probe — 4-Cell Variation Sweep</h2>
             </div>
             <p class="body">
-                At each generation step the decoder picks one of ~50,000 tokens.
-                The probability of any specific token — like " Oh" at the Friedberg
-                moment — depends on the decoder state: which prefix tokens are
-                committed, whether timestamps are enabled, and whether the decoder
-                has built its own context from the audio or is being probed cold.
+                I continue to probe with Whisper's native decoder using Pyannote and Silero VAD modules for pre-processing, looking for the probability of any token at Friedberg's ghost moment in the Libsyn file. 
+                Results varied according to the decoder's state. The big takeaway from the graph below, is that 
             </p>
             <p class="body">
-                I ran a 4-cell sweep crossing timestamps ON/OFF with
-                condition-on-previous-tokens (COPT) TRUE/FALSE, on both pyannote
-                and Silero VAD chunks. V1 = TS on, COPT true (production-equivalent).
-                V2 = TS on, COPT false (anchor-only). V3 = TS off, COPT true
-                (continuation mode). V4 = TS off, COPT false (no context).
+                V1 = TS on, COPT true (production-equivalent for transcripts).
+                V2 = TS on, COPT false (anchor-only). 
+                V3 = TS off, COPT true (continuation mode). 
+                V4 = TS off, COPT false (no context).
             </p>
 
             <table>
                 <tr>
                     <th>Chunk</th>
-                    <th>Cell</th>
+                    <th>Trial</th>
                     <th>TS</th>
                     <th>COPT</th>
                     <th>Reached</th>
@@ -1305,7 +1293,7 @@
                 </tr>
                 <tr class="row-canonical">
                     <td>pyannote</td>
-                    <td>V1</td>
+                    <td>v1</td>
                     <td>ON</td>
                     <td>TRUE</td>
                     <td>✓</td>
@@ -1314,7 +1302,7 @@
                 </tr>
                 <tr>
                     <td>pyannote</td>
-                    <td>V2</td>
+                    <td>v2</td>
                     <td>ON</td>
                     <td>FALSE</td>
                     <td>✓</td>
@@ -1323,7 +1311,7 @@
                 </tr>
                 <tr>
                     <td>pyannote</td>
-                    <td>V3</td>
+                    <td>v3</td>
                     <td>OFF</td>
                     <td>TRUE</td>
                     <td>✓</td>
@@ -1332,7 +1320,7 @@
                 </tr>
                 <tr>
                     <td>pyannote</td>
-                    <td>V4</td>
+                    <td>v4</td>
                     <td>OFF</td>
                     <td>FALSE</td>
                     <td>✓</td>
@@ -1341,7 +1329,7 @@
                 </tr>
                 <tr class="row-failure">
                     <td>silero</td>
-                    <td>V1</td>
+                    <td>v1</td>
                     <td>ON</td>
                     <td>TRUE</td>
                     <td>✗</td>
@@ -1350,7 +1338,7 @@
                 </tr>
                 <tr>
                     <td>silero</td>
-                    <td>V2</td>
+                    <td>v2</td>
                     <td>ON</td>
                     <td>FALSE</td>
                     <td>✓</td>
@@ -1359,7 +1347,7 @@
                 </tr>
                 <tr>
                     <td>silero</td>
-                    <td>V3</td>
+                    <td>v3</td>
                     <td>OFF</td>
                     <td>TRUE</td>
                     <td>✓</td>
@@ -1368,7 +1356,7 @@
                 </tr>
                 <tr>
                     <td>silero</td>
-                    <td>V4</td>
+                    <td>v4</td>
                     <td>OFF</td>
                     <td>FALSE</td>
                     <td>✓</td>
@@ -1378,10 +1366,7 @@
             </table>
 
             <p class="body" style="margin-top: 14px;">
-                <strong>Results:</strong> " Oh" is rank 1 in 6 of 8 cells — the
-                model knows the ghost is there in nearly every probe state. The
-                chunk-sensitivity asymmetry shows up only in V1 (production-equivalent),
-                where pyannote reaches " Oh" at 87.83% and Silero collapses to
+                <strong>Results:</strong> " Oh" is rank 0 (top choice) in 5 of 8 runs. Importantly, the Pyannote production run (V1) recovers Friedberg's ghost at 87.83% and Silero collapses to
                 0.226% despite identical audio content.
             </p>
 
