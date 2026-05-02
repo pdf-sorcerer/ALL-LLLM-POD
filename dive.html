@@ -979,17 +979,13 @@
 
         <div class="lead">
             <p>
-                I built chatbots of the four <strong>All-In Podcast</strong> hosts:
-                Jason Calacanis, David Sacks, David Friedberg, and Chamath Palihapitiya,
-                by first creating 538 podcast transcripts from videos, clips, shorts found on official All-In YouTube channels. 
-                Audio was used to identify podcast speakers and label their speech (as text), allowing me to train each persona directly on their alter-ego's spoken content.
+                I built ALL-LLM Pod, a cross-platform app featuring an iOS style UX where I can talk and text with chatbots trained on the four <strong>All-In Podcast</strong> hosts in-app:
+                Jason Calacanis, David Sacks, David Friedberg, and Chamath Palihapitiya. My remote PC handles GPU accellerated inference via Mistral-7B, and chatbots are hot-swappable LoRa adapters trained on transcripts generated from over 500 videos, episodes, and clips.
+
             </p>
+     
             <p>
-                I can talk and text with the chatbots via my iPhone, and my remote PC handles
-                all the heavy GPU work.
-            </p>
-            <p>
-                <strong>Transcript creation was by far the most complex part of the project, and a ton of foresenic effort went into my internal tools to handle AI quirks and errors. Transcripts became even more interesting when I switched out YouTube audio for Libsyn (podcast platform), and that's what I'm going to talk about here.</strong>
+                <strong>Transcript generation was by far the most complex and enjoyable part of ALL-LLM Pod. The process continued to humble me when I moved over to Libsyn (podcast platform).  That's what I'm going to talk about here.</strong>
             </p>
         </div>
 
@@ -1012,27 +1008,26 @@
                 <h2>The Discovery</h2>
             </div>
             <p class="body">
-                In early 2026, I began work on v2 of the transcripts. My v1 corpus
-                was a hodgepodge of videos, clips, and shorts from official All-In
-                YouTube channels — brain-calorie intensive to maintain. Switching to
-                Libsyn (the podcast provider with consistent naming) made things
-                much easier.
+                Version 1 (v1) of the transcripts finished in early December 2025, and was created from
+                a hodgepodge of videos, clips, and shorts from official All-In YouTube channels. Organizing and maintaining v1 content was brain-calorie intensive, so I made a decision
+                to move to the Libsyn. Libsyn is a podcast platform, and their podcast files are higher quality and come with release dates and predictable episode names, which took away a lot 
+                of guess work on what content was 'canonical' and what was redundant (clips and shorts) or out of scope (All-In Summit).
             </p>
             <p class="body">
-                Before committing fully to v2, I compared Episode 136 transcripts
-                side by side. In the opening 30 seconds, both David Friedberg and
-                Brad Gerstner say <em>"oh my god"</em>. Friedberg's was in the
-                original YouTube transcript but not the Libsyn copy. Gerstner's was
-                in neither.
+                Before going all-in on Libsyn, I ran a handful through my WhisperX transcription pipeline. I compared Episode 136 transcripts, the original YouTube v1 and the fresh Libsyn v2,
+                side by side and spotted a curious difference. Within the opening 30 seconds, both David Friedberg and
+                Brad Gerstner say <em>"oh my god"</em>. Friedberg's line was recorded the
+                original YouTube transcript, but not found the Libsyn copy. Gerstner's utterance was found in neither.
             </p>
             <p class="body">
-                Same audio. Different transcript. That bothered me. My existing
-                tools handled detectable AI quirks like speaker misclassification —
-                wrong label, right words. But this was different. This was words
-                that should be there, missing entirely. <strong>Ghost audio:</strong>
-                audible speech that doesn't get transcribed, leaving silent gaps
-                in the dialogue and distorting what the surrounding sentences
-                appear to mean.
+                Same content in both audio files resulted in different transcripts. That really bothered me. WhisperX pre-processing standardizes audio input by converting files to 16khz mono, so I figured 
+                that was all well and good. Up now, my internal tools were created to find and correct detectable AI mistakes such as speaker misclassification. This was different. This was words
+                that should be there, missing entirely. I started calling it <strong>Ghost audio</strong>, because it's quite ethereal: audible spech that you and I hear, but doesn't make its way into the transcript.
+                <br><br>
+                Now, remember: we're focused on creating training data for the four hosts. Friedberg is a host; Brad Gerstner is not. But Gerstner's ghost, which proves to never be recoverable still matters for Friedberg's training
+                data, because of how PROMPT/COMPLETION pairs work. Ghost audio silently creates gaps in dialogue and distorts what the surrounding sentences appear to mean. At this point I had no idea how prelevant this phenomonon was, or how 
+                to go about proactively detecting it. That bothered me even more, so I set about finding answers. 
+        
             </p>
             <div class="callout">
                 <div class="callout-label">An intuition for the failure modes</div>
