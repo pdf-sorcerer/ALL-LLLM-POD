@@ -1273,7 +1273,8 @@
             <p class="body">
                 I continue to probe with Whisper's native decoder using Pyannote and Silero VAD modules for pre-processing, looking for the probability of any token at Friedberg's ghost moment in the Libsyn file. 
                 Results varied according to the decoder's state. 
-                V2 = TS on, COPT false (anchor-only). 
+                V1 = TS on, COPT true (transcript production settings)
+                V2 = TS on, COPT false (anchor-only): no prior audio (or tokens) taken into context
                 V3 = TS off, COPT true (continuation mode). 
                 V4 = TS off, COPT false (no context).
             </p>
@@ -1397,80 +1398,56 @@
 
 <table>
                 <tr>
-                    <th>File</th>
+                    <th>Audio File</th>
                     <th>Engine</th>
                     <th>Beam</th>
                     <th>Friedberg</th>
                     <th>Gerstner</th>
                 </tr>
+                 <tr>
+                    <td>YouTube</td>
+                    <td>WhisperX (CT2) - control </td>
+                    <td>5</td>
+                    <td>✓ recoverd</td>
+                    <td>✗ not found</td>
+                </tr>
                 <tr>
                     <td>Libsyn</td>
-                    <td>WhisperX (CT2)</td>
+                    <td>WhisperX (CT2) - </td>
                     <td>1</td>
-                    <td>✓ recovers</td>
-                    <td>✗ drops</td>
+                    <td>✓ recoverd</td>
+                    <td>✗ not found</td>
                 </tr>
                 <tr class="row-failure">
                     <td>Libsyn</td>
                     <td>WhisperX (CT2)</td>
                     <td>5</td>
-                    <td>✗ drops</td>
-                    <td>✗ drops</td>
+                    <td>✗ not found</td>
+                    <td>✗ not found</td>
                 </tr>
                 <tr>
                     <td>Libsyn</td>
                     <td>reference Whisper (PWW)</td>
                     <td>1</td>
-                    <td>✓ recovers</td>
-                    <td>✗ drops</td>
+                    <td>✓ recoverd</td>
+                    <td>✗ not found</td>
                 </tr>
                 <tr class="row-canonical">
                     <td>Libsyn</td>
                     <td>reference Whisper (PWW)</td>
                     <td>5</td>
-                    <td>✓ recovers</td>
-                    <td>✗ drops</td>
-                </tr>
-                <tr>
-                    <td>YouTube</td>
-                    <td>WhisperX (CT2)</td>
-                    <td>1</td>
-                    <td>✓ recovers</td>
-                    <td>✗ drops</td>
-                </tr>
-                <tr>
-                    <td>YouTube</td>
-                    <td>WhisperX (CT2)</td>
-                    <td>5</td>
-                    <td>✓ recovers</td>
-                    <td>✗ drops</td>
+                    <td>✓ recoverd</td>
+                    <td>✗ not found</td>
                 </tr>
             </table>
 
             <p class="body" style="margin-top: 14px;">
-                One failure cell for Friedberg: Libsyn × WhisperX (CT2) × beam=5 —
-                the production-equivalent default, which is why this surfaced at
-                all. Every other tested cell recovers him. Gerstner drops in all
-                six tested cells regardless of file, engine, or beam strategy. The
-                two-class distinction holds: Friedberg is recoverable when the
-                decoder configuration cooperates; Gerstner is below the decoder's
-                threshold of perception in every configuration.
+This table shows that recovery of Friedberg's ghost in the Libsyn is possible with the original WhisperX pipeline when using beam=1 (greedy). Greedy 
+decoding commits to the most likely next token based on porbability, which we know "Oh" is 87.83%. Beam=5, the default setting, takes a joint probability of the entire statement, "Oh my god" and compares it against other candidates, such as "He's not even here."   
+                <br><br>
+                I decided to get back into the file itself, and suss around on gain, dynamic-range, EQ, and other levers. 
             </p>
-            <p class="body">
-                <strong>Mechanistic note.</strong> At beam=1 (greedy), the decoder
-                commits token-by-token to the highest-probability next token; " Oh"
-                wins at 87.83% locally and the ghost is emitted. At beam=5, the
-                decoder optimizes joint probability across the whole sequence; on
-                the Libsyn file it finds a path that skips Friedberg's quiet
-                utterance because the longer "He's not even here..." continuation
-                scores higher in joint probability than the path including " Oh,
-                my god." What's special about the Libsyn file's audio — versus the
-                YouTube file's, where beam=5 catches the ghost — is unidentified.
-                The audio panel below rules out gain, dynamic-range expansion, EQ,
-                and loudnorm as the lever.
-            </p>
-
-            <p class="body">
+             <p class="body">
                 <strong>Audio modification panel.</strong> To isolate which audio
                 property of Libsyn drives the beam=5 failure, ten ffmpeg-filtered
                 variants were generated from the Libsyn source and run through
