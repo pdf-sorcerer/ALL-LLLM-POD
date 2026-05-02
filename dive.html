@@ -1419,45 +1419,67 @@
                 7 of 8 cells were tested directly on Episode 136.
             </p>
 
-            <table>
+<table>
                 <tr>
                     <th>File</th>
                     <th>Engine</th>
-                    <th>beam=1</th>
-                    <th>beam=5</th>
+                    <th>Beam</th>
+                    <th>Friedberg</th>
+                    <th>Gerstner</th>
+                </tr>
+                <tr>
+                    <td>Libsyn</td>
+                    <td>WhisperX (CT2)</td>
+                    <td>1</td>
+                    <td>✓ recovers</td>
+                    <td>✗ drops</td>
                 </tr>
                 <tr class="row-failure">
                     <td>Libsyn</td>
                     <td>WhisperX (CT2)</td>
+                    <td>5</td>
+                    <td>✗ drops</td>
+                    <td>✗ drops</td>
+                </tr>
+                <tr>
+                    <td>Libsyn</td>
+                    <td>reference Whisper (PWW)</td>
+                    <td>1</td>
                     <td>✓ recovers</td>
                     <td>✗ drops</td>
                 </tr>
                 <tr class="row-canonical">
                     <td>Libsyn</td>
                     <td>reference Whisper (PWW)</td>
+                    <td>5</td>
                     <td>✓ recovers</td>
-                    <td>✓ recovers</td>
+                    <td>✗ drops</td>
                 </tr>
                 <tr>
                     <td>YouTube</td>
                     <td>WhisperX (CT2)</td>
+                    <td>1</td>
                     <td>✓ recovers</td>
-                    <td>✓ recovers</td>
+                    <td>✗ drops</td>
                 </tr>
                 <tr>
                     <td>YouTube</td>
-                    <td>reference Whisper (PWW)</td>
-                    <td>(untested)</td>
-                    <td>(untested)</td>
+                    <td>WhisperX (CT2)</td>
+                    <td>5</td>
+                    <td>✓ recovers</td>
+                    <td>✗ drops</td>
                 </tr>
             </table>
 
             <p class="body" style="margin-top: 14px;">
-                One failure cell: Libsyn × WhisperX (CT2) × beam=5. That cell is
+                One failure cell for Friedberg: Libsyn × WhisperX (CT2) × beam=5 —
                 the production-equivalent default, which is why this surfaced at
-                all. Every other tested cell recovers Friedberg.
+                all. Every other tested cell recovers him. Gerstner drops in all
+                six tested cells regardless of file, engine, or beam strategy. The
+                two-class distinction holds: Friedberg is recoverable when the
+                decoder configuration cooperates; Gerstner is below the decoder's
+                threshold of perception in every configuration.
             </p>
-
             <p class="body">
                 <strong>Mechanistic note.</strong> At beam=1 (greedy), the decoder
                 commits token-by-token to the highest-probability next token; " Oh"
