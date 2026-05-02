@@ -1008,26 +1008,25 @@
                 <h2>The Discovery</h2>
             </div>
             <p class="body">
-                Version 1 (v1) of the transcripts finished in early December 2025, and was created from
-                a hodgepodge of videos, clips, and shorts from official All-In YouTube channels. Organizing and maintaining v1 content was brain-calorie intensive, so I made a decision
-                to move to the Libsyn. Libsyn is a podcast platform, and their podcast files are higher quality and come with release dates and predictable episode names, which took away a lot 
-                of guess work on what content was 'canonical' and what was redundant (clips and shorts) or out of scope (All-In Summit).
+                Version 1 (v1) transcripts were created from a hodgepodge of All-In videos, clips, and shorts from official YouTube channels. 
+                Organizing and maintaining this content was brain-calorie intensive, so I made a decision
+                to move to the Libsyn to simplify. Libsyn is a podcast platform, and they provide a canonial list of episodes, including release dates and a predictable naming convention. It took 
+                the guesswork out of what was an episode, what was redundant (many shorts and clips), and what was out of scope (All-In Summit).
             </p>
             <p class="body">
-                Before going all-in on Libsyn, I ran a handful through my WhisperX transcription pipeline. I compared Episode 136 transcripts, the original YouTube v1 and the fresh Libsyn v2,
-                side by side and spotted a curious difference. Within the opening 30 seconds, both David Friedberg and
-                Brad Gerstner say <em>"oh my god"</em>. Friedberg's line was recorded the
-                original YouTube transcript, but not found the Libsyn copy. Gerstner's utterance was found in neither.
+                I loaded up Episode 136 transcripts, both the original YouTube and the fresh Libsyn v2,
+                side by side. There was a curious difference. spotted a curious difference. In the episode's introduction, David Friedberg and
+                Brad Gerstner say <em>"oh my god"</em>. Friedberg's line was found in the
+                original YouTube transcript, but not in the Libsyn copy. Gerstner's was found in neither. 
             </p>
             <p class="body">
-                Same content in both audio files resulted in different transcripts. That really bothered me. WhisperX pre-processing standardizes audio input by converting files to 16khz mono, so I figured 
-                that was all well and good. Up now, my internal tools were created to find and correct detectable AI mistakes such as speaker misclassification. This was different. This was words
-                that should be there, missing entirely. I started calling it <strong>Ghost audio</strong>, because it's quite ethereal: audible spech that you and I hear, but doesn't make its way into the transcript.
-                <br><br>
-                Now, remember: we're focused on creating training data for the four hosts. Friedberg is a host; Brad Gerstner is not. But Gerstner's ghost, which proves to never be recoverable still matters for Friedberg's training
-                data, because of how PROMPT/COMPLETION pairs work. Ghost audio silently creates gaps in dialogue and distorts what the surrounding sentences appear to mean. At this point I had no idea how prelevant this phenomonon was, or how 
-                to go about proactively detecting it. That bothered me even more, so I set about finding answers. 
-        
+                Same speech, same content, different transcripts - that really bothered me, because WhisperX pre-processing standardizes audio by converting everything to 16khz mono. I figured had
+                figured that was all well and good, and here months later emerged an example challenging that assumption. Up to this moment, my internal tooling was designed to find and correct detectable AI mistakes. 
+                This was different: speech should have been transcribed, words should be present but are not. How do you detect an ommission of content? 
+
+                I coined phenomina <strong>'Ghost audio'</strong>. Unlike speaker-misclassification, where speech is transcribed to the transcript but attributed to the wrong person, ghost audio 
+                leaves a void in transcript dialogue that silently distorts what neighboring speech appears to mean. I had no idea the prevelance of this phenomion, or any method to detect it. That bothered me, so I set about finding answers.
+
             </p>
             <div class="callout">
                 <div class="callout-label">An intuition for the failure modes</div>
