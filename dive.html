@@ -1273,9 +1273,6 @@
             <p class="body">
                 I continue to probe with Whisper's native decoder using Pyannote and Silero VAD modules for pre-processing, looking for the probability of any token at Friedberg's ghost moment in the Libsyn file. 
                 Results varied according to the decoder's state. 
-            </p>
-            <p class="body">
-                V1 = TS on, COPT true (production-equivalent for transcripts).
                 V2 = TS on, COPT false (anchor-only). 
                 V3 = TS off, COPT true (continuation mode). 
                 V4 = TS off, COPT false (no context).
@@ -1366,43 +1363,25 @@
             </table>
 
             <p class="body" style="margin-top: 14px;">
-                <strong>Results:</strong> " Oh" is rank 0 (top choice) in 5 of 8 runs. Importantly, the Pyannote production run (V1) recovers Friedberg's ghost at 87.83% and Silero collapses to
-                0.226% despite identical audio content.
+                <strong>Results:</strong> " Oh" is rank 0 (top choice) in 5 of 8 runs. Importantly, the Pyannote production-trial run (Pyannote V1) recovers Friedberg's ghost at 87.83%. This led to the adoption of a Pyannote + Whisper + wav2vec (PWW) pipeline for processing v2 transcript at scale. 
             </p>
 
-            <div class="callout">
-                <div class="callout-label">The finding behind the finding</div>
-                Silero V1 = 0.226%. Silero V2 = 49.06%. Same chunk. Same audio at
-                the encoder. The difference is whether the decoder builds 19 seconds
-                of prefix context before probing. With pyannote's chunk, building
-                context preserves the path to " Oh" (V1 = 87.83%). With Silero's
-                chunk, building context destroys it (V1 = 0.226%). The chunk
-                doesn't poison Whisper's perception of the audio — it poisons the
-                natural-decode path through the audio.
-            </div>
 
             <p class="body" style="margin-top: 22px;">
                 <strong>Gerstner</strong> (same V1 probe state): rank 65–134 at
-                0.004–0.075% across all three chunks. None of the pipelines reach
-                Gerstner's expected timestamp anchor in natural decode — all
-                bypass it via an "I'm bullying when you're--" hallucination loop
-                terminating at <code>&lt;|endoftext|&gt;</code>. Three orders of
-                magnitude below Friedberg, and the decoder doesn't reach the
-                relevant state regardless of which chunk it's handed.
+                0.004–0.075%. All of the trials overshoot Gerstner's expected timestamp, choosing to emit an "I'm bullying when you're--" hallucination loop
             </p>
 
 
 <div class="callout">
     <div class="callout-label">Friedberg-ghost vs. Gerstner-ghost</div>
-    <strong>Friedberg-ghosts</strong> are recoverable with the Pyannote+Whisper+Wav2vec pipeline (PWW). <strong>Gerstner-ghosts</strong>
+    <strong>Friedberg-ghosts</strong> are recoverable with the new Pyannote+Whisper+Wav2vec pipeline (PWW). <strong>Gerstner-ghosts</strong>
     remain unrecoverable with current tools.
     <br><br>
-    PWW will generate v2 transcripts using beam=5. I found that beam=1 (greedy), the decoder falls into
-    hallucination loops in the ghost regions, emitting <em>"I'm bullying
-    when you're..."</em> repeatedly near Gerstner's position. This is interesting, because VAD removes silence before transcription,
-    which should suppress Whisper's tendency to hallucinate. By happy accident, hallucinations appear specifically during regions of voice activity — a
-    possible signal that Whisper heard something it couldn't transcribe cleanly. This gives me a potential forensic probe: repetitive phrases or stuck
-    loops in close proximity flag where additional ghosts may be.
+    I tested different beam settings with the new PWW pipeline. Using beam=1 (greedy), the decoder falls into
+    hallucination loops in the ghost regions, emitting <em>"oh my god"</em> in Friedberg's window and <em>"I'm bullying
+    when you're bullying"</em> repeatedly near Gerstner's. This was interesting, as VAD had already moved silence, which suggested Whisper was hallucinating on speech that it couldn't transcribe correctly. 
+    This gives me a forensic probe: repetitive phrases or stuck loops in close proximity flag where additional ghosts may be.
 </div>
 
             <div class="section-heading">
