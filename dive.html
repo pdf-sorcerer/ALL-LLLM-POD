@@ -1242,15 +1242,15 @@
             <figcaption>Fig. 1 — VAD, RMS, Pitch of Ghost Windows.</figcaption>
             </figure>
             <p class="body">
-                I loaded the file and ran VAD, RMS, and pyin pitch over 10 seconds of audio (t=20 to t=30). VAD confirmed voice, and RMS looked promising in both ghost windows. 
-                First pass: no traces of pitch were found. Spectral subtraction was then run, anchoring on Chamath's speech (t=17 to t=20). On the second pass, evidence of Friedberg's pitch emerged.
+                I loaded the file and ran VAD, RMS, and pyin pitch over 10 seconds of audio (t=20 to t=30). VAD confirmed voice, and RMS looked promising in both ghost windows.
+                First pass: no traces of pitch were found at either ghost. Spectral subtraction was then run, anchoring on Chamath's speech (t=17 to t=20). On the second pass, evidence of Friedberg's pitch emerged. Gerstner's pitch did not emerge on either pass — RMS energy was present, but no F0 fundamental could be recovered from the residual.
             </p>
             <div class="section-heading">
                 <span class="section-num">03</span>
                 <h2>Cross-Attention</h2>
             </div>
             <p class="body">
-                The v1 transcripts were created with WhisperX, which uses CTranslate2 for its decoder and I was unable to open it up and extract logits from it. So, I swapped to Whisper's native decoder to see where it was spending its attention in the ghost windows:
+                The v2 transcripts were created with WhisperX, which uses CTranslate2 as its decoder backend. CT2's internal decoder state isn't easily inspectable from outside — extracting per-token logits and cross-attention weights mid-decode requires hooks the library doesn't expose. So I swapped to reference openai-whisper, which runs the same Whisper model weights through a PyTorch decoder that can be probed directly, and looked at where it was spending its attention in the ghost windows:
             </p>
             <figure class="fig">
                 <a href="attention_both_ghosts.png" target="_blank">
@@ -1272,7 +1272,7 @@
             </div>
             <p class="body">
                 I continue to probe with Whisper's native decoder using Pyannote and Silero VAD modules for pre-processing, looking for the probability of any token at Friedberg's ghost moment in the Libsyn file. 
-                Results varied according to the decoder's state. The big takeaway from the graph below, is that 
+                Results varied according to the decoder's state. 
             </p>
             <p class="body">
                 V1 = TS on, COPT true (production-equivalent for transcripts).
@@ -1391,21 +1391,19 @@
                 relevant state regardless of which chunk it's handed.
             </p>
 
+
 <div class="callout">
-                <div class="callout-label">Two failure modes, one costume</div>
-                <strong>Friedberg-class</strong> ghosts are recoverable — the decoder
-                almost gets there. In some pipeline configurations, chunk boundaries
-                push it the rest of the way; in others, the same chunk fails when
-                combined with the wrong inference engine and beam-search strategy.
-                Of ten audio modifications tested on Libsyn — gain in either
-                direction, dynamic-range expansion, EQ filters, loudness
-                normalization — only one (a specific compression curve with gain)
-                recovered Friedberg under default WhisperX. The failure mode is
-                narrow and brittle, not a clean function of any one audio property.
-                <strong>Gerstner-class</strong> ghosts are unrecoverable with
-                current tools — the decoder doesn't know there's anything there at
-                all, regardless of pipeline.
-            </div>
+    <div class="callout-label">Friedberg-ghost vs. Gerstner-ghost</div>
+    <strong>Friedberg-ghosts</strong> are recoverable with the Pyannote+Whisper+Wav2vec pipeline (PWW). <strong>Gerstner-ghosts</strong>
+    remain unrecoverable with current tools.
+    <br><br>
+    PWW will generate v2 transcripts using beam=5. I found that beam=1 (greedy), the decoder falls into
+    hallucination loops in the ghost regions, emitting <em>"I'm bullying
+    when you're..."</em> repeatedly near Gerstner's position. This is interesting, because VAD removes silence before transcription,
+    which should suppress Whisper's tendency to hallucinate. By happy accident, hallucinations appear specifically during regions of voice activity — a
+    possible signal that Whisper heard something it couldn't transcribe cleanly. This gives me a potential forensic probe: repetitive phrases or stuck
+    loops in close proximity flag where additional ghosts may be.
+</div>
 
             <div class="section-heading">
                 <span class="section-num">04</span>
