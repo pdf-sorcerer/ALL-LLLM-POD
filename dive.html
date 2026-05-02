@@ -1,1394 +1,1706 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALL-LLM Pod | Four Hosts, One Pipeline</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALL-LLM Pod | Four Hosts, One Pipeline</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
-    :root {
-      --green: #76b900;
-      --green-dim: rgba(118, 185, 0, 0.12);
-      --bg: #f9f9f9;
-      --surface: #ffffff;
-      --border: #e4e4e4;
-      --code-bg: #0d1117;
-      --text: #1a1a1a;
-      --muted: #6b6b6b;
-      --faint: #aaaaaa;
-      --nav-width: 220px;
-    }
+        :root {
+            --green: #76b900;
+            --green-dim: rgba(118, 185, 0, 0.12);
+            --bg: #f9f9f9;
+            --surface: #ffffff;
+            --border: #e4e4e4;
+            --code-bg: #0d1117;
+            --text: #1a1a1a;
+            --muted: #6b6b6b;
+            --faint: #aaaaaa;
+            --nav-width: 220px;
+        }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      min-height: 100vh;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
 
-    nav {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: var(--nav-width);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 32px 0;
-      overflow-y: auto;
-    }
+        nav {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: var(--nav-width);
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 0;
+            overflow-y: auto;
+        }
 
-    .nav-logo {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--green);
-      padding: 0 24px 28px;
-      border-bottom: 1px solid var(--border);
-    }
+        .nav-logo {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--green);
+            padding: 0 24px 28px;
+            border-bottom: 1px solid var(--border);
+        }
 
-    .nav-section-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 20px 24px 8px;
-    }
+        .nav-section-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--faint);
+            padding: 20px 24px 8px;
+        }
 
-    .nav-item {
-      display: block;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 7px 24px;
-      border-left: 2px solid transparent;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+        .nav-item {
+            display: block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 7px 24px;
+            border-left: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    .nav-item:hover {
-      color: var(--text);
-      background: var(--bg);
-      border-left-color: var(--border);
-    }
+        .nav-item:hover {
+            color: var(--text);
+            background: var(--bg);
+            border-left-color: var(--border);
+        }
 
-    .nav-item.active {
-      color: var(--green);
-      border-left-color: var(--green);
-      background: var(--green-dim);
-    }
+        .nav-item.active {
+            color: var(--green);
+            border-left-color: var(--green);
+            background: var(--green-dim);
+        }
 
-    .nav-footer {
-      margin-top: auto;
-      padding: 20px 24px 0;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      line-height: 1.6;
-    }
+        .nav-footer {
+            margin-top: auto;
+            padding: 20px 24px 0;
+            border-top: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--faint);
+            line-height: 1.6;
+        }
 
-    main {
-      flex: 1;
-      padding: 56px 64px 120px;
-      max-width: 860px;
-    }
+        main {
+            flex: 1;
+            padding: 56px 64px 120px;
+            max-width: 860px;
+        }
 
-    .page-eyebrow {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 12px;
-    }
+        .page-eyebrow {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 12px;
+        }
 
-    h1 {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: 14px;
-    }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
 
-    .lead {
-      font-size: 14px;
-      line-height: 1.75;
-      color: #3a3a3a;
-      max-width: 680px;
-      margin-bottom: 36px;
-    }
+        .lead {
+            font-size: 14px;
+            line-height: 1.75;
+            color: #3a3a3a;
+            max-width: 680px;
+            margin-bottom: 36px;
+        }
 
-    .lead strong { font-weight: 600; color: var(--text); }
+        .lead strong {
+            font-weight: 600;
+            color: var(--text);
+        }
 
-    .lead p + p { margin-top: 14px; }
+        .lead p+p {
+            margin-top: 14px;
+        }
 
-    /* ── Toggle ─────────────────────────────────────── */
-    .mode-note {
-      font-size: 13px;
-      line-height: 1.7;
-      color: #3a3a3a;
-      max-width: 680px;
-      margin-bottom: 18px;
-    }
+        /* ── Toggle ─────────────────────────────────────── */
+        .mode-note {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #3a3a3a;
+            max-width: 680px;
+            margin-bottom: 18px;
+        }
 
-    .toggle-wrap {
-      display: inline-flex;
-      align-items: center;
-      gap: 0;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 4px;
-      margin-bottom: 56px;
-    }
+        .toggle-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 4px;
+            margin-bottom: 56px;
+        }
 
-    .toggle-btn {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      background: transparent;
-      border: none;
-      padding: 9px 18px;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: color 0.15s, background 0.15s;
-    }
+        .toggle-btn {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            padding: 9px 18px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: color 0.15s, background 0.15s;
+        }
 
-    .toggle-btn:hover {
-      color: var(--text);
-    }
+        .toggle-btn:hover {
+            color: var(--text);
+        }
 
-    .toggle-btn.active {
-      color: var(--green);
-      background: var(--green-dim);
-    }
+        .toggle-btn.active {
+            color: var(--green);
+            background: var(--green-dim);
+        }
 
-    /* ── View switching ─────────────────────────────── */
-    .view { display: none; }
-    .view.active { display: block; }
+        /* ── View switching ─────────────────────────────── */
+        .view {
+            display: none;
+        }
 
-    .section-heading {
-      display: flex;
-      align-items: baseline;
-      gap: 16px;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-      margin-top: 52px;
-    }
+        .view.active {
+            display: block;
+        }
 
-    .section-heading:first-of-type { margin-top: 0; }
+        .section-heading {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            margin-top: 52px;
+        }
 
-    h2 {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
+        .section-heading:first-of-type {
+            margin-top: 0;
+        }
 
-    .section-num {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      letter-spacing: 0.08em;
-    }
+        h2 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text);
+        }
 
-    p.body {
-      font-size: 14px;
-      line-height: 1.75;
-      color: #3a3a3a;
-      max-width: 680px;
-    }
+        .section-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--faint);
+            letter-spacing: 0.08em;
+        }
 
-    p.body + p.body { margin-top: 14px; }
+        p.body {
+            font-size: 14px;
+            line-height: 1.75;
+            color: #3a3a3a;
+            max-width: 680px;
+        }
 
-    p.body strong { color: var(--text); font-weight: 600; }
+        p.body+p.body {
+            margin-top: 14px;
+        }
 
-    ul.body {
-      font-size: 14px;
-      line-height: 1.75;
-      color: #3a3a3a;
-      max-width: 680px;
-      list-style: none;
-      padding: 0;
-      margin-top: 8px;
-    }
+        p.body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
 
-    ul.body li {
-      padding-left: 18px;
-      position: relative;
-      margin-bottom: 6px;
-    }
+        ul.body {
+            font-size: 14px;
+            line-height: 1.75;
+            color: #3a3a3a;
+            max-width: 680px;
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+        }
 
-    ul.body li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 11px;
-      width: 6px;
-      height: 1px;
-      background: var(--green);
-    }
+        ul.body li {
+            padding-left: 18px;
+            position: relative;
+            margin-bottom: 6px;
+        }
 
-    ul.body li strong { color: var(--text); font-weight: 600; }
+        ul.body li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 6px;
+            height: 1px;
+            background: var(--green);
+        }
 
-    .callout {
-      margin-top: 18px;
-      padding: 16px 20px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 2px solid var(--green);
-      font-size: 13px;
-      line-height: 1.7;
-      color: #3a3a3a;
-      max-width: 680px;
-    }
+        ul.body li strong {
+            color: var(--text);
+            font-weight: 600;
+        }
 
-    .callout-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 6px;
-    }
+        .callout {
+            margin-top: 18px;
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 2px solid var(--green);
+            font-size: 13px;
+            line-height: 1.7;
+            color: #3a3a3a;
+            max-width: 680px;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
+        .callout-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 6px;
+        }
 
-    th {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 10px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
 
-    td {
-      padding: 11px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      color: #3a3a3a;
-      background: var(--surface);
-      font-size: 13px;
-    }
+        th {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--faint);
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+        }
 
-    td:first-child {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--text);
-    }
+        td {
+            padding: 11px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            color: #3a3a3a;
+            background: var(--surface);
+            font-size: 13px;
+        }
 
-    .diagram {
-      background: var(--code-bg);
-      border: 1px solid #1e2530;
-      border-radius: 3px;
-      padding: 22px 24px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      line-height: 1.9;
-      color: #c9d1d9;
-      white-space: pre-wrap;
-    }
+        td:first-child {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--text);
+        }
 
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      overflow: hidden;
-      max-width: 680px;
-    }
+        /* highlight rows for the variation table */
+        tr.row-canonical td {
+            background: rgba(118, 185, 0, 0.08);
+        }
 
-    .stat {
-      background: var(--surface);
-      padding: 18px 16px;
-    }
+        tr.row-canonical td:first-child {
+            color: var(--green);
+            font-weight: 600;
+        }
 
-    .stat-num {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--green);
-      letter-spacing: -0.02em;
-    }
+        tr.row-failure td {
+            background: rgba(204, 51, 51, 0.06);
+        }
 
-    .stat-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--faint);
-      margin-top: 4px;
-    }
+        tr.row-failure td:first-child {
+            color: #cc3333;
+            font-weight: 600;
+        }
 
-    .footer {
-      margin-top: 80px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
+        .diagram {
+            background: var(--code-bg);
+            border: 1px solid #1e2530;
+            border-radius: 3px;
+            padding: 22px 24px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            line-height: 1.9;
+            color: #c9d1d9;
+            white-space: pre-wrap;
+        }
 
-    @media (max-width: 768px) {
-      nav { display: none; }
-      main { padding: 32px 24px 80px; }
-      .stat-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-  </style>
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            max-width: 680px;
+        }
+
+        .stat {
+            background: var(--surface);
+            padding: 18px 16px;
+        }
+
+        .stat-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--green);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin-top: 4px;
+        }
+
+        .footer {
+            margin-top: 80px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text);
+        }
+
+        /* ── Additional reading section ─────────────────── */
+        .additional-reading {
+            margin-top: 56px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+            max-width: 680px;
+        }
+
+        .additional-reading-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 18px;
+        }
+
+        .additional-reading ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .additional-reading li {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .additional-reading li:last-child {
+            border-bottom: none;
+        }
+
+        .additional-reading a {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.15s;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .additional-reading a:hover {
+            color: var(--green);
+        }
+
+        .additional-reading a::after {
+            content: ' ↗';
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 400;
+            color: var(--green);
+        }
+
+        .additional-reading-desc {
+            display: block;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        /* ── Figure placeholders ────────────────────────── */
+        figure.fig {
+            margin: 18px 0 24px;
+            max-width: 680px;
+        }
+
+        figure.fig img,
+        figure.fig .fig-placeholder {
+            display: block;
+            width: 100%;
+            max-width: 680px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            background: var(--surface);
+        }
+
+        figure.fig .fig-placeholder {
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--faint);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: repeating-linear-gradient(45deg,
+                    var(--surface),
+                    var(--surface) 8px,
+                    var(--bg) 8px,
+                    var(--bg) 16px);
+        }
+
+        figure.fig figcaption {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 0.04em;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        /* ── Video + transcript split ───────────────────── */
+        .ghost-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            max-width: 720px;
+            margin: 18px 0 24px;
+        }
+
+        .ghost-split-cell {
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            background: var(--surface);
+            overflow: hidden;
+        }
+
+        .ghost-split-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--faint);
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+        }
+
+        .ghost-split-body {
+            padding: 14px 14px 16px;
+        }
+
+        .ghost-split-video {
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            background: #000;
+            display: block;
+            border: none;
+        }
+
+        .ghost-split-video-placeholder {
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            background: repeating-linear-gradient(45deg, #1a1a1a, #1a1a1a 8px, #222 8px, #222 16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: #888;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .ghost-script {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            line-height: 1.85;
+            color: #3a3a3a;
+        }
+
+        .ghost-script .speaker {
+            color: var(--text);
+            font-weight: 600;
+            display: inline-block;
+            width: 78px;
+        }
+
+        .ghost-script .ghost-line {
+            color: #cc3333;
+            font-style: italic;
+        }
+
+        .ghost-script .timestamp {
+            color: var(--faint);
+            font-size: 10px;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 700px) {
+            .ghost-split {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Accordions ─────────────────────────────────── */
+        details.accordion {
+            max-width: 680px;
+            margin: 14px 0 18px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            background: var(--surface);
+        }
+
+        details.accordion[open] {
+            border-color: #d0d0d0;
+        }
+
+        details.accordion summary {
+            cursor: pointer;
+            padding: 13px 18px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text);
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.15s;
+        }
+
+        details.accordion summary:hover {
+            background: var(--bg);
+        }
+
+        details.accordion summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details.accordion summary::after {
+            content: '+';
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 16px;
+            color: var(--green);
+            transition: transform 0.15s;
+        }
+
+        details.accordion[open] summary::after {
+            content: '−';
+        }
+
+        details.accordion .accordion-body {
+            padding: 4px 18px 18px;
+            border-top: 1px solid var(--border);
+        }
+
+        details.accordion .accordion-body p.body,
+        details.accordion .accordion-body ul.body,
+        details.accordion .accordion-body table {
+            max-width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+
+            main {
+                padding: 32px 24px 80px;
+            }
+
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ─── Empire Strikes Back modal ─────────────────────── */
+        .modal-trigger {
+            border: none;
+            background: none;
+            padding: 0;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            border-bottom: 1px dashed var(--green);
+            transition: color 0.15s;
+        }
+
+        .modal-trigger:hover {
+            color: var(--green);
+        }
+
+        #empire-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            cursor: pointer;
+        }
+
+        #empire-overlay.open {
+            display: flex;
+        }
+
+        #empire-box {
+            background: var(--surface);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            cursor: default;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #empire-content {
+            padding: 20px 24px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            line-height: 1.75;
+            color: #3a3a3a;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        #empire-content .modal-eyebrow {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 14px;
+        }
+
+        #empire-content p {
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        .empire-videos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin: 16px 0 0;
+        }
+
+        .empire-videos>div:first-child {
+            border-right: 1px solid var(--border);
+        }
+
+        .empire-videos video {
+            width: 100%;
+            display: block;
+            background: #000;
+        }
+
+        .empire-videos-cap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--faint);
+            margin-bottom: 24px;
+        }
+
+        .empire-videos-cap>div {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-top: none;
+            background: var(--bg);
+        }
+
+        .empire-videos-cap>div:first-child {
+            border-right: none;
+        }
+
+        /* ─── Empire callout (real-world example) ─────────── */
+        .empire-callout {
+            margin: 18px 0 4px;
+            padding: 14px 16px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-left: 2px solid var(--green);
+        }
+
+        .empire-callout-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 12px;
+        }
+
+        .empire-callout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 14px;
+            align-items: start;
+        }
+
+        .empire-callout-text {
+            min-width: 0;
+        }
+
+        .empire-callout-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .empire-callout-body {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            line-height: 1.65;
+            color: #3a3a3a;
+            margin: 0 !important;
+        }
+
+        .empire-callout-source {
+            display: inline-block;
+            margin-left: 6px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--green);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--green);
+            transition: color 0.15s, border-color 0.15s;
+        }
+
+        .empire-callout-source:hover {
+            color: var(--text);
+            border-bottom-color: var(--text);
+        }
+
+        @media (max-width: 600px) {
+            .empire-callout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .failmode-container {
+            margin: 16px 0 8px;
+            display: grid;
+        }
+
+        .failmode-nav {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border: 1px solid var(--border);
+            border-bottom: none;
+            background: var(--bg);
+        }
+
+        .failmode-tab {
+            padding: 12px 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--faint);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            border-right: 1px solid var(--border);
+            border-bottom: 3px solid transparent;
+            transition: all 0.15s;
+            text-align: left;
+        }
+
+        .failmode-tab:last-child {
+            border-right: none;
+        }
+
+        .failmode-tab:hover {
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        .failmode-tab.active {
+            color: var(--green);
+            background: var(--surface);
+            border-bottom-color: var(--green);
+        }
+
+        .failmode-panel {
+            grid-column: 1;
+            grid-row: 2;
+            visibility: hidden;
+        }
+
+        .failmode-panel.active {
+            visibility: visible;
+        }
+
+        .failmode-block {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .failmode-row {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .failmode-row:last-child {
+            border-bottom: none;
+        }
+
+        .failmode-row-label {
+            padding: 14px 14px 14px 16px;
+            background: var(--bg);
+            border-right: 1px solid var(--border);
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--faint);
+            align-self: start;
+        }
+
+        .failmode-row-body {
+            padding: 14px 16px;
+            color: #3a3a3a;
+        }
+
+        .failmode-row-body>div {
+            margin-bottom: 8px;
+        }
+
+        .failmode-row-body>div:last-child {
+            margin-bottom: 0;
+        }
+
+        .failmode-speaker {
+            color: var(--faint);
+        }
+
+        #empire-footer {
+            padding: 10px 24px 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--faint);
+            border-top: 1px solid var(--border);
+            cursor: pointer;
+            text-align: right;
+            background: var(--bg);
+        }
+
+        #empire-footer:hover {
+            color: var(--text);
+        }
+    </style>
 </head>
+
 <body>
 
-  <nav id="shared-nav"></nav>
+    <nav id="shared-nav"></nav>
 
-  <main>
-    <p class="page-eyebrow">Project Overview</p>
-    <h1>Four Hosts, One Pipeline</h1>
+    <main>
+        <p class="page-eyebrow">Project Overview</p>
+        <h1>Four Hosts, One Pipeline</h1>
 
-    <div class="lead">
-      <p>
-        I built chatbots of the four <strong>All-In Podcast</strong> hosts —
-        Jason Calacanis, David Sacks, David Friedberg, and Chamath Palihapitiya —
-        by transcribing 538 podcast episodes (460 hours of audio) and using those
-        transcripts to give each persona its voice.
-      </p>
-      <p>
-        The chatbots run on my iPhone with text and voice; a local PC handles
-        the heavy GPU work.
-      </p>
-      <p>
-        <strong>The chatbots are fun. The transcripts turned out to be more interesting.</strong>
-      </p>
+        <div class="lead">
+            <p>
+                I built chatbots of the four <strong>All-In Podcast</strong> hosts:
+                Jason Calacanis, David Sacks, David Friedberg, and Chamath Palihapitiya,
+                by first creating 538 podcast transcripts from episodes, clips, shorts, etc;
+                (460 hours of host audio) and using those transcripts to give each persona
+                its voice.
+            </p>
+            <p>
+                I can talk and text with the chatbots via my iPhone, and my remote PC handles
+                all the heavy GPU work.
+            </p>
+            <p>
+                <strong>The chatbots are fun. The transcripts turned out to be more interesting.</strong>
+            </p>
+        </div>
+
+        <p class="mode-note">
+            I've put together two versions of this writeup — a <strong>casual reader</strong>
+            that walks through what I dug into and why it mattered, and a <strong>technical cut</strong>
+            with the system internals. Switch between them below.
+        </p>
+
+        <div class="toggle-wrap" role="tablist" aria-label="View mode">
+            <button class="toggle-btn active" data-view="casual" role="tab" aria-selected="true">Casual Reader</button>
+            <button class="toggle-btn" data-view="technical" role="tab" aria-selected="false">Technical Cut</button>
+        </div>
+
+        <!-- ─── CASUAL VIEW ───────────────────────────────── -->
+        <section class="view active" id="view-casual" role="tabpanel">
+
+            <div class="section-heading">
+                <span class="section-num">01</span>
+                <h2>The Discovery</h2>
+            </div>
+            <p class="body">
+                In early 2026, I began work on v2 of the transcripts. My v1 corpus
+                was a hodgepodge of videos, clips, and shorts from official All-In
+                YouTube channels — brain-calorie intensive to maintain. Switching to
+                Libsyn (the podcast provider with consistent naming) made things
+                much easier.
+            </p>
+            <p class="body">
+                Before committing fully to v2, I compared Episode 136 transcripts
+                side by side. In the opening 30 seconds, both David Friedberg and
+                Brad Gerstner say <em>"oh my god"</em>. Friedberg's was in the
+                original YouTube transcript but not the Libsyn copy. Gerstner's was
+                in neither.
+            </p>
+            <p class="body">
+                Same audio. Different transcript. That bothered me. My existing
+                tools handled detectable AI quirks like speaker misclassification —
+                wrong label, right words. But this was different. This was words
+                that should be there, missing entirely. <strong>Ghost audio:</strong>
+                audible speech that doesn't get transcribed, leaving silent gaps
+                in the dialogue and distorting what the surrounding sentences
+                appear to mean.
+            </p>
+            <div class="callout">
+                <div class="callout-label">An intuition for the failure modes</div>
+                I've staged an iconic scene with Darth Vader and Luke Skywalker from
+                <button class="modal-trigger" onclick="openEmpireModal()"><em>Empire Strikes Back</em></button>
+                with subtitles, to showcase how speaker misclassification and ghost
+                audio present themselves.
+            </div>
+            <div class="ghost-split" style="margin-top: 28px;">
+                <div class="ghost-split-cell">
+                    <div class="ghost-split-label">Episode 136 · 0:20–0:30</div>
+                    <iframe class="ghost-split-video" src="https://www.youtube.com/embed/VIDEO_ID?start=20&end=30"
+                        title="Episode 136 ghost segment" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+                </div>
+                <div class="ghost-split-cell">
+                    <div class="ghost-split-label">Transcript flow</div>
+                    <div class="ghost-split-body">
+                        <div class="ghost-script">
+                            <div><span class="timestamp">0:18</span><span class="speaker">Chamath:</span>"...the
+                                fattest, that's the
+                                dumbest."</div>
+                            <div><span class="timestamp">0:21</span><span class="speaker">Friedberg:</span><span
+                                    class="ghost-line">[MISSING: "Oh my god"]</span></div>
+                            <div><span class="timestamp">0:22</span><span class="speaker">Friedberg:</span>"He's not
+                                even here."</div>
+                            <div><span class="timestamp">0:24</span><span class="speaker">Friedberg:</span>"You can't do
+                                that. It's
+                                awful."</div>
+                            <div><span class="timestamp">0:28</span><span class="speaker">Gerstner:</span><span
+                                    class="ghost-line">[MISSING: "Oh my god"]</span></div>
+                            <div><span class="timestamp">0:29</span><span class="speaker">Friedberg:</span>"That's just
+                                bullying. It's
+                                awful."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-heading">
+                <span class="section-num">02</span>
+                <h2>The Fix</h2>
+            </div>
+            <p class="body">
+                The two ghosts look the same in writing. They turned
+                out to be completely different problems.
+            </p>
+            <p class="body">
+                Up to this point, all transcripts had been generated using a WhisperX pipeline, a derivative of OpenAI's
+                Whisper
+                automated speech recognition (ASR) model. WhisperX integrates voice-activity detection which curbs
+                hallucinations,
+                some neat word-level alignment tools, and also swaps Whisper's native decoder for a significantly faster
+                CTranslate2 (anecdotally, about 5× faster generating transcripts). Think of it like an aftermarket
+                exhaust for your
+                car or motorcycle.
+                <br><br>
+                Both Whisper and WhisperX use the same model weights, and while their decoders differ, both build
+                transcripts the
+                same way: at each step, the decoder uses probability to pick the most likely next token from a
+                vocabulary of ~50,000,
+                emitting one at a time. Only Whisper's decoder will tell you what it was considering at the moment of
+                choice. And I
+                needed to know.
+            </p>
+            <p class="body">
+                For <strong>Friedberg</strong>, " Oh" was the top candidate at
+                <strong>87.8%</strong> probability — the model almost emits the ghost
+                on its own. It just doesn't get there in production. The original v2
+                transcript was generated by <strong>WhisperX</strong> — a popular
+                community pipeline whose default backend is a high-performance C++
+                inference engine called <strong>CTranslate2</strong>. Same Whisper
+                model weights, same pyannote chunk, but CT2's internal decoding
+                decisions land somewhere different — and Friedberg gets dropped on
+                the floor. Reference openai-whisper, given identical input, reaches
+                the state where " Oh" sits at 87.8% and emits the ghost.
+            </p>
+            <p class="body">
+                For <strong>Gerstner</strong>, " Oh" sat at rank 65 to 134, around
+                0.01–0.07%. Three orders of magnitude below Friedberg. The decoder
+                doesn't almost-emit Gerstner — it never considers him.
+            </p>
+            <div class="callout">
+                <div class="callout-label">Two failure modes, one costume</div>
+                <strong>Friedberg-class</strong> ghosts are recoverable — the decoder
+                almost gets there, and the right chunk boundaries push it the rest
+                of the way. <strong>Gerstner-class</strong> ghosts are unrecoverable
+                with current tools — the decoder doesn't know there's anything there
+                at all.
+            </div>
+            <p class="body" style="margin-top: 22px;">
+                After a long detour testing model variants, decoder configurations,
+                and chunk strategies, the fix turned out to be structural: keep
+                pyannote, keep wav2vec, but swap CTranslate2 for reference
+                openai-whisper. The pipeline shape is the same as WhisperX —
+                <strong>pyannote</strong> →
+                <strong>reference openai-whisper</strong> → <strong>wav2vec2</strong>.
+                I call it <strong>PWW</strong>.
+            </p>
+            <p class="body">
+                It costs about 10 minutes per episode instead of 1–2 — roughly 90
+                GPU-hours to reprocess the corpus instead of 15. Worth it. Friedberg
+                recovers reliably. Gerstner still doesn't, because his problem isn't
+                the engine — he's below the decoder's noise floor entirely, no matter
+                which Whisper backend runs the model. That one needs a different
+                approach (sketched in the technical view).
+            </p>
+
+            <div class="section-heading">
+                <span class="section-num">03</span>
+                <h2>Where It Lands</h2>
+            </div>
+            <p class="body">
+                PWW recovers the words. But that's only half the job — the words
+                still need the right speaker label, and Whisper still hallucinates
+                in quiet stretches. The full pipeline pairs PWW with a transcript
+                diff tool, a speaker-ID model, and a human review app:
+            </p>
+            <div class="diagram">pww transcription
+                ↓
+                littlecat diff (catches recoverable ghosts)
+                ↓
+                NeMo speaker ID
+                ↓
+                brody review (catches misattributions)
+                ↓
+                chatbot training data</div>
+            <p class="body" style="margin-top: 14px;">
+                For 538 episodes, manual review comes out to roughly 22 candidates
+                per episode × 538 ≈ <strong>12,000 entries</strong> across the
+                corpus. Tractable. Without these filters it would be every segment
+                of every episode — millions.
+            </p>
+            <div class="callout">
+                <div class="callout-label">What this is and isn't</div>
+                Some ghosts (Gerstner-class) remain unrecoverable. Some short
+                utterances will keep getting misattributed because the math literally
+                can't tell. The investigation produced a detection layer, not a
+                perfect transcript — but a corpus that flags its own failures is a
+                categorically different thing from one that pretends they aren't there.
+            </div>
+
+            <div class="additional-reading">
+                <div class="additional-reading-label">Additional reading</div>
+                <ul>
+                    <li>
+                        <a href="embedding-visualization.html">Embedding visualization</a>
+                        <span class="additional-reading-desc">TitaNet voice fingerprints projected into 2D — where
+                            Gerstner-class
+                            ghosts might eventually surface.</span>
+                    </li>
+                    <li>
+                        <a href="speaker-attribution.html">Speaker attribution</a>
+                        <span class="additional-reading-desc">A second failure mode: words recovered, speaker label
+                            wrong. Why the
+                            obvious two-pass fix made things worse.</span>
+                    </li>
+                    <li>
+                        <a href="littlecat.html">littlecat</a>
+                        <span class="additional-reading-desc">Diffing two transcripts to surface recoverable ghosts.
+                            1,316 raw
+                            differences → 22 reviewable entries on Episode 136.</span>
+                    </li>
+                    <li>
+                        <a href="brody.html">brody</a>
+                        <span class="additional-reading-desc">The HITL review app. Speaker mapping + 12 lexical flags
+                            for
+                            misattribution patterns.</span>
+                    </li>
+                </ul>
+            </div>
+
+        </section>
+
+        <!-- ─── TECHNICAL VIEW ────────────────────────────── -->
+        <section class="view" id="view-technical" role="tabpanel">
+
+            <p class="body" style="margin-bottom: 18px;">
+                Tight version. Five sections covering the load-bearing findings:
+                what the discovery looked like, what the decoder was doing inside,
+                what fixed it, and what's still broken. The full investigation —
+                file-level audio comparison, VAD/spectral/cross-attention probes
+                across 100+ trials, speaker-attribution sub-investigation, failure
+                taxonomy, tooling internals — lives in a separate localization
+                panel. Linked at the bottom.
+            </p>
+
+            <div class="section-heading">
+                <span class="section-num">01</span>
+                <h2>Discovery</h2>
+            </div>
+            <p class="body">
+                Building v2 transcripts of Episode 136 from a higher-quality Libsyn
+                master, I noticed Friedberg's "Oh my god" at ~21s — present in the
+                original YouTube transcript — was missing from the new one. On
+                closer inspection a second "Oh my god" from Brad Gerstner at ~28s
+                was absent from both transcripts. Acoustic verification confirmed
+                speech energy in both windows: VAD positive, F0 fundamental
+                recoverable for Friedberg via spectral subtraction, not for
+                Gerstner. The audio is real. Something in the ASR pipeline is
+                dropping it.
+            </p>
+            <div class="callout">
+                <div class="callout-label">An intuition for the failure modes</div>
+                For an intuition on how misclassification and ghost audio break a
+                transcript used as training data, see the
+                <button class="modal-trigger" onclick="openEmpireModal()"><em>Empire Strikes Back</em> staged
+                    subtitles</button>.
+            </div>
+
+            <div class="section-heading">
+                <span class="section-num">02</span>
+                <h2>Cross-Attention</h2>
+            </div>
+            <p class="body">
+                Whisper's decoder distributes attention across the audio at each
+                generation step. Plotting cross-attention weights for the 20–30s
+                window:
+            </p>
+            <figure class="fig">
+                <a href="#" data-fig="cross-attention">
+                    <div class="fig-placeholder">Whisper cross-attention — 20–30s</div>
+                </a>
+                <figcaption>Fig. 2 — Decoder cross-attention (alignment heads) across the ghost window. Both ghost
+                    regions show
+                    near-zero attention; surrounding speech gets the strong spikes.</figcaption>
+            </figure>
+            <p class="body">
+                Friedberg's ghost falls into a wide attention valley (~20–22.5s).
+                Gerstner's sits in a narrow gap between two of the strongest
+                attention spikes in the window. Near-zero attention is consistent
+                with the decoder ignoring the region. This explained the symptom —
+                but not why the decoder distributed attention this way on the
+                Libsyn file when the YouTube file got Friedberg right. The
+                mechanism lives further upstream.
+            </p>
+
+            <div class="section-heading">
+                <span class="section-num">03</span>
+                <h2>Decoder Probe — 4-Cell Variation Sweep</h2>
+            </div>
+            <p class="body">
+                At each generation step the decoder picks one of ~50,000 tokens.
+                The probability of any specific token — like " Oh" at the Friedberg
+                moment — depends on the decoder state: which prefix tokens are
+                committed, whether timestamps are enabled, and whether the decoder
+                has built its own context from the audio or is being probed cold.
+            </p>
+            <p class="body">
+                I ran a 4-cell sweep crossing timestamps ON/OFF with
+                condition-on-previous-tokens (COPT) TRUE/FALSE, on both pyannote
+                and Silero VAD chunks. V1 = TS on, COPT true (production-equivalent).
+                V2 = TS on, COPT false (anchor-only). V3 = TS off, COPT true
+                (continuation mode). V4 = TS off, COPT false (no context).
+            </p>
+
+            <table>
+                <tr>
+                    <th>Chunk</th>
+                    <th>Cell</th>
+                    <th>TS</th>
+                    <th>COPT</th>
+                    <th>Reached</th>
+                    <th>" Oh" rank</th>
+                    <th>" Oh" prob</th>
+                </tr>
+                <tr class="row-canonical">
+                    <td>pyannote</td>
+                    <td>V1</td>
+                    <td>ON</td>
+                    <td>TRUE</td>
+                    <td>✓</td>
+                    <td>0</td>
+                    <td>87.83%</td>
+                </tr>
+                <tr>
+                    <td>pyannote</td>
+                    <td>V2</td>
+                    <td>ON</td>
+                    <td>FALSE</td>
+                    <td>✓</td>
+                    <td>0</td>
+                    <td>34.15%</td>
+                </tr>
+                <tr>
+                    <td>pyannote</td>
+                    <td>V3</td>
+                    <td>OFF</td>
+                    <td>TRUE</td>
+                    <td>✓</td>
+                    <td>0</td>
+                    <td>58.93%</td>
+                </tr>
+                <tr>
+                    <td>pyannote</td>
+                    <td>V4</td>
+                    <td>OFF</td>
+                    <td>FALSE</td>
+                    <td>✓</td>
+                    <td>46</td>
+                    <td>0.020%</td>
+                </tr>
+                <tr class="row-failure">
+                    <td>silero</td>
+                    <td>V1</td>
+                    <td>ON</td>
+                    <td>TRUE</td>
+                    <td>✗</td>
+                    <td>14</td>
+                    <td>0.226%</td>
+                </tr>
+                <tr>
+                    <td>silero</td>
+                    <td>V2</td>
+                    <td>ON</td>
+                    <td>FALSE</td>
+                    <td>✓</td>
+                    <td>0</td>
+                    <td>49.06%</td>
+                </tr>
+                <tr>
+                    <td>silero</td>
+                    <td>V3</td>
+                    <td>OFF</td>
+                    <td>TRUE</td>
+                    <td>✓</td>
+                    <td>0</td>
+                    <td>57.61%</td>
+                </tr>
+                <tr>
+                    <td>silero</td>
+                    <td>V4</td>
+                    <td>OFF</td>
+                    <td>FALSE</td>
+                    <td>✓</td>
+                    <td>48</td>
+                    <td>0.019%</td>
+                </tr>
+            </table>
+
+            <p class="body" style="margin-top: 14px;">
+                <strong>Results:</strong> " Oh" is rank 1 in 6 of 8 cells — the
+                model knows the ghost is there in nearly every probe state. The
+                chunk-sensitivity asymmetry shows up only in V1 (production-equivalent),
+                where pyannote reaches " Oh" at 87.83% and Silero collapses to
+                0.226% despite identical audio content.
+            </p>
+
+            <div class="callout">
+                <div class="callout-label">The finding behind the finding</div>
+                Silero V1 = 0.226%. Silero V2 = 49.06%. Same chunk. Same audio at
+                the encoder. The difference is whether the decoder builds 19 seconds
+                of prefix context before probing. With pyannote's chunk, building
+                context preserves the path to " Oh" (V1 = 87.83%). With Silero's
+                chunk, building context destroys it (V1 = 0.226%). The chunk
+                doesn't poison Whisper's perception of the audio — it poisons the
+                natural-decode path through the audio.
+            </div>
+
+            <p class="body" style="margin-top: 22px;">
+                <strong>Gerstner</strong> (same V1 probe state): rank 65–134 at
+                0.004–0.075% across all three chunks. None of the pipelines reach
+                Gerstner's expected timestamp anchor in natural decode — all
+                bypass it via an "I'm bullying when you're--" hallucination loop
+                terminating at <code>&lt;|endoftext|&gt;</code>. Three orders of
+                magnitude below Friedberg, and the decoder doesn't reach the
+                relevant state regardless of which chunk it's handed.
+            </p>
+
+            <div class="callout">
+                <div class="callout-label">Two failure modes, one costume</div>
+                <strong>Friedberg-class</strong> ghosts are recoverable — the decoder
+                almost gets there. In some pipeline configurations, chunk boundaries
+                push it the rest of the way; in others, the same chunk fails when
+                combined with the wrong inference engine and beam-search strategy.
+                Of ten audio modifications tested on Libsyn — gain in either
+                direction, dynamic-range expansion, EQ filters, loudness
+                normalization — only one (a specific compression curve with gain)
+                recovered Friedberg under default WhisperX. The failure mode is
+                narrow and brittle, not a clean function of any one audio property.
+                <strong>Gerstner-class</strong> ghosts are unrecoverable with
+                current tools — the decoder doesn't know there's anything there at
+                all, regardless of pipeline.
+            </div>
+
+            <div class="section-heading">
+                <span class="section-num">04</span>
+                <h2>The PWW Pipeline</h2>
+            </div>
+            <p class="body">
+                Out: WhisperX + CTranslate2. In: pyannote VAD → reference
+                openai-whisper (PyTorch, beam=1, greedy, temperature=0) →
+                wav2vec2 forced alignment.
+            </p>
+            <div class="diagram">audio
+                ↓
+                pyannote VAD
+                ↓
+                reference openai-whisper (beam=1, greedy, temperature=0)
+                ↓
+                wav2vec2 forced alignment
+                ↓
+                v2 transcript (segments + word timings + per-word scores)</div>
+            <p class="body" style="margin-top: 14px;">
+                Validated end-to-end on Episode 136. Friedberg recovers in all four
+                configurations tested (pyannote/Silero × 30s-chunk/full-file).
+                Gerstner drops in all four — the two-class distinction is real, not
+                artifactual. Pyannote VAD is 13× faster than Silero and dominates
+                on cost. ASR is ~90% of wall time.
+            </p>
+            <p class="body">
+                <strong>Cost:</strong> ~10 min/episode vs ~1–2 min for WhisperX
+                defaults. Across 538 episodes: ~90 GPU-hours instead of ~15.
+                Tradeoff is compute time for content fidelity — and reference
+                Whisper picks up more hallucinations than CTranslate2 in the
+                process. Those hallucinations are detectable via wav2vec phonemic
+                alignment failure, so the cost is bounded: the noise it picks up
+                is flaggable.
+            </p>
+            <p class="body">
+                <strong>Determinism:</strong> reference openai-whisper is bit-exact
+                deterministic at temperature=0/beam=1 on this hardware (verified —
+                encoder features identical, 196/196 tokens match, final text byte-
+                identical). The chunk-boundary sensitivity in V1 is therefore not
+                nondeterminism. Identical inputs produce identical outputs; similar
+                inputs do not.
+            </p>
+
+            <div class="section-heading">
+                <span class="section-num">05</span>
+                <h2>Caveats</h2>
+            </div>
+            <ul class="body">
+                <li><strong>Single-episode validation.</strong> Most pipeline validation lives on Episode 136.
+                    Generalization to
+                    noisier, longer, or multi-language episodes unverified.</li>
+                <li><strong>Gerstner-class is unsolved.</strong> No tested configuration recovers him. The embedding
+                    triple-negative idea is sketched, not built.</li>
+                <li><strong>The chunk-sensitivity finding lives at the isolated-probe level.</strong> V1 silero shows "
+                    Oh" at
+                    rank 14 / 0.226% in the stripped-down probe, but full-pipeline silero recovers Friedberg in
+                    production via
+                    fallback machinery (temperature schedules, surrounding context). The 4-cell sweep exposes trajectory
+                    fragility; production tooling absorbs much of it. Real, but its production-scale impact is bounded.
+                </li>
+                <li><strong>Heuristic thresholds tuned by inspection.</strong> 4-second lizard cutoff, 20-second blob
+                    cutoff,
+                    0.5 wav2vec score floor — hand-tuned on Episode 136. Edge cases will leak.</li>
+            </ul>
+
+            <div class="additional-reading">
+                <div class="additional-reading-label">Additional reading</div>
+                <ul>
+                    <li>
+                        <a href="localization-panel.html">Localization panel</a>
+                        <span class="additional-reading-desc">The full investigation: file-level audio comparison,
+                            VAD/spectral/cross-attention probes, Trial F–P localization grid, hybrid sweep
+                            results.</span>
+                    </li>
+                    <li>
+                        <a href="embedding-visualization.html">Embedding visualization</a>
+                        <span class="additional-reading-desc">TitaNet voice fingerprints projected into 2D — and where
+                            Gerstner-class ghosts might surface as embedding triple-negatives.</span>
+                    </li>
+                    <li>
+                        <a href="speaker-attribution.html">Speaker attribution</a>
+                        <span class="additional-reading-desc">Second failure mode: words recovered, speaker label wrong.
+                            Why
+                            two-pass clustering scored worse than single-pass on this corpus.</span>
+                    </li>
+                    <li>
+                        <a href="littlecat.html">littlecat</a>
+                        <span class="additional-reading-desc">Segment-level transcript diff with normalization filters.
+                            1,316 raw
+                            deltas → 22 reviewable entries on Episode 136.</span>
+                    </li>
+                    <li>
+                        <a href="brody.html">brody</a>
+                        <span class="additional-reading-desc">HITL review tool: speaker mapping (cluster ID → human
+                            name) + 12
+                            lexical flags including lowercase-continuation, backchannel-bleed, blob, low-score.</span>
+                    </li>
+                </ul>
+            </div>
+
+        </section>
+
+        <div class="footer">Mason Thompson · Berkeley, California</div>
+    </main>
+
+    <!-- ─── Empire Strikes Back modal ──────────────────────────── -->
+    <div id="empire-overlay" onclick="if(event.target===this)closeEmpireModal()">
+        <div id="empire-box">
+            <div id="empire-content">
+                <div class="modal-eyebrow">Empire Strikes Back — staged demo</div>
+                <p>
+                    Two clips from <em>Empire Strikes Back</em> staged to demonstrate speaker misclassification and
+                    ghost audio.
+                </p>
+
+                <div class="empire-videos">
+                    <div><video src="{{VIDEO: misclass.mp4}}" controls></video></div>
+                    <div><video src="{{VIDEO: ghost.mp4}}" controls></video></div>
+                </div>
+                <div class="empire-videos-cap">
+                    <div>Misclassification</div>
+                    <div>Ghost audio</div>
+                </div>
+
+                <p>
+                    If you wanted to create Darth Vader and Luke Skywalker training data organized in PROMPT/COMPLETION
+                    pairs,
+                    here's the outcome from each failure mode applied to the same scene:
+                </p>
+
+                <div class="failmode-container">
+                    <div class="failmode-nav">
+                        <button class="failmode-tab active"
+                            onclick="showFailmode(event, 'mis')">Misclassification</button>
+                        <button class="failmode-tab" onclick="showFailmode(event, 'ghost')">Ghost audio</button>
+                    </div>
+
+                    <div id="failmode-mis" class="failmode-panel active">
+                        <div class="failmode-block">
+                            <div class="failmode-row">
+                                <div class="failmode-row-label">Prompt</div>
+                                <div class="failmode-row-body">
+                                    <div><span class="failmode-speaker">VADER:</span> If you only knew the power of the
+                                        dark side. Obi-Wan
+                                        never told you what happened to your father.</div>
+                                    <div><span class="failmode-speaker">LUKE:</span> He told me enough! He told me you
+                                        killed him.</div>
+                                </div>
+                            </div>
+                            <div class="failmode-row">
+                                <div class="failmode-row-label">Completion</div>
+                                <div class="failmode-row-body">
+                                    <div><span class="failmode-speaker">YODA:</span> No. I am your father.</div>
+                                </div>
+                            </div>
+                            <div class="failmode-row">
+                                <div class="failmode-row-label">Implication</div>
+                                <div class="failmode-row-body">
+                                    Vader's line gets attributed to Yoda. The model learns that <strong>Yoda</strong> is
+                                    Luke's father,
+                                    and Luke's
+                                    strong denial now reads as a reaction to Yoda, reinforcing the misattribution.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="failmode-ghost" class="failmode-panel">
+                        <div class="failmode-block">
+                            <div class="failmode-row">
+                                <div class="failmode-row-label">Prompt</div>
+                                <div class="failmode-row-body">
+                                    <div><span class="failmode-speaker">VADER:</span> If you only knew the power of the
+                                        dark side. Obi-Wan
+                                        never told you what happened to your father.</div>
+                                </div>
+                            </div>
+                            <div class="failmode-row">
+                                <div class="failmode-row-label">Completion</div>
+                                <div class="failmode-row-body">
+                                    <div><span class="failmode-speaker">LUKE:</span> He told me enough! He told me you
+                                        killed him. No. No.
+                                        It's not true. That's not possible!</div>
+                                </div>
+                            </div>
+                            <div class="failmode-row">
+                                <div class="failmode-row-label">Implication</div>
+                                <div class="failmode-row-body">
+                                    Vader's iconic line is omitted from the transcript, collapsing Luke's two responses
+                                    — which were
+                                    originally separated by Vader — into one continuous completion. The model learns
+                                    that
+                                    <strong>Luke</strong> is someone who states a claim and immediately contradicts
+                                    himself.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 24px;">
+                    <strong>Note:</strong> <em>It's not far-fetched for a streaming service to pivot to real-time AI
+                        subtitle
+                        generation over conventional, decades-old transcripts. YouTube already does AI-generated
+                        subtitles, and here's a memorable example of transcribing the wrong word (which was corrected
+                        soon after, by
+                        a human):</em>
+                </p>
+
+                <div class="empire-callout">
+                    <div class="empire-callout-label">Real-world example — YouTube auto-captions</div>
+                    <div class="empire-callout-grid">
+                        <div class="empire-callout-text">
+                            <p class="empire-callout-body">
+                                YouTube auto-caption on a Hello Games / No Man's Sky video. The actual line was "<em>dev
+                                    kits</em>"
+                                (developer kits) — the captioner mishears it as "deaf kids," and the sentence reads as
+                                something else
+                                entirely.
+                                <a href="https://x.com/NoMansSky/status/1930256256968609966" target="_blank"
+                                    rel="noopener noreferrer" class="empire-callout-source">Source ↗</a>
+                            </p>
+                        </div>
+                        <img src="path/to/your-image.png"
+                            alt="YouTube auto-caption error: 'For the last year we've had this little secret room hiding some deaf kids...'"
+                            class="empire-callout-img">
+                    </div>
+                </div>
+            </div>
+            <div id="empire-footer" onclick="closeEmpireModal()">close ✕</div>
+        </div>
     </div>
 
-    <p class="mode-note">
-      I've put together two versions of this writeup — a <strong>casual reader</strong>
-      that walks through what I dug into and why it mattered, and a <strong>technical cut</strong>
-      with the system internals. Switch between them below.
-    </p>
+    <script>
+        // Toggle between casual and technical views
+        const buttons = document.querySelectorAll('.toggle-btn');
+        const views = document.querySelectorAll('.view');
 
-    <div class="toggle-wrap" role="tablist" aria-label="View mode">
-      <button class="toggle-btn active" data-view="casual" role="tab" aria-selected="true">Casual Reader</button>
-      <button class="toggle-btn" data-view="technical" role="tab" aria-selected="false">Technical Cut</button>
-    </div>
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.view;
 
-    <!-- ─── CASUAL VIEW ───────────────────────────────── -->
-    <section class="view active" id="view-casual" role="tabpanel">
+                buttons.forEach(b => {
+                    const active = b.dataset.view === target;
+                    b.classList.toggle('active', active);
+                    b.setAttribute('aria-selected', active ? 'true' : 'false');
+                });
 
-      <div class="section-heading">
-        <span class="section-num">01</span>
-        <h2>The Thing I Wasn't Looking For</h2>
-      </div>
-      <p class="body">
-        While building v2 of the transcripts — moving from YouTube audio to
-        higher-quality Libsyn files — I was comparing Episode 136 side-by-side.
-        In the opening 30 seconds, Friedberg says <em>"oh my god."</em>
-        It's in the YouTube transcript. It's not in the Libsyn one.
-      </p>
-      <p class="body">
-        Three missing words. Not a catastrophe. But the failure mode bothered
-        me: same speech, transcribed in one file, dropped in the other. Same
-        model. Same code. Different audio. I started calling these
-        <strong>ghosts</strong> — audible speech that exists in the recording
-        but doesn't reach the transcript.
-      </p>
-      <p class="body">
-        Misclassification (right words, wrong speaker) is bad. Ghosts are worse.
-        Ghosts erase content entirely. For chatbots trained on hundreds of
-        transcripts, a missing reaction changes what each persona appears to
-        think and how they respond. I paused v2 and asked a different question:
-        how do I detect ghosts at scale across 538 episodes?
-      </p>
+                views.forEach(v => {
+                    v.classList.toggle('active', v.id === `view-${target}`);
+                });
 
-      <div class="section-heading">
-        <span class="section-num">02</span>
-        <h2>The Two Ghosts in Episode 136</h2>
-      </div>
-      <p class="body">
-        Episode 136 opens with Friedberg moderating for an absent Jason
-        Calacanis. Chamath roasts Jcal — mimicking him, escalating it. The
-        room laughs. Then two reactions land back-to-back:
-      </p>
-      <div class="diagram">Chamath:    "...and the fattest, that's the dumbest." [laughter, music]
-Friedberg:  [MISSING: "Oh my god"]
-Friedberg:  "He's not even here. You can't do that. It's awful."
-Gerstner:   [MISSING: "Oh my god"]
-Friedberg:  "That's just bullying. It's awful."</div>
-      <p class="body" style="margin-top: 14px;">
-        Two ghosts, side by side. They look the same in writing. They're
-        completely different problems.
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">03</span>
-        <h2>What the Audio Said vs. What the Model Heard</h2>
-      </div>
-      <p class="body">
-        I checked whether the audio actually contained speech in those windows.
-        It did. Spectrograms showed clear vocal energy. Pitch detection found
-        a fundamental frequency. After stripping out the dominant audio
-        (Chamath's voice, the music) with spectral subtraction, Friedberg's
-        vocal pitch surfaced cleanly inside his ghost window.
-      </p>
-      <p class="body">
-        So the audio existed. The transcription failed.
-      </p>
-      <p class="body">
-        I dug into Whisper's decoder — the part of the model that picks which
-        words to emit. At each step it considers thousands of candidate
-        next-words and picks the most likely one. I extracted what it was
-        thinking at each ghost moment.
-      </p>
-      <ul class="body">
-        <li>
-          <strong>Friedberg:</strong> "Oh my god" was the runner-up. The
-          decoder considered it at about 4% probability. The dominant choice
-          — "He's not even" — was 16× more likely, so that's what got emitted.
-          Friedberg's actual next sentence won the beam. His reaction got
-          skipped over.
-        </li>
-        <li>
-          <strong>Gerstner:</strong> "Oh my god" wasn't even in contention.
-          It ranked between 15th and 134th out of the 50,000 possible
-          next-words, with probabilities around 0.01%. The dominant path was
-          10,000× more likely. The decoder didn't almost-emit Gerstner's
-          words. It never considered them.
-        </li>
-      </ul>
-      <div class="callout">
-        <div class="callout-label">Two failure modes, one costume</div>
-        <strong>Friedberg-class</strong> ghosts are recoverable — the decoder
-        almost got there. <strong>Gerstner-class</strong> ghosts are
-        unrecoverable — the decoder doesn't know there's anything there at all.
-      </div>
-
-      <div class="section-heading">
-        <span class="section-num">04</span>
-        <h2>The Pipeline That Recovers Friedberg</h2>
-      </div>
-      <p class="body">
-        After a long detour testing decoder configurations (beam size,
-        timestamp settings, batch sizes — all of which mattered in narrow ways
-        but none of which solved the underlying problem), the answer turned
-        out to be structural, not parametric.
-      </p>
-      <p class="body">
-        Whisper makes a quiet decision at the start of decoding: how densely
-        to segment the audio. On default 30-second chunks, it picks a sparse
-        mode that absorbs quiet utterances into longer segments — Friedberg's
-        "oh my god" gets swallowed by his next sentence. On smaller chunks
-        set by a voice-activity detector, it picks dense mode and Friedberg
-        gets his own slot.
-      </p>
-      <p class="body">
-        So I switched pipelines. Out: WhisperX (the off-the-shelf tool I'd
-        been using). In: a hybrid of <strong>pyannote</strong> (voice activity
-        detection) → <strong>reference openai-whisper</strong> (the original
-        Python implementation, not the speed-optimized fork) →
-        <strong>wav2vec2</strong> (word-level alignment).
-      </p>
-      <p class="body">
-        I call this hybrid <strong>pww</strong>. It costs about 10 minutes per
-        episode instead of 1–2 — roughly 60 GPU-hours to reprocess the corpus
-        instead of 10. Worth it. Friedberg recovers reliably. Gerstner still
-        doesn't, because Gerstner's problem isn't segmentation density —
-        it's that he's below the decoder's noise floor entirely.
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">05</span>
-        <h2>A Second Failure Mode: Speaker Attribution</h2>
-      </div>
-      <p class="body">
-        Even when the words come back correctly, the speaker can be wrong.
-        Episode 136's Friedberg ghost — once recovered by pww — still got
-        attributed to Chamath by the speaker-identification model (NeMo).
-        At 0.6 seconds, the utterance is too short for the model to build a
-        distinctive voiceprint. It gets compared to whichever speaker centroid
-        is closest, and small differences flip the assignment.
-      </p>
-      <p class="body">
-        I tested an obvious fix: wait until you've seen the whole episode,
-        build mature centroids from all the data, then go back and re-classify
-        everything against those. Two variants tested. Neither helped. On a
-        9-segment ground-truth slice, the rescoring pass was 5/8 correct vs.
-        the first pass's 7/8. It introduced regressions and didn't fix the
-        original miss.
-      </p>
-      <p class="body">
-        The reason it failed is structural: when the first pass is mostly
-        correct, averaging across its labels produces centroids that sit
-        closer together than truth — especially when speaker manifolds
-        overlap. Small embedding differences flip assignments at the fuzzy
-        boundary. The fix made things worse.
-      </p>
-      <p class="body">
-        So: trust the first pass. Flag short segments (under 4 seconds) for
-        human review regardless of the model's confidence. The 0.6-second
-        ghost is below the threshold where the math can help; that's a
-        human-in-the-loop problem, not a clustering problem.
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">06</span>
-        <h2>Three Detectors, Three Failure Modes</h2>
-      </div>
-      <p class="body">
-        The investigation produced a taxonomy of how transcripts go wrong,
-        plus a detection mechanism for each:
-      </p>
-      <ul class="body">
-        <li>
-          <strong>Hallucination loops.</strong> When the decoder skips real
-          audio, it often fills the silence with a repeated phrase from its
-          language model. Episode 136 has <em>"I'm bullying when you're
-          bullying"</em> emitted three times in 10 seconds — none of it in
-          the audio. Detected by scanning for exact-match phrases that repeat
-          within short windows, then confirming with a forced-alignment check
-          that the phonemes don't match the underlying audio.
-        </li>
-        <li>
-          <strong>v1↔v2 transcript diffs.</strong> Where two pipelines
-          transcribe the same episode and disagree, the disagreements are
-          diagnostic. New content in v2 = recovered ghost. Content in v1
-          that's gone in v2 = suppressed hallucination. I built a tool called
-          <strong>littlecat</strong> that diffs two transcripts
-          segment-by-segment and surfaces the meaningful differences —
-          filtering out segmentation noise, speaker-name aliases, contractions,
-          number-vs-word spellings. On Episode 136 it cut 1,316 raw
-          differences down to 22 reviewable entries — about a 98% noise
-          reduction. The 22 contained the original Friedberg ghost plus
-          several de novo ghosts neither pipeline alone had surfaced.
-        </li>
-        <li>
-          <strong>Embedding triple-negatives.</strong> This one's still a
-          sketch. The speaker-identification model produces voice embeddings
-          on a regular grid — every fraction of a second, regardless of what
-          the transcription pipeline does. Where a high-magnitude,
-          speech-like embedding exists at a timestamp that has no transcript
-          segment AND no speaker turn, that triple-negative is a candidate
-          Gerstner-class ghost. The embedding is evidence something happened
-          acoustically; both downstream pipelines threw it away. This
-          complements the hallucination detector: hallucinations show where
-          the decoder spoke too much, embedding triple-negatives show where
-          it spoke too little.
-        </li>
-      </ul>
-
-      <div class="section-heading">
-        <span class="section-num">07</span>
-        <h2>The Repair Tool: brody</h2>
-      </div>
-      <p class="body">
-        Once detection surfaces a candidate, a human has to confirm and fix
-        it. That's <strong>brody</strong>, a Streamlit app with two tabs:
-      </p>
-      <ul class="body">
-        <li>
-          <strong>Tab 1 — Speaker mapping.</strong> After the speaker-ID model
-          runs, brody groups segments by cluster ID, plays the five longest
-          samples per cluster, and lets you type a human name. Names propagate
-          to every segment in the cluster.
-        </li>
-        <li>
-          <strong>Tab 2 — Lexical review.</strong> Twelve flags surface
-          candidate problems: <em>lowercase-continuation</em> (segment opens
-          lowercase after a non-terminal-punctuation segment — likely a
-          continuation misattributed across a speaker boundary),
-          <em>backchannel-bleed</em> (short "yeah"/"right"/"totally"
-          attributed to the wrong speaker), <em>blob</em> (segments over 20
-          seconds, likely containing multiple speakers),
-          <em>low-score</em> (wav2vec confidence under 0.5, correlates with
-          quiet audio or overlap), and others. Each flag is a deterministic
-          rule, fully readable, fully editable.
-        </li>
-      </ul>
-      <p class="body">
-        Filter, page through, listen, edit, save. The full pipeline produces
-        flagged candidates; brody is where humans reduce them to corrected
-        transcripts.
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">08</span>
-        <h2>Where It Lands</h2>
-      </div>
-      <p class="body">The pipeline now looks like this:</p>
-      <div class="diagram">pww transcription
-    ↓
-littlecat diff   (catches recoverable ghosts)
-    ↓
-NeMo speaker ID
-    ↓
-brody review    (catches misattributions)
-    ↓
-consecutive-same-speaker batching
-    ↓
-chatbot training data</div>
-      <p class="body" style="margin-top: 14px;">
-        For 538 episodes, the manual review surface comes out to roughly 22
-        candidates per episode × 538 ≈ <strong>12,000 entries</strong> to
-        human-review across the corpus. That's tractable. Without these
-        filters it would be every segment of every episode — millions.
-      </p>
-      <div class="callout">
-        <div class="callout-label">What this is and isn't</div>
-        Some ghosts (Gerstner-class) remain unrecoverable. Some short
-        utterances will keep getting misattributed because the math literally
-        can't tell. The investigation produced a detection layer, not a
-        perfect transcript — but a corpus that flags its own failures is a
-        categorically different thing from one that pretends they aren't there.
-      </div>
-
-    </section>
-
-    <!-- ─── TECHNICAL VIEW ────────────────────────────── -->
-    <section class="view" id="view-technical" role="tabpanel">
-
-      <p class="body" style="margin-bottom: 28px;">
-        The goal is for each chatbot persona to be trained on what they said
-        in the episode, and that comes down to the accuracy of transcript
-        speaker labeling. Two challenges emerged and need to be addressed:
-      </p>
-      <ul class="body" style="margin-bottom: 22px;">
-        <li>
-          <strong>Misattribution</strong> — speech correctly transcribed but
-          assigned to the wrong speaker. Trains one host in knowledge they
-          never had; denies the rightful host their own content.
-        </li>
-        <li>
-          <strong>Ghost audio (late discovery).</strong> Audible speech that
-          does NOT appear in the transcript. Silently distorts conversational
-          dialogue. Personas don't learn what they said, and what they say or
-          respond to is warped by the ghost's omission of content.
-        </li>
-      </ul>
-      <div class="callout" style="margin-bottom: 0;">
-        <div class="callout-label">Baseline</div>
-        Both humans and AI struggle with short-form conversational audio,
-        especially burst speech, soft utterances, and cross-talk. Training a
-        custom speech classifier, I found a 12% classification error rate —
-        better than what's reported elsewhere. However, actors in this space
-        commonly drop segments shorter than 5 seconds; that would be 43% of
-        all v1 content.
-      </div>
-
-      <div class="section-heading">
-        <span class="section-num">01</span>
-        <h2>Discovery (Episode 136, Opening 30 Seconds)</h2>
-      </div>
-      <p class="body">
-        <strong>Trigger.</strong> I was creating a version 2 (v2) of episode
-        transcripts using Libsyn audio for easier long-term management. For
-        Episode 136, I opened a v1 transcript with a fresh v2 transcript
-        side-by-side and noticed a line missing from David Friedberg
-        (<em>"oh my god"</em>).
-      </p>
-      <p class="body">
-        <strong>Observation.</strong> Friedberg's "Oh my god" at ~21s was
-        present in the YouTube transcript, absent in the Libsyn transcript.
-        On closer inspection, a second "Oh my god" from Brad Gerstner at ~28s
-        — absent from both transcripts and only audible by watching the video
-        and noticing his lips move.
-      </p>
-      <p class="body">
-        <strong>Implication.</strong> The value of the completions ("oh my
-        god") to host corpora is probably very low. But the failure mode is
-        potentially serious: an omission of content isn't just denying the
-        host their spoken words — it potentially warps how the model learns
-        knowledge.
-      </p>
-      <p class="body">
-        <strong>Audio verification:</strong>
-      </p>
-      <ul class="body">
-        <li>Spectrogram showed clear speech energy in both ghost regions</li>
-        <li>RMS in Friedberg's window: 81.8th percentile of surrounding 10s</li>
-        <li>F0 detection confirmed vocal fundamental in both windows</li>
-        <li>Conclusion: voice exists; transcription failure not yet localized</li>
-      </ul>
-      <p class="body">
-        This converted the question from "is the audio there" to "what in
-        the pipeline is dropping it."
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">02</span>
-        <h2>Acoustic and Signal-Level Analysis</h2>
-      </div>
-
-      <p class="body" style="margin-bottom: 14px;"><strong>2.1 File-level comparison</strong></p>
-      <table>
-        <tr>
-          <th></th>
-          <th>YouTube Rip</th>
-          <th>Libsyn File</th>
-        </tr>
-        <tr><td>Size</td><td>46 MB</td><td>135 MB</td></tr>
-        <tr><td>Bitrate</td><td>65 kbps</td><td>192 kbps</td></tr>
-        <tr><td>Sample rate</td><td>44.1 kHz</td><td>48 kHz</td></tr>
-        <tr><td>True peak</td><td>+2.3 dBTP</td><td>−4.0 dBTP</td></tr>
-        <tr><td>Crest factor</td><td>28.1 dB</td><td>23.0 dB</td></tr>
-        <tr><td>VAD @ 20.88s</td><td>0.48 (dip)</td><td>0.86+ (no dip)</td></tr>
-        <tr><td>Friedberg ghost</td><td>✓ in transcript</td><td>✗ absent</td></tr>
-      </table>
-      <p class="body" style="margin-top: 14px;">
-        The YouTube file is objectively worse audio (lossy, lower bitrate,
-        lower sample rate) but its larger dynamic range produced a VAD
-        probability dip at the ghost timestamp — which in turn surfaced the
-        segment. The Libsyn file's tighter dynamic range smoothed the VAD
-        curve, the dip disappeared, and the segment was absorbed into the
-        surrounding region.
-      </p>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>2.2 Voice activity detection</strong></p>
-      <p class="body">
-        Silero VAD ran across both files. Friedberg's window showed
-        continuous speech in both. Gerstner's window showed discontinuous
-        speech in both, with a characteristic dropout between bursts.
-      </p>
-      <p class="body">
-        <strong>Result:</strong> positive but not conclusive. VAD detected
-        speech in both ghost windows. The downstream transcriber was told
-        "voice exists in these places," but it transcribed nothing. What was
-        doing that?
-      </p>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>2.3 Spectral subtraction</strong></p>
-      <p class="body">
-        To test whether ghost speech was acoustically masked by the dominant
-        audio:
-      </p>
-      <ul class="body">
-        <li>Built a noise/voice profile from a clean sample of Chamath's roast (17–19s)</li>
-        <li>Subtracted Chamath's profile from the full 30-second segment window</li>
-        <li>Used pYIN pitch detection on the residual audio</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        <strong>Results:</strong>
-      </p>
-      <ul class="body">
-        <li>pYIN frame count: 81 (raw) → 146 (residual)</li>
-        <li>New F0 cluster emerged at ~21s — Friedberg's vocal fundamental, inside his ghost window</li>
-        <li>Gerstner's window: no pitch revealed</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        Friedberg's voice was acoustically present but masked. Gerstner's was
-        either masked beyond what spectral subtraction could recover or
-        genuinely below the level the technique can isolate.
-      </p>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>2.4 Whisper cross-attention</strong></p>
-      <p class="body">
-        Extracted decoder cross-attention weights for the 30-second window
-        and plotted against time:
-      </p>
-      <ul class="body">
-        <li><strong>Friedberg's ghost (~20–22.5s):</strong> wide attention valley, near-zero values</li>
-        <li><strong>Gerstner's ghost (~28s):</strong> narrow gap sandwiched between two of the strongest attention spikes in the window</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        Near-zero attention is consistent with the decoder ignoring the
-        region. This explained the symptom but not the cause — why does the
-        decoder distribute attention this way on this audio when the YouTube
-        version got it right?
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">03</span>
-        <h2>Decoder Autopsy (Beam Search)</h2>
-      </div>
-      <p class="body">
-        At each generation step, Whisper's decoder picks one of ~50,000
-        possible tokens. Beam search keeps the top-N candidate sequences
-        alive simultaneously. I ran beam=5 and inspected the candidates at
-        each ghost decision point.
-      </p>
-      <p class="body" style="margin-top: 14px;">
-        <strong>Friedberg's ghost</strong> (prefix: "...that's the dumbest."):
-      </p>
-      <ul class="body">
-        <li>Dominant beam: "He's not even" — 67.82% joint probability</li>
-        <li>"Oh my god" beam: 4.22% joint probability</li>
-        <li>Ratio: ~16× in favor of the dominant path</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        "He's not even here" is what Friedberg actually said immediately
-        after the ghost. The decoder saw the ghost as a plausible runner-up
-        but committed to the higher-probability path.
-      </p>
-      <p class="body" style="margin-top: 14px;">
-        <strong>Gerstner's ghost</strong> (prefix: "...It's awful."):
-      </p>
-      <ul class="body">
-        <li>Dominant beam: "That's just bullying" — 89.80% joint probability</li>
-        <li>"Oh my god" beam: 0.00896% joint probability</li>
-        <li>Ratio: ~10,000× in favor of the dominant path</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        "Oh my god" wasn't a runner-up; it wasn't in contention.
-      </p>
-      <div class="callout">
-        <div class="callout-label">Two-class taxonomy crystallized</div>
-        <strong>Friedberg-class:</strong> subthreshold but adjacent. The
-        decoder almost got there. Recovery is achievable if the pipeline can
-        nudge segmentation toward giving the ghost its own decode slot.<br><br>
-        <strong>Gerstner-class:</strong> subthreshold by orders of magnitude.
-        The decoder doesn't see the audio at all in any meaningful sense.
-        Recovery requires something other than decoder tuning — likely
-        pipeline architecture changes upstream of the decoder, or HITL review
-        against external evidence (embeddings).
-      </div>
-
-      <div class="section-heading">
-        <span class="section-num">04</span>
-        <h2>Configuration Sweeps and the WhisperX Dead-End</h2>
-      </div>
-
-      <p class="body" style="margin-bottom: 14px;"><strong>4.1 Phase 1–5: variable isolation in WhisperX</strong></p>
-      <p class="body">
-        Tested decoder/pipeline variables across 100 trials (5 configs × 20
-        trials) in WhisperX:
-      </p>
-      <table style="margin-top: 14px;">
-        <tr>
-          <th>Config</th>
-          <th>Setup</th>
-          <th>Friedberg Recovery</th>
-        </tr>
-        <tr>
-          <td>A</td>
-          <td>WhisperX + large-v3 + beam=5 + no-timestamps</td>
-          <td>0/20</td>
-        </tr>
-        <tr>
-          <td>B</td>
-          <td>WhisperX + large-v2 + same flags</td>
-          <td>20/20</td>
-        </tr>
-        <tr>
-          <td>C</td>
-          <td>Raw transformers (no WhisperX)</td>
-          <td>20/20</td>
-        </tr>
-        <tr>
-          <td>D</td>
-          <td>WhisperX + v3 + beam=5 + with-timestamps</td>
-          <td>20/20</td>
-        </tr>
-        <tr>
-          <td>E</td>
-          <td>WhisperX + v3 + beam=1 + no-timestamps</td>
-          <td>20/20</td>
-        </tr>
-      </table>
-      <p class="body" style="margin-top: 14px;">
-        The compound failure was WhisperX + large-v3 + without_timestamps=True
-        + beam≥5. Break any one of those four conditions and the ghost
-        surfaces. 100% deterministic on the test sample.
-      </p>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>4.2 Gerstner: nothing works</strong></p>
-      <p class="body">
-        Same matrix expanded to 160 trials covering raw Whisper without VAD,
-        multiple beam sizes, multiple timestamp modes, both v2 and v3:
-      </p>
-      <ul class="body">
-        <li>Friedberg: 0/160 in raw Whisper without VAD (he needs WhisperX's VAD-driven chunking to surface)</li>
-        <li>Gerstner: 0/160 across every configuration tested. No combination of settings recovers him.</li>
-      </ul>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>4.3 The pivot</strong></p>
-      <p class="body">
-        Phase 1–5 produced reproducible findings inside WhisperX, but the
-        framing was wrong. Beam size and timestamp settings matter only
-        because they sit downstream of a more fundamental decision: how the
-        decoder segments at step 0.
-      </p>
-      <p class="body">
-        Lockstep greedy decoding of the same audio under two chunk
-        configurations revealed:
-      </p>
-      <ul class="body">
-        <li><strong>Default 0–30s chunk</strong> → 8 timestamps emitted across 93 decoder steps. Friedberg's window absorbed into a long "He's not even here" segment. Sparse-segmentation mode.</li>
-        <li><strong>Pyannote chunks (1.26–30.98s)</strong> → 45 timestamps emitted. Friedberg gets his own segment slot. Dense-segmentation mode.</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        Cosine similarity of encoder features between the two configurations:
-        0.90. The encoder sees nearly the same audio. The decoder makes a
-        different segmentation choice at step 0, and that choice cascades.
-      </p>
-      <p class="body">
-        <strong>Implication:</strong> chasing CTranslate2's beam-size
-        sensitivity was the wrong target. The right target is upstream — make
-        sure the decoder gets the audio in chunks that trigger dense mode.
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">05</span>
-        <h2>The pww Pipeline</h2>
-      </div>
-      <p class="body">New pipeline:</p>
-      <div class="diagram">pyannote VAD                    (small chunks, ~1–30s, aligned to speech)
-    ↓
-reference openai-whisper        (PyTorch, beam=1, greedy, temperature=0)
-    ↓
-wav2vec2 forced alignment       (word-level timestamps + per-word confidence)</div>
-      <p class="body" style="margin-top: 14px;">
-        <strong>Validation on full 98-minute Episode 136:</strong>
-      </p>
-      <table style="margin-top: 14px;">
-        <tr>
-          <th>VAD</th>
-          <th>Scale</th>
-          <th>Friedberg</th>
-          <th>Gerstner</th>
-          <th>Total Time</th>
-        </tr>
-        <tr><td>pyannote</td><td>30s chunk</td><td>✓</td><td>✗</td><td>37.6s</td></tr>
-        <tr><td>pyannote</td><td>full</td><td>✓</td><td>✗</td><td>575.5s</td></tr>
-        <tr><td>Silero</td><td>30s chunk</td><td>✓</td><td>✗</td><td>93.2s</td></tr>
-        <tr><td>Silero</td><td>full</td><td>✓</td><td>✗</td><td>625.9s</td></tr>
-      </table>
-      <ul class="body" style="margin-top: 14px;">
-        <li>Friedberg recovers in all four configurations. Given dense-mode chunks, the decoder reaches his decode state.</li>
-        <li>Gerstner drops in all four. Confirms the two-class distinction is real, not artifactual.</li>
-        <li>VAD choice doesn't matter for ghost recovery on this episode — pyannote and Silero both produce chunks that trigger dense mode.</li>
-        <li>Pyannote VAD is 13× faster than Silero (4.7s vs 69.6s on a 98-minute file). Pyannote wins on cost.</li>
-        <li>ASR dominates wall time (~90% of total).</li>
-        <li>Cost vs. WhisperX default: ~10 min/episode for pww vs. ~1–2 min for WhisperX CTranslate2. Across 538 episodes: ~90 GPU-hours instead of ~15. Tradeoff is compute time for content fidelity.</li>
-      </ul>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>5.1 Determinism check</strong></p>
-      <p class="body">
-        Same audio chunk fed to reference Whisper twice in a single process:
-      </p>
-      <ul class="body">
-        <li>Encoder features bit-exact identical (max abs diff = 0.0e+00)</li>
-        <li>Token sequences identical at every step (196/196 tokens match)</li>
-        <li>Final text byte-identical</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        Reference openai-whisper is fully deterministic at temperature=0,
-        beam=1 on this hardware. Earlier observations of "different
-        hallucinations between runs" came from process-state pollution when
-        multiple pipelines loaded sequentially, not from Whisper
-        nondeterminism.
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">06</span>
-        <h2>Hallucination as Signal</h2>
-      </div>
-      <p class="body">
-        In Gerstner's window, all three pipelines (WhisperX, pww-pyannote,
-        pww-Silero) emit the same hallucinated phrase: <em>"I'm bullying when
-        you're bullying"</em> or close variants, repeated 3 times in ~10
-        seconds. The phrase isn't in the audio. Wav2vec2 forced alignment
-        fails on it across all three pipelines — phonemes don't match.
-      </p>
-      <p class="body">
-        I had a hunch this could be exploitable as a detection mechanism.
-        When VAD is applied before transcription, silence is cut out of the
-        full audio file. It's common for Whisper to produce hallucinations
-        during silent audio, but here there is none. So when the decoder gets
-        stuck in a language-model loop, real audio is almost certainly being
-        masked by hallucination. The signature — repeated phrase + alignment
-        failure + VAD-voiced region — marks regions where transcription
-        failed silently.
-      </p>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>6.1 Repetition probe (stage 1)</strong></p>
-      <p class="body">
-        Scanned the full 98-minute transcript for exact-match phrases
-        appearing 2+ times within a 30-second window (≥4 words OR ≥20 chars).
-        Found 9 candidate clusters:
-      </p>
-      <ul class="body">
-        <li>1 high-confidence ghost loop ("I'm bullying when you're bullying" ×3, gaps 4.0s + 2.9s)</li>
-        <li>8 lower-confidence 2× repeats spread across the episode</li>
-      </ul>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>6.2 Acoustic verification (stage 2)</strong></p>
-      <p class="body">
-        Ran VAD/RMS/F0 probes on each occurrence. All 9 classified as
-        real_repetition because the probes detect speech presence, not
-        transcription correctness.
-      </p>
-      <p class="body">
-        <strong>Limitation found:</strong> acoustic probes alone cannot
-        distinguish hallucination-over-real-speech (the Gerstner case) from
-        genuine repetition. The bullying hallucination occurs while Friedberg
-        is actually speaking, so VAD/RMS/F0 all show real signal — they just
-        don't know whose signal it is.
-      </p>
-      <p class="body">
-        The negative finding was useful: hallucinations don't only happen
-        over silence. They happen over real speech that the decoder ignores
-        in favor of its own language-model continuation. This forced the
-        realization that hallucination detection needs phonemic alignment
-        (wav2vec2 failure), not just acoustic presence.
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">07</span>
-        <h2>Speaker Attribution Layer</h2>
-      </div>
-      <p class="body">
-        Even when text is recovered, the speaker label can be wrong. NeMo's
-        clustering makes incremental decisions as TitaNet embeddings arrive;
-        speaker centroids are immature in early-episode windows. A short
-        utterance that lands during the immaturity window risks being
-        assigned to whichever centroid was closest at the moment of decision
-        — which may not be the right one.
-      </p>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>7.1 Pass 1 vs. Pass 2 hypothesis</strong></p>
-      <p class="body">
-        <strong>Hypothesis:</strong> if Pass 1's centroids are immature, a
-        Pass 2 that builds centroids from the full episode and re-classifies
-        every segment should outperform Pass 1.
-      </p>
-      <p class="body">
-        <strong>Test slice:</strong> 9 segments from Episode 136 (16.5–30.5s)
-        with ground-truth labels — 3 Chamath, 6 Friedberg, including the "Oh
-        my god" ghost.
-      </p>
-      <p class="body" style="margin-top: 12px;">
-        <strong>Pass 1 results</strong> (NeMo raw clustering, pyannote-derived UEM):
-      </p>
-      <ul class="body">
-        <li>7/8 correct (1 unknown)</li>
-        <li>The single miss: Friedberg's "Oh my god" at 20.871s assigned to Chamath</li>
-        <li>This is the 0.6-second utterance — exactly the case Pass 2 was designed to fix</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        <strong>Pass 2 v5c</strong> (centroid rescoring, full-episode means):
-      </p>
-      <ul class="body">
-        <li>5/8 correct</li>
-        <li>The headline ghost case did not improve (still misclassified)</li>
-        <li>Two previously-correct classifications regressed:
-          <ul class="body" style="margin-top: 6px; margin-bottom: 6px;">
-            <li>"And the fattest, that's the dumbest" (Chamath ✓ → speaker_3 ✗)</li>
-            <li>"You can't do that" (Friedberg ✓ → speaker_2 ✗)</li>
-          </ul>
-        </li>
-        <li>Net: 0 fixes, 2 regressions</li>
-      </ul>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>7.2 Why Pass 2 failed</strong></p>
-      <p class="body">
-        <strong>Structural reason:</strong> when Pass 1's labels are mostly
-        correct, averaging across them produces centroids that sit closer
-        together than they should — especially when speaker manifolds overlap
-        (Chamath and Friedberg do, visibly, in the embedding viz).
-        Full-episode averaging pulls both centroids toward the overlap zone.
-        Segments that previously sat cleanly inside one cluster now sit near
-        a fuzzy boundary, and small embedding differences flip assignments.
-      </p>
-      <p class="body">
-        Centroid rescoring is most useful when initial labels are noisy
-        enough that averaging pulls them toward truth. Here, initial labels
-        were clean enough that averaging just smeared the boundaries.
-      </p>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>7.3 Decision</strong></p>
-      <p class="body">
-        Drop Pass 2. Trust Pass 1. Centroids still computed (cheap, useful
-        for the manifold viz's <em>conf</em> value) but inform diagnostic
-        flags only — not classification decisions.
-      </p>
-      <p class="body">
-        The 0.6-second ghost case is below the threshold where TitaNet
-        produces a speaker-distinctive embedding regardless of which centroid
-        you compare it against. That's a different problem from "the centroid
-        is immature." The right tool for this segment class is HITL review
-        surfaced via a <em>lizard</em> flag (segments under 4s flagged
-        regardless of model confidence).
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">08</span>
-        <h2>Failure Taxonomy and Detection Mechanisms</h2>
-      </div>
-      <p class="body">
-        The investigation produced two orthogonal failure modes plus a
-        hybrid case, and one detection mechanism for each.
-      </p>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>8.1 Lexical / transcription failures</strong></p>
-      <table>
-        <tr>
-          <th>Failure</th>
-          <th>Fingerprint</th>
-          <th>Detector</th>
-        </tr>
-        <tr>
-          <td>Friedberg-class ghost</td>
-          <td>v1/v2 disagreement; segment in one pipeline, absent in other</td>
-          <td>littlecat (segment-level diff)</td>
-        </tr>
-        <tr>
-          <td>Hallucination loop</td>
-          <td>Exact-match phrase repeated within short window + wav2vec alignment failure on phonemes</td>
-          <td>Repetition scanner + alignment-failure flag</td>
-        </tr>
-        <tr>
-          <td>Gerstner-class ghost</td>
-          <td>TitaNet embedding magnitude high at a timestamp with no transcript segment AND no RTTM turn</td>
-          <td>Embedding triple-negative (sketched, not yet built)</td>
-        </tr>
-      </table>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>8.2 Diarization / attribution failures</strong></p>
-      <p class="body">
-        Six diarization failure patterns currently surface in HITL review.
-        The published page categorizes them as fingerprints; brody
-        operationalizes them as flags.
-      </p>
-      <table style="margin-top: 14px;">
-        <tr>
-          <th>Pattern</th>
-          <th>Fingerprint</th>
-          <th>Brody Flag(s)</th>
-        </tr>
-        <tr>
-          <td>1a. Turn contamination: ellipsis</td>
-          <td>One segment contains two speakers; mid-segment ellipsis is the seam</td>
-          <td>ellipsis</td>
-        </tr>
-        <tr>
-          <td>1b. Speaker sandwich</td>
-          <td>A→B→A where middle B is misattribution; mid-segment ellipsis + next opens lowercase</td>
-          <td>ellipsis + lowercase-continuation</td>
-        </tr>
-        <tr>
-          <td>2. Third-person self-reference</td>
-          <td>Speaker's own name appears in their own segment</td>
-          <td>Not yet implemented</td>
-        </tr>
-        <tr>
-          <td>3. Lowercase continuation</td>
-          <td>New segment opens lowercase — ASR capitalizes new turns, so lowercase = continuation misattributed</td>
-          <td>lowercase-continuation, lowercase-start</td>
-        </tr>
-        <tr>
-          <td>4. Backchannel bleed</td>
-          <td>Short "yeah"/"right"/"totally" assigned to acoustically dominant local speaker</td>
-          <td>backchannel-bleed + lizard (&lt;4s)</td>
-        </tr>
-        <tr>
-          <td>5. Blob (speaker collapse)</td>
-          <td>20+ second segment attributed to one speaker but containing multiple</td>
-          <td>blob (&gt;20s)</td>
-        </tr>
-      </table>
-      <p class="body" style="margin-top: 14px;">
-        Brody also implements flags that don't map 1:1 to a published
-        failure mode but surface candidates for review:
-      </p>
-      <ul class="body">
-        <li><strong>hyphen-split</strong> — hyphen+space inside a segment (often a turn boundary the splitter didn't catch)</li>
-        <li><strong>no-terminal-punct</strong> — segment lacks .?! ending; adjacent to ellipsis as boundary signal</li>
-        <li><strong>noise (&lt;0.02s)</strong> — sub-perceptual segments, almost certainly artifacts</li>
-        <li><strong>discourse-marker</strong> — segment opens with so/well/anyway/etc. (pair-aware; skipped at episode start)</li>
-        <li><strong>period-before-conjunction</strong> — prev ends terminal, current opens with and/but/etc., suggesting a sentence cut across a speaker boundary</li>
-        <li><strong>low-score (&lt;0.5)</strong> — wav2vec mean per-word score below 0.5; correlates with quiet audio, overlap, or noise</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        The low-score flag is notable: it was first identified as an open
-        thread in littlecat's design (distinguish recovered ghost from
-        hallucinated micro-segment) and ended up implemented one stage
-        downstream, in brody, after NeMo runs. The "LLM." / "a tube." class
-        of micro-segments gets caught here.
-      </p>
-
-      <div class="section-heading">
-        <span class="section-num">09</span>
-        <h2>The Tools</h2>
-      </div>
-
-      <p class="body" style="margin-bottom: 14px;"><strong>9.1 littlecat — v1↔v2 transcript diff</strong></p>
-      <p class="body">
-        Compares two transcripts of the same audio segment-by-segment and
-        surfaces meaningful differences. Pipeline order:
-      </p>
-      <ul class="body">
-        <li><strong>Time-overlap matching</strong> — pairs v1↔v2 segments by best time-window overlap (default tolerance 0.5s). One-to-one matching; leftovers become candidate v1_only / v2_only.</li>
-        <li><strong>Three-tier text classification</strong> for matched pairs: identical_text (lowercase + whitespace match) → near_identical (also strip basic punctuation) → catches normalization-equivalent variants (J.Cal/Jcal, co-founder/cofounder, A.I./AI).</li>
-        <li><strong>Aggressive normalization</strong> for containment checks: lowercase → expand contractions (~50 entries including spoken fusions: gonna, gotta, wanna, kinda, lemme) → speaker aliases (Sax/Sachs/Saxx → sacks; analogous for Chamath, Friedberg) → compound aliases (~30 entries: news feed → newsfeed) → split mashed tokens → drop $ signs → digits to words → strip punctuation → post-strip aliases → collapse adjacent canonical-name duplicates.</li>
-        <li><strong>Containment via Markov walk + LCS fallback</strong> — strip leading/trailing discourse markers from needle; pure-discourse needles preserved iff their tokens don't appear in nearby haystack (protects real "Yeah" / "Oh my god" ghost recoveries); Markov walk seeded at nearest-by-time segment with up to 1 zero-advance segment tolerance, max 5 hops; LCS time-window fallback if walk fails.</li>
-        <li><strong>Block list</strong> drops segments containing known noise phrases (intro/outro music lyrics, recurring outro chatter), with optional last-N-minutes time gating.</li>
-      </ul>
-
-      <p class="body" style="margin-top: 22px; margin-bottom: 14px;"><strong>Effectiveness on Episode 136:</strong></p>
-      <table>
-        <tr>
-          <th>Stage</th>
-          <th>Reviewable Deltas</th>
-        </tr>
-        <tr><td>Pre-filtering (raw diff)</td><td>1316</td></tr>
-        <tr><td>After speaker aliases + boundary containment</td><td>~71</td></tr>
-        <tr><td>After backward Markov walk</td><td>~55</td></tr>
-        <tr><td>After compound aliases + US/mashed/dollars</td><td>~33</td></tr>
-        <tr><td>After content-weighted LCS + 'like' stopword + dedup</td><td>~22</td></tr>
-      </table>
-      <p class="body" style="margin-top: 14px;">
-        ~98% noise reduction. Of the final 22:
-      </p>
-      <ul class="body">
-        <li>~10 confirmed real signal, including four <strong>de novo ghosts</strong> (content authority v1 never surfaced at all): "Oh, my god." × 2 — Friedberg at 0:00:20.9 and Chamath at 1:27:45.8 — plus "Yeah, great." (0:02:10.5) and "LLM." (0:08:13.8). Plus genuine v1-only utterances v2 missed (Sacks "Totally.", "I got to go to Vegas.", "People were trying to shoot it down.") and stutter-fragment ghosts ("Can I ask you guys-", "So it sounds like the-").</li>
-        <li>~3 accepted residuals: number paraphrases ($2.5 billion vs "two and a half billion"), homophones (errored/aired, base/basis).</li>
-        <li>~5 missed false positives: cases requiring semantic/paraphrase understanding (single-content-word needles, word-order permutations, semantic paraphrases like "I was shocked" vs "Can't be anything but shocked").</li>
-      </ul>
-      <p class="body" style="margin-top: 12px;">
-        Architecture is debuggable end-to-end. Every suppression decision can
-        be traced through readable dictionaries and explicit thresholds. No
-        opaque ML components. New variants (host nicknames, compound words,
-        contractions) added by appending to the relevant dict and re-running.
-      </p>
-
-      <div class="callout">
-        <div class="callout-label">Implication of the de novo ghosts</div>
-        Authority v1 isn't editing these out — its upstream pipeline
-        (VAD → diarization-first ASR) likely never surfaced them at all.
-        Short emotional reactions ("Oh, my god."), low-amplitude
-        micro-utterances ("LLM."), backchannels ("Yeah, great.") — exactly
-        the classes hardest to cleanly diarize and most likely to overlap a
-        dominant speaker. v2's pre-fusion ordering, transcribing first and
-        aligning later, catches what v1's ordering excludes. These aren't
-        HITL edit decisions; they're architectural blind spots. The Chamath
-        "Oh, my god." at 1:27:45 lands in conversational context where the
-        reaction is the punchline — without v2's recovery, the joke reads
-        flat. v3 (the merged output) is the only path to recovering this
-        content; the recurring pattern of the same phrases catching the same
-        kinds of moments suggests a quantifiable corpus-wide pipeline-coverage
-        gap.
-      </div>
-
-      <div class="section-heading">
-        <span class="section-num">10</span>
-        <h2>Pipeline (Final)</h2>
-      </div>
-      <div class="diagram">audio
-    ↓
-pyannote VAD
-    ↓
-reference openai-whisper        (beam=1, greedy, temperature=0)
-    ↓
-wav2vec2 forced alignment
-    ↓
-v2 transcript                   (segments with words[] and per-word scores)
-    ↓
-littlecat: v1↔v2 segment diff   → HITL review of recovered ghosts /
-                                  suppressed hallucinations
-    ↓
-NeMo Pass 1 clustering          (pyannote-derived UEM)
-    ↓
-fused transcript                (segments + nemo_speaker_id)
-    ↓
-brody Tab 1: speaker_id → human name mapping
-    ↓
-brody Tab 2: 12-flag lexical review → HITL corrections
-    ↓
-consecutive-same-speaker batching (utterance-level grouping)
-    ↓
-chatbot training data</div>
-      <ul class="body" style="margin-top: 14px;">
-        <li><strong>Cost budget:</strong> ~10 minutes per episode wall time; ~90 GPU-hours total for 538 episodes.</li>
-        <li><strong>HITL surface:</strong> ~22 littlecat candidates + brody flag counts per episode. At corpus scale, ~12k entries to review across 538 episodes — tractable.</li>
-      </ul>
-
-      <div class="section-heading">
-        <span class="section-num">11</span>
-        <h2>Honest Caveats</h2>
-      </div>
-      <ul class="body">
-        <li><strong>Sample size.</strong> The 9-segment ground-truth slice is small. Pass 2 may help on segments outside this slice (later in episodes, longer utterances) that weren't checked. Net global outcome unverified.</li>
-        <li><strong>Single-episode validation.</strong> Most pipeline validation lives on Episode 136. Generalization to noisier, longer, or multi-language episodes unverified. The Libsyn pipeline was a relatively clean test case (4 known speakers, ~98 min, podcast-quality).</li>
-        <li><strong>Gerstner-class is unsolved.</strong> No tested pipeline configuration recovers Gerstner. The embedding triple-negative idea is sketched, not built, and may not work — it presumes TitaNet produces a high-magnitude embedding for sub-decoder-threshold audio, which is plausible but not yet verified.</li>
-        <li><strong>Phase 1–5 trial findings remain historically true</strong> but no longer guide pipeline decisions. The pivot to reference Whisper on pyannote chunks bypasses CTranslate2 entirely, which is where the beam-size sensitivity lives.</li>
-        <li><strong>Acoustic probes can't distinguish</strong> hallucination-over-speech from real repetition. The stage-2 probe verified this on Episode 136. Full hallucination detection requires wav2vec phonemic alignment failure, not VAD/RMS/F0 alone.</li>
-        <li><strong>Heuristic thresholds are tuned by inspection.</strong> The 0.85 LCS coverage threshold, the 4-second lizard cutoff, the 20-second blob cutoff, the 0.5 wav2vec score floor — all hand-tuned on Episode 136 and similar test episodes. Edge cases will leak.</li>
-      </ul>
-
-      <div class="section-heading">
-        <span class="section-num">12</span>
-        <h2>Open Threads</h2>
-      </div>
-      <ul class="body">
-        <li>Generate v2 transcripts across all 538 episodes (~90 GPU-hours).</li>
-        <li><strong>Corpus-scale littlecat run</strong> — aggregate v1_only / v2_only counts across all episodes; quantify the ghost-density distribution and identify which classes of utterance v1's pipeline structurally misses. Now a measurable question with a concrete framing: "what fraction of host vocalizations does v1's diarization-first ordering fail to surface at all?"</li>
-        <li><strong>Build the embedding triple-negative detector</strong> for Gerstner-class drops. Manifold viz already surfaces part of it (the unknown tag for embeddings without RTTM coverage); adding the transcript axis closes the loop.</li>
-        <li><strong>Implement third-person self-reference flag</strong> in brody (the one published heuristic with no current detection in code).</li>
-        <li><strong>Merge tool (v3 producer)</strong> — emit a strictly-richer-than-either transcript using littlecat diff entries as fusion points. Given the de novo ghost finding, v3 is no longer just additive bookkeeping — it's the only artifact in the pipeline that can capture the conversational reactions v1 architecturally cannot.</li>
-        <li><strong>Confidence-score filter for v2 micro-segments</strong> — partially landed as brody's low-score flag, but a tighter integration with littlecat's diff output (distinguishing recovered ghost from new hallucination at the diff stage) is still open.</li>
-      </ul>
-
-    </section>
-
-    <div class="footer">Mason Thompson · Berkeley, California</div>
-  </main>
-
-  <script>
-    // Toggle between casual and technical views
-    const buttons = document.querySelectorAll('.toggle-btn');
-    const views = document.querySelectorAll('.view');
-
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.view;
-
-        buttons.forEach(b => {
-          const active = b.dataset.view === target;
-          b.classList.toggle('active', active);
-          b.setAttribute('aria-selected', active ? 'true' : 'false');
+                // Smooth scroll back to the toggle so context stays anchored
+                document.querySelector('.toggle-wrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
         });
 
-        views.forEach(v => {
-          v.classList.toggle('active', v.id === `view-${target}`);
+        // Empire modal
+        function openEmpireModal() {
+            document.getElementById('empire-overlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeEmpireModal() {
+            document.getElementById('empire-overlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeEmpireModal();
         });
 
-        // Smooth scroll back to the toggle so context stays anchored
-        document.querySelector('.toggle-wrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      });
-    });
+        function showFailmode(evt, mode) {
+            document.querySelectorAll('.failmode-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.failmode-tab').forEach(function (t) { t.classList.remove('active'); });
+            document.getElementById('failmode-' + mode).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
 
-    window.NAV_ANCHORS = [];
-  </script>
-  <script src="nav-loader.js" data-page="four-hosts"></script>
+        window.NAV_ANCHORS = [];
+    </script>
+    <script src="nav-loader.js" data-page="four-hosts"></script>
 
 </body>
+
 </html>
