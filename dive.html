@@ -1392,7 +1392,7 @@
                 relevant state regardless of which chunk it's handed.
             </p>
 
-            <div class="callout">
+<div class="callout">
                 <div class="callout-label">Two failure modes, one costume</div>
                 <strong>Friedberg-class</strong> ghosts are recoverable — the decoder
                 almost gets there. In some pipeline configurations, chunk boundaries
@@ -1410,18 +1410,180 @@
 
             <div class="section-heading">
                 <span class="section-num">04</span>
-                <h2>The PWW Pipeline</h2>
+                <h2>Production Failure Matrix</h2>
             </div>
             <p class="body">
+                Section 03 probed isolated chunks. The production failure looks
+                different: it's a function of which file, which inference engine,
+                and which beam strategy. Crossing all three gives an 8-cell grid;
+                7 of 8 cells were tested directly on Episode 136.
+            </p>
+
+            <table>
+                <tr>
+                    <th>File</th>
+                    <th>Engine</th>
+                    <th>beam=1</th>
+                    <th>beam=5</th>
+                </tr>
+                <tr class="row-failure">
+                    <td>Libsyn</td>
+                    <td>WhisperX (CT2)</td>
+                    <td>✓ recovers</td>
+                    <td>✗ drops</td>
+                </tr>
+                <tr class="row-canonical">
+                    <td>Libsyn</td>
+                    <td>reference Whisper (PWW)</td>
+                    <td>✓ recovers</td>
+                    <td>✓ recovers</td>
+                </tr>
+                <tr>
+                    <td>YouTube</td>
+                    <td>WhisperX (CT2)</td>
+                    <td>✓ recovers</td>
+                    <td>✓ recovers</td>
+                </tr>
+                <tr>
+                    <td>YouTube</td>
+                    <td>reference Whisper (PWW)</td>
+                    <td>(untested)</td>
+                    <td>(untested)</td>
+                </tr>
+            </table>
+
+            <p class="body" style="margin-top: 14px;">
+                One failure cell: Libsyn × WhisperX (CT2) × beam=5. That cell is
+                the production-equivalent default, which is why this surfaced at
+                all. Every other tested cell recovers Friedberg.
+            </p>
+
+            <p class="body">
+                <strong>Mechanistic note.</strong> At beam=1 (greedy), the decoder
+                commits token-by-token to the highest-probability next token; " Oh"
+                wins at 87.83% locally and the ghost is emitted. At beam=5, the
+                decoder optimizes joint probability across the whole sequence; on
+                the Libsyn file it finds a path that skips Friedberg's quiet
+                utterance because the longer "He's not even here..." continuation
+                scores higher in joint probability than the path including " Oh,
+                my god." What's special about the Libsyn file's audio — versus the
+                YouTube file's, where beam=5 catches the ghost — is unidentified.
+                The audio panel below rules out gain, dynamic-range expansion, EQ,
+                and loudnorm as the lever.
+            </p>
+
+            <p class="body">
+                <strong>Audio modification panel.</strong> To isolate which audio
+                property of Libsyn drives the beam=5 failure, ten ffmpeg-filtered
+                variants were generated from the Libsyn source and run through
+                default WhisperX (CT2, beam=5):
+            </p>
+
+            <table>
+                <tr>
+                    <th>Variant</th>
+                    <th>Filter</th>
+                    <th>Recovered?</th>
+                </tr>
+                <tr>
+                    <td>V01 baseline</td>
+                    <td>resample only</td>
+                    <td>NO</td>
+                </tr>
+                <tr>
+                    <td>V02 gain +3 dB</td>
+                    <td>volume=3dB</td>
+                    <td>NO</td>
+                </tr>
+                <tr>
+                    <td>V03 gain +6 dB</td>
+                    <td>volume=6dB</td>
+                    <td>NO</td>
+                </tr>
+                <tr>
+                    <td>V04 gain −3 dB</td>
+                    <td>volume=-3dB</td>
+                    <td>NO</td>
+                </tr>
+                <tr>
+                    <td>V05 expand mild</td>
+                    <td>compand (lift crest, mild)</td>
+                    <td>NO</td>
+                </tr>
+                <tr>
+                    <td>V06 expand strong</td>
+                    <td>compand (lift crest, strong)</td>
+                    <td>NO</td>
+                </tr>
+                <tr class="row-canonical">
+                    <td>V07 compress + gain</td>
+                    <td>compand (lower crest) + volume=5dB</td>
+                    <td>YES</td>
+                </tr>
+                <tr>
+                    <td>V08 highpass 80 Hz</td>
+                    <td>highpass=f=80</td>
+                    <td>NO</td>
+                </tr>
+                <tr>
+                    <td>V09 lowpass 7800 Hz</td>
+                    <td>lowpass=f=7800</td>
+                    <td>NO</td>
+                </tr>
+                <tr>
+                    <td>V10 loudnorm</td>
+                    <td>loudnorm I=-16:LRA=11:TP=-1.5</td>
+                    <td>NO</td>
+                </tr>
+            </table>
+
+            <p class="body" style="margin-top: 14px;">
+                One variant out of ten recovered the ghost: V07, a compand
+                compression curve (peaks anchored at 0 dB, mids pulled down,
+                quiets pulled further down) plus a 5 dB makeup gain. Crest factor
+                dropped from 22.97 dB to 17.90 dB. A separately-run targeted
+                compression test (different compand parameters, also lowering
+                crest) independently recovered Friedberg as well — two
+                compression-style modifications hit, eight non-compression
+                modifications missed.
+            </p>
+
+            <p class="body">
+                <strong>What this rules out.</strong> Pure gain in any direction
+                isn't the lever. Dynamic-range expansion isn't the lever — and
+                pushing Libsyn's crest factor toward YouTube's measured 28.1 dB
+                made things worse, not better. EQ filtering isn't the lever.
+                Loudness normalization isn't the lever. The earlier intuition
+                that YouTube recovers Friedberg because YouTube has higher dynamic
+                range than Libsyn is dead: higher crest doesn't help; lower
+                crest does.
+            </p>
+
+            <p class="body">
+                <strong>What this doesn't establish.</strong> Why specifically
+                compression recovers Friedberg is not known. The two successful
+                runs share "lower crest factor" as a property, but V05 and V06
+                also altered crest factor (in the opposite direction) and didn't
+                recover the ghost. The defensible finding is that the failure is
+                brittle to perturbation — narrow, sensitive to specific filter
+                shapes, not driven by any clean acoustic-property gradient
+                measurable from the panel.
+            </p>
+
+            <div class="section-heading">
+                <span class="section-num">05</span>
+                <h2>The PWW Pipeline</h2>
+            </div>
+<p class="body">
                 Out: WhisperX + CTranslate2. In: pyannote VAD → reference
-                openai-whisper (PyTorch, beam=1, greedy, temperature=0) →
+                openai-whisper (PyTorch, beam=5, temperature=0) →
                 wav2vec2 forced alignment.
             </p>
             <div class="diagram">audio
                 ↓
                 pyannote VAD
                 ↓
-                reference openai-whisper (beam=1, greedy, temperature=0)
+                reference openai-whisper (beam=5, temperature=0)
                 ↓
                 wav2vec2 forced alignment
                 ↓
@@ -1443,16 +1605,18 @@
                 is flaggable.
             </p>
             <p class="body">
-                <strong>Determinism:</strong> reference openai-whisper is bit-exact
-                deterministic at temperature=0/beam=1 on this hardware (verified —
-                encoder features identical, 196/196 tokens match, final text byte-
-                identical). The chunk-boundary sensitivity in V1 is therefore not
-                nondeterminism. Identical inputs produce identical outputs; similar
-                inputs do not.
+                <strong>Determinism:</strong> reference openai-whisper at
+                temperature=0 is reproducible run-to-run on this hardware —
+                identical inputs produce identical outputs. (Bit-exact equality
+                was verified at beam=1; beam=5 introduces additional sources of
+                floating-point reordering during beam expansion but the practical
+                output is stable across runs.) The chunk-boundary sensitivity in
+                V1 is therefore not nondeterminism. Identical inputs produce
+                identical outputs; similar inputs do not.
             </p>
 
-            <div class="section-heading">
-                <span class="section-num">05</span>
+           <div class="section-heading">
+                <span class="section-num">06</span>
                 <h2>Caveats</h2>
             </div>
             <ul class="body">
@@ -1471,6 +1635,12 @@
                 <li><strong>Heuristic thresholds tuned by inspection.</strong> 4-second lizard cutoff, 20-second blob
                     cutoff,
                     0.5 wav2vec score floor — hand-tuned on Episode 136. Edge cases will leak.</li>
+                <li><strong>Audio panel rules out, doesn't explain.</strong> Ten variants tested; one (compand
+                    compression + gain) recovered Friedberg under default WhisperX. A second
+                    independently-parameterized compression run also recovered him. Together these rule out gain,
+                    dynamic-range expansion, EQ, and loudnorm as the lever — but the proximate audio mechanism
+                    behind the Libsyn × beam=5 failure remains unidentified. What we have is a brittleness
+                    finding, not a causal one.</li>
             </ul>
 
             <div class="additional-reading">
