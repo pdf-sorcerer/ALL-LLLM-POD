@@ -16,17 +16,28 @@ nav{position:sticky;top:0;height:100vh;width:var(--nav-width);flex-shrink:0;back
 .nav-item:hover{color:var(--text);background:var(--bg);border-left-color:var(--border);}
 .nav-item.active{color:var(--green);border-left-color:var(--green);background:var(--green-dim);}
 .nav-footer{margin-top:auto;padding:20px 24px 0;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);line-height:1.6;}
-main{flex:1;padding:56px 64px 120px;max-width:860px;}
+main{flex:1;padding:56px 64px 120px;max-width:920px;}
 .page-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px;}
 h1{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:14px;}
-.lead{font-size:14px;line-height:1.75;color:#3a3a3a;max-width:680px;margin-bottom:52px;}
+.lead{font-size:14px;line-height:1.75;color:#3a3a3a;max-width:720px;margin-bottom:52px;}
 .section-heading{display:flex;align-items:baseline;gap:16px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);margin-top:52px;}
 h2{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg);}
 td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);color:#3a3a3a;background:var(--surface);line-height:1.5;}
-td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);width:42%;}
+td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);width:34%;}
+td.v1, td.v2 { font-family:'IBM Plex Mono',monospace; font-size:11px; width:33%; }
+td.v1 { color:var(--muted); }
+td.v2 { color:var(--text); }
+th.v2 { color:var(--green); }
+.row-section td { background:var(--bg); font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); padding:8px 14px; }
 .placeholder{font-family:'IBM Plex Mono',monospace;color:var(--faint);font-style:italic;}
+.callout{background:var(--green-dim);border-left:3px solid var(--green);padding:18px 22px;margin-bottom:32px;border-radius:0 4px 4px 0;}
+.callout-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:8px;}
+.callout h3{font-size:15px;font-weight:600;margin-bottom:8px;}
+.callout p{font-size:13px;line-height:1.7;color:#3a3a3a;}
+.footnote{font-size:11px;color:var(--muted);font-style:italic;line-height:1.7;margin-top:18px;padding:14px 16px;background:var(--bg);border-left:2px solid var(--border);}
+.footnote sup{color:var(--green);font-weight:600;font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:9px;margin-right:4px;}
 .video-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:26px;}
 .video-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px;}
 .video-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;}
@@ -40,28 +51,139 @@ td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--
 <nav id="shared-nav"></nav>
 
 <main>
-<p class="page-eyebrow">Local GPU · RTX 4070 Super</p>
+<p class="page-eyebrow">Multi-Machine · RTX 4070 Super + Apple Silicon</p>
 <h1>Performance & Instrumentation</h1>
-<p class="lead">The system operates entirely on a local RTX 4070 Super (12GB VRAM) GPU workstation. Latency instrumentation is implemented end-to-end across ASR, diarization, LLM inference, and TTS playback using structured logging and trace-level metrics.</p>
+<p class="lead">The system has evolved from a single-workstation pipeline to a multi-machine architecture: Windows handles ASR, TTS, and orchestration on the RTX 4070 Super; Apple Silicon hosts the LLM via MLX. The trade — modestly higher latency for substantially more capable inference — is documented below side-by-side with the original V1 numbers, end-to-end instrumented.</p>
 
-<div class="section-heading" id="runtime"><h2>Inference Runtime</h2></div>
+<div class="callout">
+<p class="callout-eyebrow">Shipped</p>
+<h3>Stateful Chat — Sliding-Window Memory + Cross-Session Continuity</h3>
+<p>Voice and text conversations now maintain state. The last 10 turns of the active session are injected into prompt context. On disconnect, the session is summarized by Mac MLX and that summary becomes available to the next session. Per-persona separation is enforced at the schema level; conversation history is backed up to Supabase under a multi-tenant schema.</p>
+</div>
+
+<div class="section-heading" id="runtime"><h2>Inference Runtime — V1 vs V2</h2></div>
 <table>
-<tr><th>Metric</th><th>Value</th></tr>
-<tr><td>Model</td><td>Mistral 7B + LoRA Adapters</td></tr>
-<tr><td>TTS System</td><td>F5-TTS</td></tr>
-<tr><td>GPU</td><td>RTX 4070 Super (12GB VRAM)</td></tr>
-<tr><td>Quantization</td><td>4-bit / 8-bit (VRAM-constrained)</td></tr>
-<tr><td>ASR (WhisperX small, CPU)</td><td>388 ms</td></tr>
-<tr><td>LLM First-Token Latency</td><td>692 ms</td></tr>
-<tr><td>TTS[0] Synthesis</td><td>1,078 ms</td></tr>
-<tr><td>Time to First Audio (ttFA)</td><td>2,167 ms</td></tr>
-<tr><td>TTS[1] Synthesis</td><td>1,908 ms</td></tr>
-<tr><td>TTS[2] Synthesis</td><td>1,090 ms</td></tr>
-<tr><td>Peak VRAM Usage</td><td><span class="placeholder">~10.5GB</span></td></tr>
+<tr>
+  <th>Metric</th>
+  <th>V1 (Original)</th>
+  <th class="v2">V2 (Current)</th>
+</tr>
+
+<tr class="row-section"><td colspan="3">Stack</td></tr>
+<tr>
+  <td>LLM Model</td>
+  <td class="v1">Mistral 7B + LoRA</td>
+  <td class="v2">Qwen3-30B-A3B (MoE, 3B active)</td>
+</tr>
+<tr>
+  <td>LLM Runtime</td>
+  <td class="v1">PC GPU (CUDA)</td>
+  <td class="v2">MLX on Apple Silicon (Metal)</td>
+</tr>
+<tr>
+  <td>ASR</td>
+  <td class="v1">WhisperX small, CPU</td>
+  <td class="v2">WhisperX large-v3-turbo, CUDA</td>
+</tr>
+<tr>
+  <td>TTS System</td>
+  <td class="v1">F5-TTS</td>
+  <td class="v2">F5-TTS, per-persona reference pool</td>
+</tr>
+<tr>
+  <td>Quantization</td>
+  <td class="v1">4-bit / 8-bit (VRAM-constrained)</td>
+  <td class="v2">4-bit MoE</td>
+</tr>
+<tr>
+  <td>Inference Hardware</td>
+  <td class="v1">1× RTX 4070 Super (12GB)</td>
+  <td class="v2">RTX 4070 Super + Apple Silicon</td>
+</tr>
+
+<tr class="row-section"><td colspan="3">Latency — Warm Path</td></tr>
+<tr>
+  <td>ASR Latency</td>
+  <td class="v1">388 ms</td>
+  <td class="v2">200 – 400 ms</td>
+</tr>
+<tr>
+  <td>LLM First-Token Latency</td>
+  <td class="v1">692 ms</td>
+  <td class="v2">1.0 – 2.5 s</td>
+</tr>
+<tr>
+  <td>TTS[0] Synthesis</td>
+  <td class="v1">1,078 ms</td>
+  <td class="v2">1.0 – 1.5 s</td>
+</tr>
+<tr>
+  <td>TTS[1] Synthesis</td>
+  <td class="v1">1,908 ms</td>
+  <td class="v2">1.0 – 1.5 s</td>
+</tr>
+<tr>
+  <td>Time to First Audio (TTFA)</td>
+  <td class="v1">2,167 ms</td>
+  <td class="v2">3 – 5 s</td>
+</tr>
+
+<tr class="row-section"><td colspan="3">Latency — Cold Start <sup style="color:var(--green);font-family:'IBM Plex Mono',monospace;font-size:9px;">¹</sup></td></tr>
+<tr>
+  <td>LLM First-Token Latency</td>
+  <td class="v1">—</td>
+  <td class="v2">30 – 60 s</td>
+</tr>
+<tr>
+  <td>Time to First Audio (TTFA)</td>
+  <td class="v1">—</td>
+  <td class="v2">~ 45 s</td>
+</tr>
+
+<tr class="row-section"><td colspan="3">Memory</td></tr>
+<tr>
+  <td>Peak VRAM (PC GPU)</td>
+  <td class="v1">~10.5 GB</td>
+  <td class="v2">~5 GB (ASR + TTS)</td>
+</tr>
+<tr>
+  <td>Mac Unified Memory</td>
+  <td class="v1">—</td>
+  <td class="v2">~17 GB (Qwen3-30B-A3B)</td>
+</tr>
+
+<tr class="row-section"><td colspan="3">Capabilities</td></tr>
+<tr>
+  <td>Stateful Chat</td>
+  <td class="v1">—</td>
+  <td class="v2">Sliding window (10 turns)</td>
+</tr>
+<tr>
+  <td>Cross-Session Memory</td>
+  <td class="v1">—</td>
+  <td class="v2">Session-end summarization</td>
+</tr>
+<tr>
+  <td>Per-Turn Metrics in UI</td>
+  <td class="v1">—</td>
+  <td class="v2">TTFA / LLM / ASR / chunks</td>
+</tr>
+<tr>
+  <td>System Status Indicator</td>
+  <td class="v1">—</td>
+  <td class="v2">Green / Yellow / Grey dot</td>
+</tr>
+<tr>
+  <td>Cloud Backup</td>
+  <td class="v1">—</td>
+  <td class="v2">Supabase (multi-tenant)</td>
+</tr>
 </table>
 
+<p class="footnote"><sup>¹</sup> Cold-start applies to the first inference after Mac MLX has been idle long enough for the OS to page out model weights, or after a server restart. Subsequent turns hit the prompt cache and return to the warm-path numbers above. Mitigation via pre-warm-on-connect and PC-to-Mac keep-alive ping is planned.</p>
+
 <div class="section-heading" id="demos"><h2>FaceTime Persona Demonstrations</h2></div>
-<p class="lead">Each persona runs through the same local inference pipeline: WhisperX ASR → Mistral-7B + LoRA adapter → F5-TTS voice synthesis. The clips below show 1:1 conversational interaction with each host persona.</p>
+<p class="lead">Each persona runs through the same pipeline: WhisperX ASR (PC) → Qwen3-30B-A3B (Mac MLX) → F5-TTS voice synthesis (PC), with sliding-window memory injected per turn. The clips below show 1:1 conversational interaction with each host persona.</p>
 
 <div class="video-grid">
 <div class="video-card"><div class="video-label">David Sacks</div><iframe src="https://www.youtube.com/embed/h7_qrrBfofg" allowfullscreen></iframe></div>
