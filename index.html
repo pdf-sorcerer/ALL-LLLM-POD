@@ -153,6 +153,43 @@
       color: var(--text);
     }
 
+    h3 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .stage-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+      margin-right: 8px;
+    }
+
+    p.body {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      margin-bottom: 14px;
+      max-width: 720px;
+    }
+
+    p.body a {
+      color: var(--green);
+      text-decoration: none;
+      border-bottom: 1px solid var(--green-dim);
+    }
+
+    p.body a:hover {
+      border-bottom-color: var(--green);
+    }
+
+    p.body strong { font-weight: 600; color: var(--text); }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -194,6 +231,17 @@
       border-bottom: none;
     }
 
+    tr.group-row td {
+      background: var(--bg);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
     .diagram {
       background: var(--code-bg);
       border: 1px solid #1e2530;
@@ -206,18 +254,154 @@
       white-space: pre-wrap;
     }
 
+    .diagram-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      margin-top: 24px;
+    }
+
+    .pullquote {
+      border-left: 2px solid var(--green);
+      padding: 4px 0 4px 18px;
+      margin: 18px 0 22px 0;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: #3a3a3a;
+      max-width: 700px;
+    }
+
+    .pullquote .quote-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .footnote {
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-top: 16px;
+      max-width: 680px;
+    }
+
     .footer {
       margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .footer a:hover {
+      color: var(--green);
+      border-bottom-color: var(--green-dim);
+    }
+
+    .architecture-block {
+      margin: 0 0 52px 0;
+    }
+
+    .architecture-thumb {
+      display: block;
+      width: 100%;
+      max-width: 760px;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--surface);
+      cursor: zoom-in;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .architecture-thumb:hover {
+      border-color: var(--green);
+      box-shadow: 0 2px 12px rgba(118, 185, 0, 0.08);
+    }
+
+    .architecture-caption {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: zoom-out;
+      padding: 32px;
+    }
+
+    .lightbox.is-open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      border-radius: 3px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 3px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .lightbox-close:hover {
+      color: white;
+      border-color: rgba(255, 255, 255, 0.6);
     }
 
     @media (max-width: 768px) {
       nav { display: none; }
       main { padding: 32px 24px 80px; }
+      .footer { flex-direction: column; align-items: flex-start; }
+      .lightbox { padding: 16px; }
     }
   </style>
 </head>
@@ -229,83 +413,347 @@
     <p class="page-eyebrow">Multi-Agent LLM System</p>
     <h1>ALL-LLM Pod</h1>
     <p class="lead">
-      <strong>Real-Time Text &amp; Voice Interaction Between Multiple AI Personas.</strong><br><br>
-      ALL-LLM Pod is a full-stack, multi-agent LLM system designed to simulate
-      real-time text and voice interaction between multiple AI personas.
-      The system runs entirely on a local GPU workstation and includes a
-      custom ASR + diarization pipeline, hybrid RAG architecture,
-      Human-in-the-Loop validation tooling, and a SwiftUI client application.
+      <strong>Real-time text and voice interaction between multiple AI personas.</strong><br><br>
+      A full-stack, self-hosted multi-agent system that simulates the All-In Podcast hosts as conversational AI. Runs across an iOS client, a Windows GPU workstation, and Apple Silicon &mdash; with a custom ASR + diarization pipeline, hybrid RAG, per-user memory, and a SwiftUI client.
     </p>
 
-    <div class="section-heading"><h2>538 Episodes: Spoken Time by Speaker</h2></div>
+    <div class="architecture-block">
+      <img class="architecture-thumb"
+           src="architecture.png"
+           alt="ALL-LLM Pod system architecture: iPhone, M4 Mac, and PC across two domains (live App and offline Training Data)"
+           onclick="openLightbox()">
+      <p class="architecture-caption">Click to enlarge &middot; Live runtime and offline training pipeline</p>
+    </div>
+
+    <div class="section-heading"><h2>Corpus Stats &middot; 538 Episodes</h2></div>
+    <p class="body">
+      Source: 538 All-In Podcast uploads (episodes, clips, shorts) totaling 474.83 hours of wall-clock audio. After WhisperX + NeMo diarization and forensic repair, 84.5% of wall-clock time is attributed to a known speaker. Host-only speech below, after deduplication.&sup1;
+    </p>
     <table>
       <tr>
         <th>Host</th>
-        <th>Speaker Audio Hours</th>
+        <th>Speaker Hours</th>
         <th>Segments</th>
       </tr>
       <tr>
         <td>Jcal</td>
-        <td>24.07</td>
-        <td>23,074</td>
+        <td>89.87</td>
+        <td>23,698</td>
       </tr>
       <tr>
         <td>Chamath</td>
-        <td>19.90</td>
-        <td>14,732</td>
+        <td>85.44</td>
+        <td>15,282</td>
       </tr>
       <tr>
         <td>Sacks</td>
-        <td>18.31</td>
-        <td>12,479</td>
+        <td>79.11</td>
+        <td>12,933</td>
       </tr>
       <tr>
         <td>Friedberg</td>
-        <td>14.75</td>
-        <td>11,595</td>
+        <td>65.75</td>
+        <td>11,612</td>
       </tr>
       <tr class="total-row">
         <td>Total</td>
-        <td>77.03</td>
-        <td>61,880</td>
+        <td>320.16</td>
+        <td>63,525</td>
       </tr>
     </table>
+    <p class="footnote">
+      &sup1; Dedupe step removed 3,438 segments (5.68 hours) across hosts &mdash; mostly short-utterance repeats (&le;3 words) from re-cut clips and shorts. Of 474.83 hours total, 325.84 hours (68.6%) is host speech, 75.34 hours (15.9%) is guests, and 73.62 hours (15.5%) is unaccounted (silence, ads, music).
+    </p>
 
-    <div class="section-heading"><h2>System Architecture</h2></div>
-    <div class="diagram">iOS SwiftUI App
-    ↓ (Tailscale)
-FastAPI Backend (Local GPU Workstation)
-    ├── LLM (Mistral + LoRA Adapters)
-    ├── TTS Engine (F5-TTS primary, VibeVoice1.5B backup)
-    ├── Hybrid RAG Layer
-    ├── Behavioral Memory Store
-    ├── WhisperX (ASR) transcripts
-    ├── Whisper (small) Speech-to-text inference
-    ├── NVIDIA NeMo (Diarization)
-    └── Structured Logging &amp; Latency Metrics</div>
+    <div class="section-heading"><h2>Origin &middot; Forced Offload as Capability Upgrade</h2></div>
+    <p class="body">
+      V1 shipped on a single Windows workstation with a 12&nbsp;GB RTX 4070 Super. Whisper-small + Mistral 7B LLM + TTS all on one 12GB GPU. It worked, with tradeoffs: low VRAM ceiling meant tablestakes features like ASR fidelity and conversational memory had to be downgraded and made more limited.
+    </p>
+    <p class="body">
+      The solution was supposed to be pragmatic &mdash; route the LLM to a Mac M-series over Tailscale to free PC VRAM for ASR and TTS. What the migration unlocked turned out to be larger than the problem it solved:
+    </p>
+    <div class="pullquote">
+      <span class="quote-label">Three unplanned wins</span>
+      <strong>MoE architecture.</strong> Qwen3-30B-A3B is a Mixture-of-Experts model: 30B total parameters, ~3B active per token. Voice mode gets 30B-class reasoning at near-3B inference speed. The active-parameter routing is exactly the tradeoff conversational latency needs.<br><br>
+      <strong>Unified memory.</strong> Apple Silicon holds a 30B 4-bit model (16.8&nbsp;GB pinned) the PC literally cannot fit. The forced offload became an architectural capability the original setup couldn't reach.<br><br>
+      <strong>Abliteration.</strong> The chosen model (Josiefied-Qwen3-30B-A3B-abliterated) has the refusal direction orthogonalized out of its weights. Personas stay in character without prompt gymnastics fighting safety reflexes that would otherwise leak into the host voice.
+    </div>
+    <p class="body">
+      None of these were planned. They emerged from the constraint. In retrospect, I should have been looking earlier for this solution. The current v2 stack is the result of solving the VRAM problem and discovering, after the fact, that the solution was the right architecture for the product.
+    </p>
 
-    <div class="section-heading"><h2>ASR &amp; Diarization Pipeline</h2></div>
-    <div class="diagram">YouTube URL
-    ↓
-yt_dlp + 3rd party apps
-    ↓
-Audio Normalization (16k mono)
-    ↓
-WhisperX Transcription
-    ↓
-NeMo Diarization
-    ↓
-Speaker Merge &amp; Segment Repair
-    ↓
-HITL Validation
-    ↓
-Speaker-Labeled Dataset Export</div>
+    <div class="section-heading"><h2>System Architecture &middot; Lifecycle</h2></div>
+    <p class="body">
+      ALL-LLM Pod is built as a three-stage lifecycle: raw podcast transcripts become structured training data; that training data assembles into deployable personas; the live system delivers them in real time over voice and text.
+    </p>
 
-    <div class="footer">Mason Thompson · Berkeley, California</div>
+    <h3><span class="stage-label">01</span>Transcripts &rarr; Training Data</h3>
+    <p class="body">
+      The source material is 538 episodes (clips, shorts, episodes) of the All-In Podcast. Each episode splits into two parallel tracks: one for text training signal, one for voice references.
+    </p>
+    <div class="diagram">  TEXT TRACK              AUDIO TRACK
+  ──────────              ───────────
+  Whisper transcription   Clip extraction
+  Diarization             Quality filter
+  Forensic repair         Prosody indexing
+  Classification          Reference pool
+  Metadata
+        ↓                       ↓
+   persona signal         per-persona F5 input</div>
+    <p class="body">
+      Text-track quality is non-trivial: WhisperX has decoder-level failure modes that drop real utterances, and NeMo's speaker assignment has attribution-level failure modes that misroute them. Both are addressed by a forensic repair layer (<a href="https://masedawg1.github.io/all_llm_pod/dive.html">dive.html</a>, <a href="https://masedawg1.github.io/all_llm_pod/forensics.html">forensics.html</a>).
+    </p>
+    <p class="body">
+      Voice references for TTS are extracted in parallel: clips filtered for quality, indexed by prosody, curated into a per-persona reference pool for zero-shot F5-TTS synthesis. Both tracks feed Stage 2.
+    </p>
+
+    <h3><span class="stage-label">02</span>Training Data &rarr; Personas</h3>
+    <p class="body">
+      Each persona is assembled from several layers, none of which require fine-tuning.
+    </p>
+    <p class="body">
+      <strong>Persona prompts.</strong> V2 uses ~2.3k-token system prompts for persona conditioning. Who they are, how they hedge, what they pivot to, how they push back &mdash; all abstracted from the transcripts. No few-shot examples in the prompt itself; the model carries the patterns. LoRA training on Qwen3 is deferred to a future Phase 3.
+    </p>
+    <p class="body">
+      <strong>Voice exemplars.</strong> Extracted in Stage 1 and pulled by F5-TTS at sentence-level boundaries. Each persona maintains its own curated reference pool; the orchestrator pins a reference at session start and the F5 service caches the preprocessed waveform across turns.
+    </p>
+    <p class="body">
+      <strong>Persona display assets.</strong> Avatars, names, locations, accent colors, and mouth-positioning are managed as an outfit organizer &mdash; interchangeable visual pieces that compose into each persona's presentation in the mobile client.
+    </p>
+    <p class="body">
+      <strong>LoRA adapters.</strong> V1 shipped Mistral 7B + persona-specific LoRA adapters. V2 currently runs Qwen3-30B-A3B with prompt-only persona conditioning &mdash; the abliterated base model holds character well enough that LoRA isn't yet pulling weight. A future Phase 3 will revisit this with the corpus data already assembled.
+    </p>
+
+    <h3><span class="stage-label">03</span>Personas &rarr; Live Inference</h3>
+    <p class="body">
+      The live system spans three machines: an iOS client, a Windows workstation running the orchestrator (ASR + TTS + memory + control), and a Mac running the language model. All three communicate over Tailscale mesh.
+    </p>
+    <p class="body">
+      <strong>ASR.</strong> WhisperX large-v3-turbo on CUDA. The iOS client streams 16-bit PCM at 16&nbsp;kHz in 100ms chunks. When the user releases the mic, a 350ms tail capture protects trailing consonants before the final flush, and the server runs a quality re-pass on the full accumulated buffer. End-to-end cycle time on a 3-5&nbsp;s utterance: 800ms&ndash;2.0&nbsp;s.
+    </p>
+    <p class="body">
+      <strong>Language model.</strong> Qwen3-30B-A3B abliterated, 4-bit quant MoE, served by <a href="https://github.com/jundot/omlx">omlx</a> on Apple Silicon. The model is pinned in memory (TTL = pinned, 16.8&nbsp;GB resident) and prefix-cache holds the persona system prompt across turns. The orchestrator assembles a per-turn prompt (base + persona + sliding window + retrieved long-term memories) and streams tokens back over HTTP.
+    </p>
+    <p class="body">
+      <strong>TTS.</strong> F5-TTS on the Windows GPU. Responses are chunked on sentence boundaries; each chunk synthesizes against the active persona's reference clip and streams PCM back to iOS chunk-by-chunk, so playback starts before the full response finishes generating.
+    </p>
+    <p class="body">
+      <strong>Memory.</strong> Two layers. A sliding window keeps the last ten turns of the active session in prompt context. An agentic memory layer indexes promoted turns with vector embeddings and recalls them by similarity. On session end, the conversation is summarized by the Mac LLM and the summary becomes available to the next session. Conversation history is persisted to local SQLite as source of truth, with backup to Supabase (multi-tenant schema).
+    </p>
+    <p class="body">
+      <strong>Face identity and per-user memory.</strong> The iOS client uses ARKit face anchors to maintain a stable per-face identifier across sessions. The first time a face talks to a given persona, the persona introduces itself and asks who you are. On future calls, the persona greets you by name and references prior conversations. Facts extracted from the introduction (name, role, why-it-matters) are written to a per-(face, persona) store on iOS and surfaced into the system prompt on subsequent calls.
+    </p>
+    <p class="body">
+      <strong>Sentiment streaming.</strong> ARKit blendshapes feed a 1Hz semantic state stream (engagement, attentiveness, confusion, valence) over the same WebSocket as ASR audio. A 15-second summary window emits a humanized line to the client log. Per-persona gaze policies adjust the avatar's eye behavior based on the inferrer's reading.
+    </p>
+    <p class="body">
+      <strong>Instrumentation.</strong> A pipeline phase indicator at the bottom of the FaceTime view shows the current stage (Listening / Transcribing / Thinking / Speaking) alongside live per-stage timings &mdash; ASR, LLM, and TTS latency in milliseconds, with active-stage highlighting and a slow fade between turns.
+    </p>
+    <p class="body">
+      <strong>The iOS client.</strong> SwiftUI app with an iMessage/FaceTime UX. Each persona is a contact you can DM (text) or FaceTime (voice). The PC is the primary orchestrator, but there's a Mac-direct fallback for LLM if the PC is unreachable, and a PC-direct TTS path if the Mac is the bottleneck.
+    </p>
+
+    <div class="section-heading"><h2>Design Decisions</h2></div>
+
+    <h3>Why prefix caching matters more than hosted-API latency</h3>
+    <p class="body">
+      Self-hosted LLMs running with prefix caching pin the persona system prompt (typically 2.3k tokens) in the KV cache across turns. The cost of the prompt is paid once at session start, not on every call. Hosted real-time APIs can't do this &mdash; every call re-tokenizes the system prompt from scratch.
+    </p>
+    <p class="body">
+      For a long-running persona conversation, this is the difference between paying for 2.3k tokens of prompt overhead per turn versus paying for it once per session. The latency win compounds: warm-path LLM first-token sits around 1&ndash;3&nbsp;s on this stack despite running on consumer Apple Silicon, because the cache is hot for the persona that's currently speaking.
+    </p>
+
+    <h3>Why self-hosted ASR/TTS still wins</h3>
+    <p class="body">
+      Hosted real-time voice APIs ship a fixed pipeline: their codec, their tail-capture timing, their re-transcription pass, their voice choices. The latency numbers they publish are real, but they're achieved by removing knobs.
+    </p>
+    <p class="body">
+      Self-hosting WhisperX-v3-turbo on a mid-range GPU gives 800ms&ndash;2.0&nbsp;s on a 3&ndash;5&nbsp;s utterance, including a deliberate 350ms tail capture and a full quality re-pass after the user releases the mic. Not sub-500ms &mdash; but the tradeoffs are visible and tunable. Trailing consonants get captured. Final transcriptions get aligned. F5-TTS draws from a custom per-persona reference pool, not a hosted voice menu.
+    </p>
+    <p class="body">
+      The "new era" framing around hosted speech-to-speech APIs is generally a sales position. The architectural reality &mdash; encoder &rarr; transformer &rarr; decoder &mdash; hasn't changed; the seam just moved. Self-hosting remains the right call when the product differentiation lives in the stack itself.
+    </p>
+
+    <h3>Why abliteration + prompt-only personas (deferring LoRA)</h3>
+    <p class="body">
+      LoRA adapters were V1's primary persona-injection mechanism. V2 dropped them, not because they failed, but because the abliterated Qwen3-30B-A3B base model holds persona character well enough on prompt alone that the marginal value of LoRA wasn't justifying the training pipeline cost.
+    </p>
+    <p class="body">
+      Abliteration matters here for a non-obvious reason. The refusal direction in a stock-aligned LLM doesn't only fire on harmful requests &mdash; it also leaks into persona consistency. Personas with strong opinions get hedged. Personas with crude humor get sanitized. Personas with political positions get diluted. Surgically removing the refusal direction at the weight level (rather than fighting it in the prompt) means the persona prompt is the only signal shaping output.
+    </p>
+    <p class="body">
+      LoRA training on Qwen3 remains on the roadmap for Phase 3, with the existing corpus data already prepared. Prompt-only is the V2 baseline because it ships now.
+    </p>
+
+    <div class="section-heading"><h2>Performance &amp; Instrumentation</h2></div>
+    <p class="body">
+      The system has evolved from a single-workstation pipeline to a multi-machine architecture: Windows handles ASR, TTS, and orchestration on the RTX 4070 Super; Apple Silicon hosts the LLM via omlx with prefix-cached pinning. The trade &mdash; modestly higher latency for substantially more capable inference and lower PC memory pressure &mdash; is documented below.
+    </p>
+
+    <h3>Inference Runtime &middot; V1 vs V2</h3>
+    <table>
+      <tr>
+        <th>Metric</th>
+        <th>V1 (Original)</th>
+        <th>V2 (Current)</th>
+      </tr>
+      <tr class="group-row"><td colspan="3">Stack</td></tr>
+      <tr>
+        <td>LLM Model</td>
+        <td>Mistral 7B + LoRA</td>
+        <td>Qwen3-30B-A3B abliterated (MoE, 3B active)</td>
+      </tr>
+      <tr>
+        <td>LLM Runtime</td>
+        <td>PC GPU (CUDA)</td>
+        <td>omlx on Apple Silicon (Metal)</td>
+      </tr>
+      <tr>
+        <td>ASR</td>
+        <td>WhisperX small, CPU</td>
+        <td>WhisperX large-v3-turbo, CUDA</td>
+      </tr>
+      <tr>
+        <td>TTS System</td>
+        <td>F5-TTS</td>
+        <td>F5-TTS, per-persona reference pool</td>
+      </tr>
+      <tr>
+        <td>Quantization</td>
+        <td>4-bit / 8-bit (VRAM-constrained)</td>
+        <td>4-bit MoE</td>
+      </tr>
+      <tr>
+        <td>Inference Hardware</td>
+        <td>1&times; RTX 4070 Super (12&nbsp;GB)</td>
+        <td>RTX 4070 Super + Apple Silicon</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="3">Latency &mdash; Warm Path</td></tr>
+      <tr>
+        <td>ASR Latency (3&ndash;5s utterance)</td>
+        <td>388 ms</td>
+        <td>800 ms &ndash; 2.0 s</td>
+      </tr>
+      <tr>
+        <td>LLM First-Token Latency</td>
+        <td>692 ms</td>
+        <td>1.0 &ndash; 3.0 s</td>
+      </tr>
+      <tr>
+        <td>LLM Throughput</td>
+        <td>&mdash;</td>
+        <td>21 &ndash; 24 tok/s</td>
+      </tr>
+      <tr>
+        <td>TTS[0] Synthesis</td>
+        <td>1,078 ms</td>
+        <td>1.0 &ndash; 1.3 s</td>
+      </tr>
+      <tr>
+        <td>Time to First Audio (TTFA)</td>
+        <td>2,167 ms</td>
+        <td>3.5 &ndash; 4.5 s</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="3">Memory</td></tr>
+      <tr>
+        <td>Peak VRAM (PC GPU)</td>
+        <td>~10.5 GB</td>
+        <td>~3.3 GB (Whisper + F5)</td>
+      </tr>
+      <tr>
+        <td>Mac Unified Memory</td>
+        <td>&mdash;</td>
+        <td>16.8 GB pinned (Qwen3-30B-A3B)</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="3">Capabilities</td></tr>
+      <tr>
+        <td>Stateful Chat</td>
+        <td>&mdash;</td>
+        <td>Sliding window (10 turns)</td>
+      </tr>
+      <tr>
+        <td>Cross-Session Memory</td>
+        <td>&mdash;</td>
+        <td>Session-end summarization</td>
+      </tr>
+      <tr>
+        <td>Per-Face Memory</td>
+        <td>&mdash;</td>
+        <td>ARKit identity + per-persona fact store</td>
+      </tr>
+      <tr>
+        <td>First-Meeting Flow</td>
+        <td>&mdash;</td>
+        <td>Persona introduces self &amp; extracts facts</td>
+      </tr>
+      <tr>
+        <td>Sentiment Streaming</td>
+        <td>&mdash;</td>
+        <td>1Hz ARKit semantic state</td>
+      </tr>
+      <tr>
+        <td>Per-Turn Metrics in UI</td>
+        <td>&mdash;</td>
+        <td>Live ASR / LLM / TTS timing strip</td>
+      </tr>
+      <tr>
+        <td>System Status Indicator</td>
+        <td>&mdash;</td>
+        <td>Green / Yellow / Grey dot</td>
+      </tr>
+      <tr>
+        <td>Cloud Backup</td>
+        <td>&mdash;</td>
+        <td>Supabase (multi-tenant)</td>
+      </tr>
+
+      <tr class="group-row"><td colspan="3">Latency &mdash; Cold Start &sup1;</td></tr>
+      <tr>
+        <td>LLM First-Token Latency</td>
+        <td>&mdash;</td>
+        <td>30 &ndash; 60 s</td>
+      </tr>
+      <tr>
+        <td>Time to First Audio (TTFA)</td>
+        <td>&mdash;</td>
+        <td>~ 45 s</td>
+      </tr>
+    </table>
+    <p class="footnote">
+      &sup1; Cold-start latencies measured on first request after model load. Warm-path latencies apply once weights are resident in memory and the prefix cache is hot for the active persona.
+    </p>
+
+    <div class="footer">
+      <span>Mason Thompson &middot; Berkeley, California</span>
+      <a href="v1.html">V1 Architecture &middot; Archive &rarr;</a>
+    </div>
   </main>
+
+  <!-- Lightbox overlay for architecture diagram -->
+  <div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">Close &times;</button>
+    <img src="architecture.png" alt="ALL-LLM Pod system architecture (enlarged)">
+  </div>
 
   <script>
     window.NAV_ANCHORS = [];
+
+    function openLightbox() {
+      document.getElementById('architectureLightbox').classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('architectureLightbox').classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
   </script>
   <script src="nav-loader.js" data-page="index"></script>
 
