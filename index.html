@@ -474,9 +474,9 @@
     </p>
     <div class="pullquote">
       <span class="quote-label">Three unplanned wins</span>
-      <strong>MoE architecture.</strong> Qwen3-30B-A3B is a Mixture-of-Experts model: 30B total parameters, ~3B active per token. Voice mode gets 30B-class reasoning at near-3B inference speed. The active-parameter routing is exactly the tradeoff conversational latency needs.<br><br>
-      <strong>Unified memory.</strong> Apple Silicon holds a 30B 4-bit model (16.8&nbsp;GB pinned) the PC literally cannot fit. The forced offload became an architectural capability the original setup couldn't reach.<br><br>
-      <strong>Abliteration.</strong> The chosen model (Josiefied-Qwen3-30B-A3B-abliterated) has the refusal direction orthogonalized out of its weights. Personas stay in character without prompt gymnastics fighting safety reflexes that would otherwise leak into the host voice.
+      <strong>MoE architecture.</strong> Qwen3-30B-A3B is a Mixture-of-Experts model: 30B total parameters, ~3B active per token. FaceTime mode gets 30B-class reasoning at totally acceptable speeds. Plus, enormous gains to context window. <br><br>
+      <strong>Unified memory.</strong> Apple Silicon holds a 30B 4-bit model (16.8&nbsp;GB pinned), the 12GB 4070 Super literally cannot fit. The forced offload became an architectural capability the original setup couldn't reach.<br><br>
+      <strong>Abliteration.</strong> Personas stay in character without prompt gymnastics or triggering guardrails. Need to look more into normal models; Reddit suggests they're better.
     </div>
     <p class="body">
       None of these were planned. They emerged from the constraint. In retrospect, I should have been looking earlier for this solution. The current v2 stack is the result of solving the VRAM problem and discovering, after the fact, that the solution was the right architecture for the product.
@@ -501,7 +501,8 @@
         ↓                       ↓
    persona signal         per-persona F5 input</div>
     <p class="body">
-      Text-track quality is non-trivial: WhisperX has decoder-level failure modes that drop real utterances, and NeMo's speaker assignment has attribution-level failure modes that misroute them. Both are addressed by a forensic repair layer (<a href="https://masedawg1.github.io/all_llm_pod/dive.html">dive.html</a>, <a href="https://masedawg1.github.io/all_llm_pod/forensics.html">forensics.html</a>).
+      <br>
+      Text-track quality is non-trivial: ASR and classification have well documented shortcomings handling sub 5-second speech, especially with quiet utterances, rapid turn-taking, and cross-talk. Those artificats make transcription and speaker classification more complicated, and are addressed by a HITL forensic repair layer (<a href="https://masedawg1.github.io/all_llm_pod/dive.html">dive.html</a>, <a href="https://masedawg1.github.io/all_llm_pod/forensics.html">forensics.html</a>).
     </p>
     <p class="body">
       Voice references for TTS are extracted in parallel: clips filtered for quality, indexed by prosody, curated into a per-persona reference pool for zero-shot F5-TTS synthesis. Both tracks feed Stage 2.
@@ -509,87 +510,78 @@
 
     <h3><span class="stage-label">02</span>Training Data &rarr; Personas</h3>
     <p class="body">
-      Each persona is assembled from several layers, none of which require fine-tuning.
+      The four hosts as well as other ALL-LLM personas are assembled by:
     </p>
     <p class="body">
-      <strong>Persona prompts.</strong> V2 uses ~2.3k-token system prompts for persona conditioning. Who they are, how they hedge, what they pivot to, how they push back &mdash; all abstracted from the transcripts. No few-shot examples in the prompt itself; the model carries the patterns. LoRA training on Qwen3 is deferred to a future Phase 3.
+      <strong>Persona prompts.</strong> ~2.3k token-size prompts handle persona conditioning. Who they are, how they hedge, what they pivot to, how they push back &mdash; all abstracted from the transcripts. No few-shot examples in the prompt itself; the model carries the patterns effectively so well, that Qwen3 LoRA adapters are on the backburner for now. 
     </p>
     <p class="body">
-      <strong>Voice exemplars.</strong> Extracted in Stage 1 and pulled by F5-TTS at sentence-level boundaries. Each persona maintains its own curated reference pool; the orchestrator pins a reference at session start and the F5 service caches the preprocessed waveform across turns.
+      <strong>Voice exemplars.</strong> Extracted from podcast audio earlier and pulled by F5 during TTS synthesis.  Each persona maintains its own curated reference pool; the orchestrator pins a reference at session start and the F5 service caches the preprocessed waveform across turns.
+        <pre class="code-block"><code>01:14:20.744 | 🔄 [BACKEND] FORCE SWAP requested for: zuck
+        01:14:20.744 | ⚙️ [SWAP] Pinning F5 reference for: zuck...
+        01:14:20.744 | [f5_service] Pinned reference for 'zuck'</code></pre>
+        <pre class="code-block"><code>01:14:38.118 | Converting audio...
+        01:14:38.147 | Audio is over 12s, clipping short. (2)
+    01:14:38.149 | Using custom reference text...</code></pre>
+    </p>
+    <br>
+    <p class="body">
+      <strong>Outfits.</strong> Persona pictures via Chat Jippity, edited (badly) in MacOS Preview. Eye, head, and mouth
+      positioning handled in-app via an outfit organizer.
     </p>
     <p class="body">
-      <strong>Persona display assets.</strong> Avatars, names, locations, accent colors, and mouth-positioning are managed as an outfit organizer &mdash; interchangeable visual pieces that compose into each persona's presentation in the mobile client.
+      <strong>LoRA adapters.</strong> V2 runs Qwen3-30B-A3B with prompt-only persona conditioning &mdash; new LoRA adapters
+      downranked to P3.
     </p>
-    <p class="body">
-      <strong>LoRA adapters.</strong> V1 shipped Mistral 7B + persona-specific LoRA adapters. V2 currently runs Qwen3-30B-A3B with prompt-only persona conditioning &mdash; the abliterated base model holds character well enough that LoRA isn't yet pulling weight. A future Phase 3 will revisit this with the corpus data already assembled.
-    </p>
-
+    
     <h3><span class="stage-label">03</span>Personas &rarr; Live Inference</h3>
     <p class="body">
-      The live system spans three machines: an iOS client, a Windows workstation running the orchestrator (ASR + TTS + memory + control), and a Mac running the language model. All three communicate over Tailscale mesh.
+      The live system spans three machines over Tailscale mesh: an iOS client, a Windows workstation running the
+      orchestrator (ASR + TTS + memory + control), and a Mac running the language model.
     </p>
     <p class="body">
-      <strong>ASR.</strong> WhisperX large-v3-turbo on CUDA. The iOS client streams 16-bit PCM at 16&nbsp;kHz in 100ms chunks. When the user releases the mic, a 350ms tail capture protects trailing consonants before the final flush, and the server runs a quality re-pass on the full accumulated buffer. End-to-end cycle time on a 3-5&nbsp;s utterance: 800ms&ndash;2.0&nbsp;s.
+      <strong>ASR.</strong> WhisperX large-v3-turbo. The iOS client streams 16-bit PCM at 16&nbsp;kHz in 100ms chunks. On
+      mic release, a 350ms tail capture protects trailing consonants before the final flush, and the server runs a quality
+      re-pass on the full buffer. End-to-end cycle on a 3&ndash;5&nbsp;s utterance: 800ms&ndash;2.0&nbsp;s.
     </p>
     <p class="body">
-      <strong>Language model.</strong> Qwen3-30B-A3B abliterated, 4-bit quant MoE, served by <a href="https://github.com/jundot/omlx">omlx</a> on Apple Silicon. The model is pinned in memory (TTL = pinned, 16.8&nbsp;GB resident) and prefix-cache holds the persona system prompt across turns. The orchestrator assembles a per-turn prompt (base + persona + sliding window + retrieved long-term memories) and streams tokens back over HTTP.
+      <strong>Language model.</strong> Qwen3-30B-A3B abliterated, 4-bit MoE, served by <a
+        href="https://github.com/jundot/omlx">omlx</a> on Apple Silicon. Model pinned in memory (16.8&nbsp;GB resident) with
+      prefix cache holding the persona system prompt across turns &mdash; a huge win. The orchestrator assembles a per-turn
+      prompt (base + persona + sliding window + retrieved memories) and streams tokens back over HTTP.
     </p>
     <p class="body">
-      <strong>TTS.</strong> F5-TTS on the Windows GPU. Responses are chunked on sentence boundaries; each chunk synthesizes against the active persona's reference clip and streams PCM back to iOS chunk-by-chunk, so playback starts before the full response finishes generating.
+      <strong>TTS.</strong> F5-TTS on the Windows GPU. LLM completions chunk on sentence boundaries; each chunk synthesizes
+      against the active persona's reference clip and streams PCM back to iOS, so playback starts before generation
+      finishes.
     </p>
     <p class="body">
-      <strong>Memory.</strong> Two layers. A sliding window keeps the last ten turns of the active session in prompt context. An agentic memory layer indexes promoted turns with vector embeddings and recalls them by similarity. On session end, the conversation is summarized by the Mac LLM and the summary becomes available to the next session. Conversation history is persisted to local SQLite as source of truth, with backup to Supabase (multi-tenant schema).
+      <strong>Memory.</strong> Two layers. A sliding window keeps the last ten turns in prompt context. An agentic layer
+      indexes promoted turns as vector embeddings and recalls by similarity. On session end, the Mac LLM summarizes the
+      conversation for the next session. History persists to local SQLite as source of truth, with backup to Supabase
+      (multi-tenant).
     </p>
     <p class="body">
-      <strong>Face identity and per-user memory.</strong> The iOS client uses ARKit face anchors to maintain a stable per-face identifier across sessions. The first time a face talks to a given persona, the persona introduces itself and asks who you are. On future calls, the persona greets you by name and references prior conversations. Facts extracted from the introduction (name, role, why-it-matters) are written to a per-(face, persona) store on iOS and surfaced into the system prompt on subsequent calls.
+      <strong>Face identity and per-user memory.</strong> The iOS client uses ARKit face anchors for a stable per-face
+      identifier across sessions. First meeting, the persona introduces itself and asks who you are; future calls, it greets
+      you by name and references prior conversations. Facts from the intro (name, role, why-it-matters) write to a
+      per-(face, persona) store and surface into the system prompt on subsequent calls.
     </p>
     <p class="body">
-      <strong>Sentiment streaming.</strong> ARKit blendshapes feed a 1Hz semantic state stream (engagement, attentiveness, confusion, valence) over the same WebSocket as ASR audio. A 15-second summary window emits a humanized line to the client log. Per-persona gaze policies adjust the avatar's eye behavior based on the inferrer's reading.
+      <strong>Sentiment streaming.</strong> ARKit blendshapes feed a 1Hz semantic state stream (engagement, attentiveness,
+      confusion, valence) over the same WebSocket as ASR audio. A 15-second summary window emits a humanized line to the
+      client log, with the goal of shaping model input from non-verbal feedback.
     </p>
     <p class="body">
-      <strong>Instrumentation.</strong> A pipeline phase indicator at the bottom of the FaceTime view shows the current stage (Listening / Transcribing / Thinking / Speaking) alongside live per-stage timings &mdash; ASR, LLM, and TTS latency in milliseconds, with active-stage highlighting and a slow fade between turns.
+      <strong>Instrumentation.</strong> A pipeline phase indicator at the bottom of the FaceTime view shows the current
+      stage (Listening / Transcribing / Thinking / Speaking) alongside live per-stage timings &mdash; ASR, LLM, TTS latency
+      in milliseconds, with active-stage highlighting and a slow fade between turns.
     </p>
     <p class="body">
-      <strong>The iOS client.</strong> SwiftUI app with an iMessage/FaceTime UX. Each persona is a contact you can DM (text) or FaceTime (voice). The PC is the primary orchestrator, but there's a Mac-direct fallback for LLM if the PC is unreachable, and a PC-direct TTS path if the Mac is the bottleneck.
+      <strong>iOS client.</strong> SwiftUI app with an iMessage/FaceTime UX. Each persona is a contact you can DM (text) or
+      FaceTime (voice). The PC is the primary orchestrator, with a Mac-direct LLM fallback if the PC is unreachable, and a
+      PC-direct TTS path if the Mac is the bottleneck.
     </p>
-
-    <div class="section-heading"><h2>Design Decisions</h2></div>
-
-    <h3>Why prefix caching matters more than hosted-API latency</h3>
-    <p class="body">
-      Self-hosted LLMs running with prefix caching pin the persona system prompt (typically 2.3k tokens) in the KV cache across turns. The cost of the prompt is paid once at session start, not on every call. Hosted real-time APIs can't do this &mdash; every call re-tokenizes the system prompt from scratch.
-    </p>
-    <p class="body">
-      For a long-running persona conversation, this is the difference between paying for 2.3k tokens of prompt overhead per turn versus paying for it once per session. The latency win compounds: warm-path LLM first-token sits around 1&ndash;3&nbsp;s on this stack despite running on consumer Apple Silicon, because the cache is hot for the persona that's currently speaking.
-    </p>
-
-    <h3>Why self-hosted ASR/TTS still wins</h3>
-    <p class="body">
-      Hosted real-time voice APIs ship a fixed pipeline: their codec, their tail-capture timing, their re-transcription pass, their voice choices. The latency numbers they publish are real, but they're achieved by removing knobs.
-    </p>
-    <p class="body">
-      Self-hosting WhisperX-v3-turbo on a mid-range GPU gives 800ms&ndash;2.0&nbsp;s on a 3&ndash;5&nbsp;s utterance, including a deliberate 350ms tail capture and a full quality re-pass after the user releases the mic. Not sub-500ms &mdash; but the tradeoffs are visible and tunable. Trailing consonants get captured. Final transcriptions get aligned. F5-TTS draws from a custom per-persona reference pool, not a hosted voice menu.
-    </p>
-    <p class="body">
-      The "new era" framing around hosted speech-to-speech APIs is generally a sales position. The architectural reality &mdash; encoder &rarr; transformer &rarr; decoder &mdash; hasn't changed; the seam just moved. Self-hosting remains the right call when the product differentiation lives in the stack itself.
-    </p>
-
-    <h3>Why abliteration + prompt-only personas (deferring LoRA)</h3>
-    <p class="body">
-      LoRA adapters were V1's primary persona-injection mechanism. V2 dropped them, not because they failed, but because the abliterated Qwen3-30B-A3B base model holds persona character well enough on prompt alone that the marginal value of LoRA wasn't justifying the training pipeline cost.
-    </p>
-    <p class="body">
-      Abliteration matters here for a non-obvious reason. The refusal direction in a stock-aligned LLM doesn't only fire on harmful requests &mdash; it also leaks into persona consistency. Personas with strong opinions get hedged. Personas with crude humor get sanitized. Personas with political positions get diluted. Surgically removing the refusal direction at the weight level (rather than fighting it in the prompt) means the persona prompt is the only signal shaping output.
-    </p>
-    <p class="body">
-      LoRA training on Qwen3 remains on the roadmap for Phase 3, with the existing corpus data already prepared. Prompt-only is the V2 baseline because it ships now.
-    </p>
-
-    <div class="section-heading"><h2>Performance &amp; Instrumentation</h2></div>
-    <p class="body">
-      The system has evolved from a single-workstation pipeline to a multi-machine architecture: Windows handles ASR, TTS, and orchestration on the RTX 4070 Super; Apple Silicon hosts the LLM via omlx with prefix-cached pinning. The trade &mdash; modestly higher latency for substantially more capable inference and lower PC memory pressure &mdash; is documented below.
-    </p>
-
     <h3>Inference Runtime &middot; V1 vs V2</h3>
     <table>
       <tr>
