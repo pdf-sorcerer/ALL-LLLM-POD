@@ -410,12 +410,16 @@
   <nav id="shared-nav"></nav>
 
   <main>
-    <p class="page-eyebrow">Multi-Agent LLM System</p>
-    <h1>ALL-LLM Pod</h1>
-    <p class="lead">
-      <strong>Real-time text and voice interaction between multiple AI personas.</strong><br><br>
-      A full-stack, self-hosted multi-agent system that simulates the All-In Podcast hosts as conversational AI. Runs across an iOS client, a Windows GPU workstation, and Apple Silicon &mdash; with a custom ASR + diarization pipeline, hybrid RAG, per-user memory, and a SwiftUI client.
-    </p>
+<p class="page-eyebrow">Multi-Agent LLM System</p>
+
+<h1>ALL-LLM Pod</h1>
+
+<p class="lead">
+  <strong>A real-time multi-agent AI system simulating podcast hosts across text, voice, and group conversation.</strong><br><br>
+  ALL-LLM Pod runs across three machines: an iPhone client, a Windows orchestration server, and Apple Silicon local inference. Users can interact with AI personas through DM, FaceTime-style voice calls, and multi-person group chat.<br><br>
+  The core runtime system works end-to-end on consumer hardware: WhisperX ASR, Qwen3-30B-A3B inference, F5-TTS voice synthesis, hybrid RAG, cross-session memory, and realtime orchestration all operate live across the stack.<br><br>
+  The current bottleneck is <strong>training-data fidelity.</strong> The personas are built from 538 podcast episodes processed through WhisperX + NeMo diarization. Current work focuses on transcript forensics: comparing legacy v2 transcripts against a newer v3 ensemble pipeline to detect dropped audio, segmentation drift, speaker contamination, and other failure modes capable of corrupting downstream persona behavior.
+</p>
 
     <div class="architecture-block">
       <img class="architecture-thumb"
