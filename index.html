@@ -4,9 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALL-LLM Pod | Mason Thompson</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
+  <!-- Fonts moved to head with preconnect (faster than CSS @import) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
     :root {
       --green: #76b900;
       --green-dim: rgba(118, 185, 0, 0.12);
@@ -16,7 +20,7 @@
       --code-bg: #0d1117;
       --text: #1a1a1a;
       --muted: #6b6b6b;
-      --faint: #aaaaaa;
+      --faint: #8c8c8c; /* darkened from #aaaaaa for WCAG AA contrast on white */
       --nav-width: 220px;
     }
 
@@ -153,23 +157,6 @@
       color: var(--text);
     }
 
-    h3 {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--text);
-      margin-top: 28px;
-      margin-bottom: 10px;
-    }
-
-    .stage-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--green);
-      margin-right: 8px;
-    }
-
     p.body {
       font-size: 13.5px;
       line-height: 1.75;
@@ -184,145 +171,11 @@
       border-bottom: 1px solid var(--green-dim);
     }
 
-    p.body a:hover {
-      border-bottom-color: var(--green);
-    }
-
+    p.body a:hover { border-bottom-color: var(--green); }
     p.body strong { font-weight: 600; color: var(--text); }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    th {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 10px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-    }
-
-    td {
-      padding: 11px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      color: #3a3a3a;
-      background: var(--surface);
-    }
-
-    td:first-child {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--text);
-    }
-
-    tr.total-row td {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 14px;
-      font-weight: 600;
-      border-bottom: none;
-    }
-
-    tr.group-row td {
-      background: var(--bg);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--green);
-      padding: 8px 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .diagram {
-      background: var(--code-bg);
-      border: 1px solid #1e2530;
-      border-radius: 3px;
-      padding: 22px 24px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      line-height: 1.9;
-      color: #c9d1d9;
-      white-space: pre-wrap;
-    }
-
-    .diagram-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-      margin-top: 24px;
-    }
-
-    .pullquote {
-      border-left: 2px solid var(--green);
-      padding: 4px 0 4px 18px;
-      margin: 18px 0 22px 0;
-      font-size: 13.5px;
-      line-height: 1.7;
-      color: #3a3a3a;
-      max-width: 700px;
-    }
-
-    .pullquote .quote-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .footnote {
-      font-size: 11px;
-      line-height: 1.6;
-      color: var(--muted);
-      margin-top: 16px;
-      max-width: 680px;
-    }
-
-    .footer {
-      margin-top: 80px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .footer a {
-      color: var(--muted);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: color 0.15s, border-color 0.15s;
-    }
-
-    .footer a:hover {
-      color: var(--green);
-      border-bottom-color: var(--green-dim);
-    }
-
-    .architecture-block {
-      margin: 0 0 52px 0;
-    }
+    /* ── Architecture image + lightbox ────────────────────────────── */
+    .architecture-block { margin: 0 0 52px 0; }
 
     .architecture-thumb {
       display: block;
@@ -333,12 +186,25 @@
       border-radius: 3px;
       background: var(--surface);
       cursor: zoom-in;
+      padding: 0;
       transition: border-color 0.15s, box-shadow 0.15s;
     }
 
     .architecture-thumb:hover {
       border-color: var(--green);
       box-shadow: 0 2px 12px rgba(118, 185, 0, 0.08);
+    }
+
+    .architecture-thumb:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 2px;
+    }
+
+    .architecture-thumb img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 2px;
     }
 
     .architecture-caption {
@@ -362,9 +228,7 @@
       padding: 32px;
     }
 
-    .lightbox.is-open {
-      display: flex;
-    }
+    .lightbox.is-open { display: flex; }
 
     .lightbox img {
       max-width: 100%;
@@ -397,6 +261,43 @@
       border-color: rgba(255, 255, 255, 0.6);
     }
 
+    .lightbox-close:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 2px;
+    }
+
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .footer a:hover {
+      color: var(--green);
+      border-bottom-color: var(--green-dim);
+    }
+
+    /* Fallback nav shown only when JS-injected nav is empty */
+    .nav-fallback { padding: 0; }
+    .nav-fallback .nav-logo { margin-bottom: 0; }
+
     @media (max-width: 768px) {
       nav { display: none; }
       main { padding: 32px 24px 80px; }
@@ -407,7 +308,21 @@
 </head>
 <body>
 
-  <nav id="shared-nav"></nav>
+  <!-- Nav is populated at runtime by nav-loader.js -> nav.html.
+       The <noscript> block below is the graceful-degradation fallback
+       if JS is disabled or nav.html fails to load. -->
+  <nav id="shared-nav">
+    <noscript>
+      <div class="nav-fallback">
+        <div class="nav-logo">ALL-LLM Pod</div>
+        <a class="nav-item" href="index.html">Overview</a>
+        <a class="nav-item" href="architecture.html">Runtime Architecture</a>
+        <a class="nav-item" href="forensics.html">Transcript Fidelity</a>
+        <a class="nav-item" href="chasing_ghosts.html">Ghost Audio</a>
+        <a class="nav-item" href="v1.html">V1 Archive</a>
+      </div>
+    </noscript>
+  </nav>
 
 <main>
   <p class="page-eyebrow">Multi-Agent LLM System</p>
@@ -415,10 +330,13 @@
   <h1>ALL-LLM Pod</h1>
 
   <div class="architecture-block">
-    <img class="architecture-thumb"
-         src="architecture.png"
-         alt="ALL-LLM Pod system architecture: iPhone, M4 Mac, and PC across live runtime and offline training data"
-         onclick="openLightbox()">
+    <button type="button"
+            class="architecture-thumb"
+            aria-label="Enlarge system architecture diagram"
+            onclick="openLightbox('architecture.png', 'ALL-LLM Pod system architecture (enlarged)')">
+      <img src="architecture.png"
+           alt="ALL-LLM Pod system architecture: iPhone, M4 Mac, and PC across live runtime and offline training data">
+    </button>
     <p class="architecture-caption">Click to enlarge &middot; Live runtime and offline training pipeline</p>
   </div>
 
@@ -435,38 +353,52 @@
 
     Short-form audio is commonly discarded in speech pipelines because speaker classification reliability drops sharply on brief utterances. I kept it because roughly 43% of host speech occurs in segments under five seconds. That decision forced the creation of a HITL forensic-review pipeline to detect and repair transcription and diarization failures at scale.<br><br>
 
-    Late in development, another failure mode emerged: speech present in one transcript source but entirely missing from another. The issue resembled dropped audio, but behaved differently enough that I began referring to it internally as “ghost audio.” Weeks were spent tracing its causes, implications, and downstream effects on persona training quality.<br><br>
+    Late in development, another failure mode emerged: speech present in one transcript source but entirely missing from another. The issue resembled dropped audio, but behaved differently enough that I began referring to it internally as &ldquo;ghost audio.&rdquo; Weeks were spent tracing its causes, implications, and downstream effects on persona training quality.<br><br>
 
     The next step is building mirror episodes: a parallel version of the weekly podcast where the personas independently gather news throughout the week, discuss stories with one another asynchronously, and synthesize their own Friday episode from those conversations.
   </p>
 
   <div class="footer">
     <span>Mason Thompson &middot; Berkeley, California</span>
-    <a href="forensics.html">Transcript Forensics &rarr;</a>
+    <a href="forensics.html">Transcript Fidelity &rarr;</a>
     <a href="v1.html">V1 Architecture &middot; Archive &rarr;</a>
   </div>
 </main>
 
-  <!-- Lightbox overlay for architecture diagram -->
-  <div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
-    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">Close &times;</button>
-    <img src="architecture.png" alt="ALL-LLM Pod system architecture (enlarged)">
+  <!-- Lightbox overlay. Image is now parameterized via openLightbox(). -->
+  <div class="lightbox" id="architectureLightbox" role="dialog" aria-modal="true" aria-label="Enlarged architecture diagram" onclick="closeLightbox()">
+    <button type="button" class="lightbox-close" onclick="closeLightbox()" aria-label="Close enlarged image">Close &times;</button>
+    <img id="lightboxImage" src="" alt="">
   </div>
 
   <script>
     window.NAV_ANCHORS = [];
 
-    function openLightbox() {
-      document.getElementById('architectureLightbox').classList.add('is-open');
+    var _lastFocused = null;
+
+    function openLightbox(src, alt) {
+      var lightbox = document.getElementById('architectureLightbox');
+      var image = document.getElementById('lightboxImage');
+      image.src = src;
+      image.alt = alt || 'Architecture diagram enlarged';
+      lightbox.classList.add('is-open');
       document.body.style.overflow = 'hidden';
+      // Move focus into the dialog and remember where to return it
+      _lastFocused = document.activeElement;
+      lightbox.querySelector('.lightbox-close').focus();
     }
 
     function closeLightbox() {
-      document.getElementById('architectureLightbox').classList.remove('is-open');
+      var lightbox = document.getElementById('architectureLightbox');
+      lightbox.classList.remove('is-open');
       document.body.style.overflow = '';
+      if (_lastFocused && typeof _lastFocused.focus === 'function') {
+        _lastFocused.focus();
+        _lastFocused = null;
+      }
     }
 
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') closeLightbox();
     });
   </script>
