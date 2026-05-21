@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALL-LLM Pod | Mason Thompson</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --green: #76b900;
+      --green-dim: rgba(118, 185, 0, 0.12);
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --border: #e4e4e4;
+      --code-bg: #0d1117;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --faint: #aaaaaa;
+      --nav-width: 220px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: var(--nav-width);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 0;
+      overflow-y: auto;
+    }
+
+    .nav-logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 20px 24px 8px;
+    }
+
+    .nav-item {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 7px 24px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: var(--bg);
+      border-left-color: var(--border);
+    }
+
+    .nav-item.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: var(--green-dim);
+    }
+
+    .nav-footer {
+      margin-top: auto;
+      padding: 20px 24px 0;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--faint);
+      line-height: 1.6;
+    }
+
+    main {
+      flex: 1;
+      padding: 56px 64px 120px;
+      max-width: 860px;
+    }
+
+    .page-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      max-width: 680px;
+      margin-bottom: 52px;
+    }
+
+    .lead strong { font-weight: 600; color: var(--text); }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-top: 52px;
+    }
+
+    h2 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+
+    .stage-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+      margin-right: 8px;
+    }
+
+    p.body {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      margin-bottom: 14px;
+      max-width: 720px;
+    }
+
+    p.body a {
+      color: var(--green);
+      text-decoration: none;
+      border-bottom: 1px solid var(--green-dim);
+    }
+
+    p.body a:hover {
+      border-bottom-color: var(--green);
+    }
+
+    p.body strong { font-weight: 600; color: var(--text); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    td {
+      padding: 11px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      color: #3a3a3a;
+      background: var(--surface);
+    }
+
+    td:first-child {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text);
+    }
+
+    tr.total-row td {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      border-bottom: none;
+    }
+
+    tr.group-row td {
+      background: var(--bg);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .diagram {
+      background: var(--code-bg);
+      border: 1px solid #1e2530;
+      border-radius: 3px;
+      padding: 22px 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      line-height: 1.9;
+      color: #c9d1d9;
+      white-space: pre-wrap;
+    }
+
+    .diagram-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      margin-top: 24px;
+    }
+
+    .pullquote {
+      border-left: 2px solid var(--green);
+      padding: 4px 0 4px 18px;
+      margin: 18px 0 22px 0;
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: #3a3a3a;
+      max-width: 700px;
+    }
+
+    .pullquote .quote-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .footnote {
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-top: 16px;
+      max-width: 680px;
+    }
+
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .footer a:hover {
+      color: var(--green);
+      border-bottom-color: var(--green-dim);
+    }
+
+    .architecture-block {
+      margin: 0 0 52px 0;
+    }
+
+    .architecture-thumb {
+      display: block;
+      width: 100%;
+      max-width: 760px;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--surface);
+      cursor: zoom-in;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .architecture-thumb:hover {
+      border-color: var(--green);
+      box-shadow: 0 2px 12px rgba(118, 185, 0, 0.08);
+    }
+
+    .architecture-caption {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: zoom-out;
+      padding: 32px;
+    }
+
+    .lightbox.is-open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      border-radius: 3px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 3px;
+      padding: 6px 14px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .lightbox-close:hover {
+      color: white;
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { padding: 32px 24px 80px; }
+      .footer { flex-direction: column; align-items: flex-start; }
+      .lightbox { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="shared-nav"></nav>
+
+<main>
+  <p class="page-eyebrow">Multi-Agent LLM System</p>
+
+  <h1>ALL-LLM Pod</h1>
+
+  <div class="architecture-block">
+    <img class="architecture-thumb"
+         src="architecture.png"
+         alt="ALL-LLM Pod system architecture: iPhone, M4 Mac, and PC across live runtime and offline training data"
+         onclick="openLightbox()">
+    <p class="architecture-caption">Click to enlarge &middot; Live runtime and offline training pipeline</p>
+  </div>
+
+  <p class="lead">
+    <strong>ALL-LLM Pod is a realtime multi-agent system simulating the hosts of the All-In Podcast through text messaging and video conversation modes.</strong><br><br>
+
+    The stack spans three machines over a Tailscale mesh: an iPhone client, a Windows GPU orchestration server, and Apple Silicon local inference. Users can DM personas, place FaceTime-style voice calls, and participate in group conversations between hosts.<br><br>
+
+    WhisperX large-v3-turbo handles both realtime ASR and forced alignment for F5-TTS voice synthesis. Qwen3-30B-A3B runs locally on Apple Silicon with the persona prompt pinned in memory, while the orchestration layer manages conversational state, retrieval, streaming, and memory across devices.<br><br>
+
+    The personas are assembled from several interacting systems: large persona prompts, a RAG corpus of 500+ speaker-labeled podcast transcripts, conversational memory, agentic memory injection, optional reasoning passes, facial recognition, and avatar face/body mapping.<br><br>
+
+    The most difficult problem in the project turned out not to be inference, but <strong>transcript fidelity</strong>.<br><br>
+
+    Short-form audio is commonly discarded in speech pipelines because speaker classification reliability drops sharply on brief utterances. I kept it because roughly 43% of host speech occurs in segments under five seconds. That decision forced the creation of a HITL forensic-review pipeline to detect and repair transcription and diarization failures at scale.<br><br>
+
+    Late in development, another failure mode emerged: speech present in one transcript source but entirely missing from another. The issue resembled dropped audio, but behaved differently enough that I began referring to it internally as “ghost audio.” Weeks were spent tracing its causes, implications, and downstream effects on persona training quality.<br><br>
+
+    The next step is building mirror episodes: a parallel version of the weekly podcast where the personas independently gather news throughout the week, discuss stories with one another asynchronously, and synthesize their own Friday episode from those conversations.
+  </p>
+
+  <div class="footer">
+    <span>Mason Thompson &middot; Berkeley, California</span>
+    <a href="forensics.html">Transcript Forensics &rarr;</a>
+    <a href="v1.html">V1 Architecture &middot; Archive &rarr;</a>
+  </div>
+</main>
+
+  <!-- Lightbox overlay for architecture diagram -->
+  <div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">Close &times;</button>
+    <img src="architecture.png" alt="ALL-LLM Pod system architecture (enlarged)">
+  </div>
+
+  <script>
+    window.NAV_ANCHORS = [];
+
+    function openLightbox() {
+      document.getElementById('architectureLightbox').classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('architectureLightbox').classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+  <script src="nav-loader.js" data-page="index"></script>
+
+</body>
+</html>
