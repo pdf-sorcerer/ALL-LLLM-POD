@@ -403,19 +403,6 @@
       .footer { flex-direction: column; align-items: flex-start; }
       .lightbox { padding: 16px; }
     }
-
-    @media (max-width: 768px) {
-      .architecture-block {
-        margin-left: -8px;
-        margin-right: -8px;
-      }
-
-      .architecture-caption {
-        font-size: 9px;
-        line-height: 1.5;
-      }
-    }
-
   </style>
 </head>
 <body>
@@ -428,44 +415,67 @@
   <h1>Runtime Architecture</h1>
 
   <p class="lead">
-    <strong>ALL-LLM Pod is a distributed realtime inference system spanning training data, orchestration, local model inference, and external multi-user clients.</strong><br><br>
+    <strong>ALL-LLM Pod is a distributed AI system for realtime text, voice, and multi-person persona conversations.</strong><br><br>
 
-    The system began as an iOS-first persona app. The architecture now separates the product surface from the runtime: the iPhone handles interaction, the Windows PC orchestrates ASR, TTS, memory, RAG, and control flow, and the Mac handles local Qwen3 inference. Discord extends the same backend into a shared multi-user surface.
+    The system runs across three machines connected through Tailscale: an iPhone client, a Windows GPU orchestration server, and an Apple Silicon laptop for local inference. The iPhone handles the user experience. The Windows PC handles speech recognition, voice synthesis, memory, RAG, and routing. The Mac runs Qwen3-30B-A3B locally.
   </p>
 
   <div class="architecture-block">
     <img class="architecture-thumb"
          src="architecture-discord.png"
-         alt="ALL-LLM Pod internal and external runtime architecture"
+         alt="ALL-LLM Pod internal runtime, training data pipeline, and Discord inference path"
          onclick="openLightbox(this.src, this.alt)">
     <p class="architecture-caption">Internal runtime, training-data pipeline, and Discord inference path</p>
   </div>
 
-  <div class="section-heading"><h2>The Runtime Split</h2></div>
+  <div class="section-heading"><h2>Why the System Is Split</h2></div>
 
   <p class="body">
-    The core architectural decision is separation of lanes. The Windows PC owns orchestration because it already hosts the GPU-heavy audio services: WhisperX for realtime ASR and F5-TTS for voice synthesis. The Mac owns local LLM inference because Apple Silicon unified memory can keep Qwen3-30B-A3B resident with the persona prompt cached across turns.
+    The first version ran on a single Windows PC with a 12 GB RTX 4070 Super. It worked, but everything competed for the same GPU memory: speech recognition, local inference, voice synthesis, and runtime control.
   </p>
 
   <p class="body">
-This split started as a VRAM workaround. Whisper-small had been running on CPU because the 12GB GPU could not comfortably support both ASR and local inference at the same time. Moving inference off the PC and onto Apple Silicon freed the Windows machine to handle audio, routing, memory, and orchestration while the Mac ran Qwen3-30B-A3B in 4-bit quantization.
-
-The immediate gain was richer persona behavior. The larger shift was architectural: larger context windows, persistent memory, and additional persona systems became feasible once inference and orchestration no longer competed for the same hardware resources.  </p>
-
-  <div class="section-heading"><h2>Request Flow</h2></div>
-
-  <p class="body">
-    A request enters through iPhone or Discord. Text requests go directly to prompt assembly and local inference. Voice requests first pass through ASR, then follow the same prompt path. If the response needs voice, generated text returns to the PC for F5-TTS before streaming back to the client.
+    Moving inference to Apple Silicon started as a VRAM workaround. Whisper-small had been running on CPU because the GPU could not comfortably support both ASR and local inference. Once the language model moved to the Mac, the Windows machine could focus on audio, routing, memory, and orchestration while the Mac handled Qwen3-30B-A3B in 4-bit quantization.
   </p>
 
   <p class="body">
-    The current constraint is serialization. Both the local LLM and TTS operate as single-lane services. Multiple users can submit requests, but they queue behind shared inference and synthesis resources.
+    The immediate gain was richer persona behavior. The larger shift was architectural: bigger context windows, persistent memory, and additional persona systems became feasible once inference and orchestration no longer fought for the same hardware resources.
+  </p>
+
+  <div class="section-heading"><h2>Runtime Flow</h2></div>
+
+  <p class="body">
+    A request enters through the iPhone app or Discord. Voice requests first pass through WhisperX speech recognition. The orchestrator then assembles the persona prompt, recent conversation, retrieved transcript context, and memory before sending the request to the Mac for local inference.
+  </p>
+
+  <p class="body">
+    Text responses can return directly to the client. Voice responses continue through F5-TTS on the Windows PC before streaming back as audio. This keeps the product surface simple while the backend coordinates several specialized services behind it.
+  </p>
+
+  <div class="section-heading"><h2>Training Data as Infrastructure</h2></div>
+
+  <p class="body">
+    The personas depend on speaker-labeled podcast transcripts. Those transcripts are not just source material; they are infrastructure. They feed persona prompts, RAG retrieval, memory injection, and voice-reference selection.
+  </p>
+
+  <p class="body">
+    That made transcript fidelity a first-order systems problem. Short utterances, cross-talk, dropped audio, and speaker-label drift do not merely make the transcript messier. They change what the personas learn, retrieve, and imitate.
+  </p>
+
+  <p class="body">
+    The most important lesson from the training pipeline was that inference quality is only as useful as the data it is grounded in. A better model can still produce worse behavior if the underlying transcript labels are wrong.
+  </p>
+
+  <div class="section-heading"><h2>Runtime Queueing</h2></div>
+
+  <p class="body">
+    Right now, the system processes expensive requests one at a time. A single user can have a smooth experience because speech recognition, language-model inference, and voice synthesis move through the pipeline cleanly.
   </p>
 
   <div class="architecture-block">
     <img class="architecture-thumb"
          src="queueing.png"
-         alt="Serialized request queue through local LLM inference and F5-TTS"
+         alt="Single-lane request queue through local LLM inference and F5-TTS"
          onclick="openLightbox(this.src, this.alt)">
     <p class="architecture-caption">Single-lane inference and TTS queueing model</p>
   </div>
@@ -473,31 +483,25 @@ The immediate gain was richer persona behavior. The larger shift was architectur
   <div class="section-heading"><h2>Why Queueing Matters</h2></div>
 
   <p class="body">
-    Queueing is the difference between a demo and a multi-user system. A single user can experience acceptable latency because requests move cleanly through ASR, LLM, and TTS. Several users at once create contention: text and voice requests compete for the same LLM lane, and voice requests continue into a second serialized TTS lane.
+    Queueing is the difference between a demo and a multi-user system. Multiple simultaneous users create contention: text and voice requests compete for the same inference lane, while voice requests continue into a second serialized TTS lane.
   </p>
 
   <p class="body">
-    Scaling therefore becomes a scheduling problem: which requests can wait, which should stream, which should skip voice, and which should route to a lighter path.
-  </p>
-
-  <div class="section-heading"><h2>Training Data as Infrastructure</h2></div>
-
-  <p class="body">
-    The runtime depends on speaker-labeled transcripts. Podcast audio is processed offline into structured training data, then used for persona prompts, RAG retrieval, memory injection, and voice-reference selection.
-  </p>
-
-  <p class="body">
-    This made transcript fidelity a first-order architecture problem. Short utterances, cross-talk, dropped audio, and speaker-label drift do not merely affect transcripts; they directly affect how the personas speak, remember, and respond.
+    Scaling therefore becomes a scheduling problem: which requests can wait, which should stream immediately, which should bypass voice synthesis, and which should route to lighter inference paths.
   </p>
 
   <div class="section-heading"><h2>Discord as External Runtime</h2></div>
 
   <p class="body">
-    Discord changes the project from a local app into a shared inference surface. Users can summon personas into channels, receive text replies, hear TTS in voice channels, and eventually trigger panel-style conversations between multiple hosts.
+    Discord changes the project from a personal app into a shared system people can interact with together. Users can summon personas into channels, receive text replies, hear synthesized voice responses in voice chat, and eventually trigger panel-style conversations between multiple hosts.
   </p>
 
   <p class="body">
-    The first Discord version should be text-in and voice-out: slash command, persona selection, Qwen response, F5-TTS playback, and transcript posted to the channel. Live speech input can come later.
+    The first Discord version should stay simple: text input, voice output. A user selects a persona, sends a prompt, receives a generated response, and hears the reply spoken back into the channel. Live speech input can come later.
+  </p>
+
+  <p class="body">
+    Longer term, the goal is for the personas to operate more independently: gathering stories, discussing topics with one another throughout the week, and eventually generating their own mirror episode of the podcast.
   </p>
 
   <div class="footer">
@@ -508,7 +512,7 @@ The immediate gain was richer persona behavior. The larger shift was architectur
   </div>
 </main>
 
-  <!-- Lightbox overlay for architecture diagrams -->
+  <!-- Lightbox overlay for architecture diagram -->
   <div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">Close &times;</button>
     <img id="lightboxImage" src="architecture-discord.png" alt="Architecture diagram enlarged">
@@ -520,10 +524,8 @@ The immediate gain was richer persona behavior. The larger shift was architectur
     function openLightbox(src, alt) {
       const lightbox = document.getElementById('architectureLightbox');
       const image = document.getElementById('lightboxImage');
-
-      if (src) image.src = src;
+      image.src = src;
       image.alt = alt || 'Architecture diagram enlarged';
-
       lightbox.classList.add('is-open');
       document.body.style.overflow = 'hidden';
     }
