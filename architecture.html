@@ -448,8 +448,9 @@
   </p>
 
   <p class="body">
-    This split started as a VRAM workaround. It became the architecture. Moving the language model off the 12GB Windows GPU freed the PC to handle audio, routing, memory, and user-facing control while the Mac ran the larger model.
-  </p>
+This split started as a VRAM workaround. Whisper-small had been running on CPU because the 12GB GPU could not comfortably support both ASR and local inference at the same time. Moving inference off the PC and onto Apple Silicon freed the Windows machine to handle audio, routing, memory, and orchestration while the Mac ran Qwen3-30B-A3B in 4-bit quantization.
+
+The immediate gain was richer persona behavior. The larger shift was architectural: larger context windows, persistent memory, and additional persona systems became feasible once inference and orchestration no longer competed for the same hardware resources.  </p>
 
   <div class="section-heading"><h2>Request Flow</h2></div>
 
