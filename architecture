@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALL-LLM Pod | Mason Thompson</title>
+  <title>ALL-LLM Pod Architecture | Mason Thompson</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -403,6 +403,19 @@
       .footer { flex-direction: column; align-items: flex-start; }
       .lightbox { padding: 16px; }
     }
+
+    @media (max-width: 768px) {
+      .architecture-block {
+        margin-left: -8px;
+        margin-right: -8px;
+      }
+
+      .architecture-caption {
+        font-size: 9px;
+        line-height: 1.5;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -410,54 +423,107 @@
   <nav id="shared-nav"></nav>
 
 <main>
-  <p class="page-eyebrow">Multi-Agent LLM System</p>
+  <p class="page-eyebrow">System Architecture</p>
 
-  <h1>ALL-LLM Pod</h1>
+  <h1>Runtime Architecture</h1>
+
+  <p class="lead">
+    <strong>ALL-LLM Pod is a distributed realtime inference system spanning training data, orchestration, local model inference, and external multi-user clients.</strong><br><br>
+
+    The system began as an iOS-first persona app. The architecture now separates the product surface from the runtime: the iPhone handles interaction, the Windows PC orchestrates ASR, TTS, memory, RAG, and control flow, and the Mac handles local Qwen3 inference. Discord extends the same backend into a shared multi-user surface.
+  </p>
 
   <div class="architecture-block">
     <img class="architecture-thumb"
-         src="architecture.png"
-         alt="ALL-LLM Pod system architecture: iPhone, M4 Mac, and PC across live runtime and offline training data"
-         onclick="openLightbox()">
-    <p class="architecture-caption">Click to enlarge &middot; Live runtime and offline training pipeline</p>
+         src="architecture-discord.png"
+         alt="ALL-LLM Pod internal and external runtime architecture"
+         onclick="openLightbox(this.src, this.alt)">
+    <p class="architecture-caption">Internal runtime, training-data pipeline, and Discord inference path</p>
   </div>
 
-  <p class="lead">
-    <strong>ALL-LLM Pod is a realtime multi-agent system simulating the hosts of the All-In Podcast through text messaging and video conversation modes.</strong><br><br>
+  <div class="section-heading"><h2>The Runtime Split</h2></div>
 
-    The stack spans three machines over a Tailscale mesh: an iPhone client, a Windows GPU orchestration server, and Apple Silicon local inference. Users can DM personas, place FaceTime-style voice calls, and participate in group conversations between hosts.<br><br>
+  <p class="body">
+    The core architectural decision is separation of lanes. The Windows PC owns orchestration because it already hosts the GPU-heavy audio services: WhisperX for realtime ASR and F5-TTS for voice synthesis. The Mac owns local LLM inference because Apple Silicon unified memory can keep Qwen3-30B-A3B resident with the persona prompt cached across turns.
+  </p>
 
-    WhisperX large-v3-turbo handles both realtime ASR and forced alignment for F5-TTS voice synthesis. Qwen3-30B-A3B runs locally on Apple Silicon with the persona prompt pinned in memory, while the orchestration layer manages conversational state, retrieval, streaming, and memory across devices.<br><br>
+  <p class="body">
+    This split started as a VRAM workaround. It became the architecture. Moving the language model off the 12GB Windows GPU freed the PC to handle audio, routing, memory, and user-facing control while the Mac ran the larger model.
+  </p>
 
-    The personas are assembled from several interacting systems: large persona prompts, a RAG corpus of 500+ speaker-labeled podcast transcripts, conversational memory, agentic memory injection, optional reasoning passes, facial recognition, and avatar face/body mapping.<br><br>
+  <div class="section-heading"><h2>Request Flow</h2></div>
 
-    The most difficult problem in the project turned out not to be inference, but <strong>transcript fidelity</strong>.<br><br>
+  <p class="body">
+    A request enters through iPhone or Discord. Text requests go directly to prompt assembly and local inference. Voice requests first pass through ASR, then follow the same prompt path. If the response needs voice, generated text returns to the PC for F5-TTS before streaming back to the client.
+  </p>
 
-    Short-form audio is commonly discarded in speech pipelines because speaker classification reliability drops sharply on brief utterances. I kept it because roughly 43% of host speech occurs in segments under five seconds. That decision forced the creation of a HITL forensic-review pipeline to detect and repair transcription and diarization failures at scale.<br><br>
+  <p class="body">
+    The current constraint is serialization. Both the local LLM and TTS operate as single-lane services. Multiple users can submit requests, but they queue behind shared inference and synthesis resources.
+  </p>
 
-    Late in development, another failure mode emerged: speech present in one transcript source but entirely missing from another. The issue resembled dropped audio, but behaved differently enough that I began referring to it internally as “ghost audio.” Weeks were spent tracing its causes, implications, and downstream effects on persona training quality.<br><br>
+  <div class="architecture-block">
+    <img class="architecture-thumb"
+         src="queueing.png"
+         alt="Serialized request queue through local LLM inference and F5-TTS"
+         onclick="openLightbox(this.src, this.alt)">
+    <p class="architecture-caption">Single-lane inference and TTS queueing model</p>
+  </div>
 
-    The next step is building mirror episodes: a parallel version of the weekly podcast where the personas independently gather news throughout the week, discuss stories with one another asynchronously, and synthesize their own Friday episode from those conversations.
+  <div class="section-heading"><h2>Why Queueing Matters</h2></div>
+
+  <p class="body">
+    Queueing is the difference between a demo and a multi-user system. A single user can experience acceptable latency because requests move cleanly through ASR, LLM, and TTS. Several users at once create contention: text and voice requests compete for the same LLM lane, and voice requests continue into a second serialized TTS lane.
+  </p>
+
+  <p class="body">
+    Scaling therefore becomes a scheduling problem: which requests can wait, which should stream, which should skip voice, and which should route to a lighter path.
+  </p>
+
+  <div class="section-heading"><h2>Training Data as Infrastructure</h2></div>
+
+  <p class="body">
+    The runtime depends on speaker-labeled transcripts. Podcast audio is processed offline into structured training data, then used for persona prompts, RAG retrieval, memory injection, and voice-reference selection.
+  </p>
+
+  <p class="body">
+    This made transcript fidelity a first-order architecture problem. Short utterances, cross-talk, dropped audio, and speaker-label drift do not merely affect transcripts; they directly affect how the personas speak, remember, and respond.
+  </p>
+
+  <div class="section-heading"><h2>Discord as External Runtime</h2></div>
+
+  <p class="body">
+    Discord changes the project from a local app into a shared inference surface. Users can summon personas into channels, receive text replies, hear TTS in voice channels, and eventually trigger panel-style conversations between multiple hosts.
+  </p>
+
+  <p class="body">
+    The first Discord version should be text-in and voice-out: slash command, persona selection, Qwen response, F5-TTS playback, and transcript posted to the channel. Live speech input can come later.
   </p>
 
   <div class="footer">
     <span>Mason Thompson &middot; Berkeley, California</span>
+    <a href="index.html">Overview &rarr;</a>
     <a href="forensics.html">Transcript Forensics &rarr;</a>
-    <a href="v1.html">V1 Architecture &middot; Archive &rarr;</a>
+    <a href="v1.html">V1 Archive &rarr;</a>
   </div>
 </main>
 
-  <!-- Lightbox overlay for architecture diagram -->
+  <!-- Lightbox overlay for architecture diagrams -->
   <div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">Close &times;</button>
-    <img src="architecture.png" alt="ALL-LLM Pod system architecture (enlarged)">
+    <img id="lightboxImage" src="architecture-discord.png" alt="Architecture diagram enlarged">
   </div>
 
   <script>
     window.NAV_ANCHORS = [];
 
-    function openLightbox() {
-      document.getElementById('architectureLightbox').classList.add('is-open');
+    function openLightbox(src, alt) {
+      const lightbox = document.getElementById('architectureLightbox');
+      const image = document.getElementById('lightboxImage');
+
+      if (src) image.src = src;
+      image.alt = alt || 'Architecture diagram enlarged';
+
+      lightbox.classList.add('is-open');
       document.body.style.overflow = 'hidden';
     }
 
@@ -470,7 +536,7 @@
       if (e.key === 'Escape') closeLightbox();
     });
   </script>
-  <script src="nav-loader.js" data-page="index"></script>
+  <script src="nav-loader.js" data-page="architecture"></script>
 
 </body>
 </html>
