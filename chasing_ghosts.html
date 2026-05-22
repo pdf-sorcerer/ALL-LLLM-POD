@@ -211,6 +211,7 @@
       padding: 22px;
       border-right: 1px solid var(--border);
       background: #fcfcfc;
+      font-family: 'IBM Plex Mono', monospace;
     }
 
     .transcript-box p {
@@ -305,17 +306,22 @@
 <h1>Ghost Audio</h1>
 
 <p class="lead">
-Late in the project, I switched from a hodgepodge of YouTube podcast audio to full episode masters from Libsyn. The assumption seemed obvious: higher-quality source audio should produce higher-quality transcripts. Instead, I found older transcripts generated from objectively worse YouTube audio sometimes contained dialogue missing entirely from the cleaner Libsyn rebuilds. I coined this phenomenon <strong>Ghost Audio</strong> because root-causing it felt like a paranormal investigation from the 1990s TV show <em>Sightings</em>: time-consuming, frustrating, and rarely ending with a clean explanation.
+Late in the project, I switched from a hodgepodge of YouTube podcast audio to full episode masters from Libsyn. The assumption seemed obvious: higher-quality source audio should produce higher-quality transcripts. Instead, I found that older transcripts generated from objectively worse YouTube audio sometimes contained dialogue missing entirely from the cleaner Libsyn rebuilds. I coined this phenomenon <strong>Ghost Audio</strong> because root-causing it felt like a paranormal investigation from the 1990s TV show <em>Sightings</em>: time-consuming, frustrating, and rarely ending with a clean explanation.
 </p>
 
-        <div class="video-box">
+<p class="body">
+The early tip-off came from Episode 136. Friedberg’s quiet “oh my god” appeared in an older transcript but vanished entirely from the Libsyn rebuild. Brad Gerstner said nearly the exact same phrase moments later — also missing. Both missing utterances are audible in the segment below. 
+</p>
+
+          <div class="video-box">
         <video controls preload="metadata">
           <source src="both_ghosts.mp4" type="video/mp4">
         </video>
       </div>
 
+
 <p class="body">
-The early tip-off came from Episode 136. Friedberg’s quiet “oh my god” appeared in an older transcript but vanished entirely from the Libsyn rebuild. Brad Gerstner said nearly the exact same phrase moments later — also missing. Acoustic inspection confirmed Friedberg’s utterance physically existed: VAD-positive, RMS energy present, recoverable pitch after spectral subtraction, and faint activation visible in the cross-attention map. The model was not “deaf” to the audio. The decoder perceived the utterance and still failed to emit tokens for it.
+Acoustic inspection confirmed Friedberg’s utterance physically existed: VAD-positive, RMS energy present, recoverable pitch after spectral subtraction, and faint activation visible in the cross-attention map. The model was not “deaf” to the audio. The decoder perceived the utterance and still failed to emit tokens for it.
 </p>
 
 <p class="body">
@@ -343,7 +349,7 @@ That investigation fundamentally changed how I thought about transcript systems.
 </div>
 
 <p class="body">
-The easiest way to understand the difference is through a scene where one missing line changes everything. Misclassification preserves the words but assigns them to the wrong speaker. Ghost audio removes the line entirely.
+The easiest way to understand the difference is through a scene where one missing line changes everything. These are fundamentally different failure modes: misclassification preserves the words but assigns them to the wrong speaker; ghost audio removes the line entirely.
 </p>
 
 <div class="comparison-grid">
@@ -392,7 +398,7 @@ The easiest way to understand the difference is through a scene where one missin
 
       <div class="video-box">
         <video controls preload="metadata">
-          <source src="ghost_audio.mp4" type="video/mp4">
+          <source src="ghost.mp4" type="video/mp4">
         </video>
       </div>
 
