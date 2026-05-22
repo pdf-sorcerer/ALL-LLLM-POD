@@ -1,102 +1,407 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Architecture | ALL-LLM Pod</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
-:root{ --green:#76b900; --green-dim:rgba(118,185,0,0.12); --bg:#f9f9f9; --surface:#ffffff; --border:#e4e4e4; --text:#1a1a1a; --muted:#6b6b6b; --faint:#aaaaaa; --nav-width:220px; }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;}
-nav{position:sticky;top:0;height:100vh;width:var(--nav-width);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:32px 0;overflow-y:auto;}
-.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green);padding:0 24px 28px;border-bottom:1px solid var(--border);}
-.nav-section-label{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:20px 24px 8px;}
-.nav-item{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;padding:7px 24px;border-left:2px solid transparent;transition:.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.nav-item:hover{color:var(--text);background:var(--bg);border-left-color:var(--border);}
-.nav-item.active{color:var(--green);border-left-color:var(--green);background:var(--green-dim);}
-.nav-footer{margin-top:auto;padding:20px 24px 0;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--faint);line-height:1.6;}
-main{flex:1;padding:56px 64px 120px;max-width:860px;}
-.page-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px;}
-h1{font-size:28px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:14px;}
-.lead{font-size:14px;line-height:1.75;color:#3a3a3a;max-width:720px;margin-bottom:52px;}
-.section-heading{display:flex;align-items:baseline;gap:16px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);margin-top:52px;}
-h2{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
-p.body{font-size:14px;line-height:1.8;color:#3a3a3a;margin-bottom:16px;max-width:720px;}
-.ascii-block{font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6;white-space:pre;overflow-x:auto;padding:18px 20px;background:var(--bg);border-left:2px solid var(--green);margin:20px 0;color:var(--text);}
-a{color:var(--green);text-decoration:none;border-bottom:1px solid var(--green-dim);}
-a:hover{border-bottom-color:var(--green);}
-.footer{margin-top:80px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text);}
-@media(max-width:768px){nav{display:none;}main{padding:32px 24px 80px;}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ghost Audio | ALL-LLM Pod</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #76b900;
+      --green-dim: rgba(118, 185, 0, 0.12);
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --border: #e4e4e4;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --faint: #8c8c8c;
+      --nav-width: 220px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: var(--nav-width);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 0;
+    }
+
+    .nav-logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 20px 24px 8px;
+    }
+
+    .nav-item {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 7px 24px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: var(--bg);
+      border-left-color: var(--border);
+    }
+
+    .nav-item.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: var(--green-dim);
+    }
+
+    .nav-footer {
+      margin-top: auto;
+      padding: 20px 24px 0;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--faint);
+      line-height: 1.6;
+    }
+
+    main {
+      flex: 1;
+      padding: 56px 64px 120px;
+      max-width: 920px;
+    }
+
+    .page-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 18px;
+    }
+
+    .lead {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #3a3a3a;
+      margin-bottom: 26px;
+      max-width: 760px;
+    }
+
+    .body {
+      font-size: 14px;
+      line-height: 1.9;
+      color: #3a3a3a;
+      margin-bottom: 24px;
+      max-width: 760px;
+    }
+
+    .section-heading {
+      margin-top: 56px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .architecture-block {
+      margin: 34px 0 48px;
+    }
+
+    .architecture-block img {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: block;
+    }
+
+    .architecture-caption {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-top: 10px;
+      text-transform: uppercase;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    .comparison-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .comparison-card h3 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+    }
+
+    .comparison-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .transcript-box {
+      padding: 22px;
+      border-right: 1px solid var(--border);
+      background: #fcfcfc;
+    }
+
+    .transcript-box p {
+      font-size: 13px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+
+    .video-box {
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+    }
+
+    .video-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: var(--green);
+    }
+
+    @media (max-width: 900px) {
+      .comparison-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .transcript-box {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+      }
+
+      main {
+        padding: 32px 24px 80px;
+      }
+    }
+
+  </style>
 </head>
+
 <body>
 
-<nav id="shared-nav"></nav>
+<nav>
+  <div class="nav-logo">ALL-LLM Pod</div>
+
+  <div class="nav-section-label">Project</div>
+  <a class="nav-item" href="index.html">Overview</a>
+  <a class="nav-item" href="architecture.html">Runtime Architecture</a>
+  <a class="nav-item" href="forensics.html">Transcript Fidelity</a>
+  <a class="nav-item active" href="ghost_audio.html">Ghost Audio</a>
+
+  <div class="nav-footer">
+    Mason Thompson<br>
+    Berkeley, California
+  </div>
+</nav>
 
 <main>
-<p class="page-eyebrow">System Architecture · Lifecycle</p>
-<h1>Architecture</h1>
-<p class="lead">ALL-LLM Pod is built as a three-stage lifecycle: raw podcast transcripts become structured training data; that training data assembles into deployable chatbots; the live system delivers them in real time over voice and text. Each stage is documented below.</p>
 
-<div class="section-heading" id="stage1"><h2>1 · Transcripts → Training Data</h2></div>
+<p class="page-eyebrow">Transcript Reconstruction</p>
 
-<p class="body">The source material is 538 episodes of the All-In Podcast. Each episode splits into two parallel tracks: one for text training signal, one for voice references.</p>
+<h1>Ghost Audio</h1>
 
-<div class="ascii-block">  TEXT TRACK              AUDIO TRACK
-  ──────────              ───────────
-  Whisper transcription   Clip extraction
-  Diarization             Quality filter
-  Forensic repair         Prosody indexing
-  Classification          Reference pool
-  Metadata                
-       ↓                       ↓
-   persona signal         per-persona F5 input</div>
+<p class="lead">
+Late in the project, I switched from a hodgepodge of YouTube podcast audio to full episode masters from Libsyn. The assumption seemed obvious: higher-quality source audio should produce higher-quality transcripts. Instead, I found older transcripts generated from objectively worse YouTube audio sometimes contained dialogue missing entirely from the cleaner Libsyn rebuilds. I coined this phenomenon <strong>Ghost Audio</strong> because root-causing it felt like a paranormal investigation from the 1990s TV show <em>Sightings</em>: time-consuming, frustrating, and rarely ending with a clean explanation.
+</p>
 
-<p class="body">Text-track quality is non-trivial: WhisperX has decoder-level failure modes that drop real utterances, and NeMo's speaker assignment has attribution-level failure modes that misroute them. Both are addressed by a forensic repair layer (<a href="dive.html">dive.html</a>, <a href="forensics.html">forensics.html</a>).</p>
+<p class="body">
+The early tip-off came from Episode 136. Friedberg’s quiet “oh my god” appeared in an older transcript but vanished entirely from the Libsyn rebuild. Brad Gerstner said nearly the exact same phrase moments later — also missing. Acoustic inspection confirmed Friedberg’s utterance physically existed: VAD-positive, RMS energy present, recoverable pitch after spectral subtraction, and faint activation visible in the cross-attention map. The model was not “deaf” to the audio. The decoder perceived the utterance and still failed to emit tokens for it.
+</p>
 
-<p class="body">Voice references for TTS are extracted in parallel: clips filtered for quality, indexed by prosody, curated into a per-persona reference pool for zero-shot synthesis.</p>
+<p class="body">
+The breakthrough came from inspecting beam search behavior directly, which required temporarily dropping WhisperX’s bolted-on CTranslate2 backend in favor of reference Whisper running through PyTorch so decoder internals could be observed directly. Friedberg’s “oh my god” existed inside the decoder’s probability space, but scored too weakly relative to louder surrounding speech. The decoder repeatedly pruned the quieter path in favor of Friedberg’s follow-up line (“He’s not even here”). Small decoding changes — beam width, VAD chunking, timestamp conditioning, segmentation density, and temperature — produced materially different conversational reconstructions from the same audio.
+</p>
 
-<p class="body">Both tracks feed Stage 2.</p>
+<div class="architecture-block">
+  <img src="attention_both_ghosts.png"
+       alt="Whisper cross-attention visualization showing both ghost regions">
+  <p class="architecture-caption">
+    Decoder cross-attention over both ghost regions · Friedberg ghost shows weak activation · Gerstner ghost barely surfaces
+  </p>
+</div>
 
-<div class="section-heading" id="stage2"><h2>2 · Training Data → Chatbots</h2></div>
+<p class="body">
+After a long detour tuning parameters, the answer turned out to be structural rather than parametric: replacing the pipeline itself. I moved from WhisperX to a hybrid stack of pyannote VAD → reference Whisper → wav2vec2 forced alignment (“pww”), which recovered Friedberg-class ghosts reliably by creating denser segmentation boundaries around quiet speech. Gerstner-class ghosts remained unrecoverable because the decoder never meaningfully surfaced the utterance in the first place.
+</p>
 
-<p class="body">Each persona is assembled from several layers.</p>
+<p class="body">
+That investigation fundamentally changed how I thought about transcript systems. You often hear that AI systems and LLMs are “probability machines,” but it’s one thing hearing that phrase and another tracing the reconstruction process closely enough to internalize what it actually means. Transcript pipelines were not producing deterministic ground truth; they were producing probabilistic reconstructions with failure modes that often looked superficially correct.
+</p>
 
-<p class="body">Persona prompts are derived from the corpus work in Stage 1. The system prompt for each host encodes their voice — how they hedge, what they pivot to, how they push back — without inline examples.</p>
+<div class="section-heading">
+  <h2>Ghost Audio vs. Misclassification</h2>
+</div>
 
-<p class="body">Voice references are the curated F5-TTS reference pool from Stage 1. At synthesis time, the system rotates through reference clips per chunk to produce natural prosody variation.</p>
+<p class="body">
+The easiest way to understand the difference is through a scene where one missing line changes everything. Misclassification preserves the words but assigns them to the wrong speaker. Ghost audio removes the line entirely.
+</p>
 
-<p class="body">Persona display assets (avatars, names, location, accent color, mouth positioning) are managed as an outfit organizer — interchangeable visual pieces that compose into each persona's presentation in the mobile client.</p>
+<div class="comparison-grid">
 
-<p class="body">LoRA adapters for the language model are a TBD layer. V1 shipped with Mistral 7B plus persona-specific LoRA adapters. V2 currently runs Qwen3-30B-A3B with prompt-only persona conditioning. A future Phase 3 will revisit LoRA training on Qwen3.</p>
+  <div class="comparison-card">
 
-<div class="section-heading" id="stage3"><h2>3 · Chatbots → Inference</h2></div>
+    <h3>Classification Error</h3>
 
-<p class="body">The live system spans three machines: an iOS client, a Windows workstation running the orchestrator, and a Mac running the language model. All three communicate over a Tailscale mesh.</p>
+    <div class="comparison-panel">
 
-<p class="body">ASR runs on Windows via WhisperX large-v3-turbo on CUDA. The iOS client streams audio to a WebSocket; partial transcripts come back continuously, and a final authoritative pass runs when the user stops speaking.</p>
+      <div class="transcript-box">
+        <p><strong>Vader:</strong> “Obi-Wan never told you what happened to your father.”</p>
 
-<p class="body">The language model lives on the Mac. The orchestrator assembles a prompt (base + persona + sliding-window memory + retrieved long-term memories), sends it to the Mac via MLX, and streams the response back.</p>
+        <p><strong>Luke:</strong> “He told me enough. He told me you killed him!”</p>
 
-<p class="body">TTS runs back on the Windows GPU. The response is chunked on sentence boundaries; each chunk goes through F5-TTS using a reference clip drawn from the persona's pool. Audio is converted to PCM and streamed to iOS chunk-by-chunk, so playback starts before the full response has finished generating.</p>
+        <p><strong>Yoda:</strong> “No. I am your father.”</p>
 
-<p class="body">Memory operates at two layers. A sliding window keeps the last ten turns of the active session in prompt context. An agentic memory layer indexes promoted turns with vector embeddings and recalls them by similarity. On session end, the conversation is summarized and the summary becomes available to the next session.</p>
+        <p><strong>Luke:</strong> “No, no. That’s not true. That’s impossible!”</p>
+      </div>
 
-<p class="body">Conversation history is persisted to local SQLite as the source of truth, with backup to a multi-tenant Supabase project.</p>
+      <div class="video-box">
+        <video controls preload="metadata">
+          <source src="classification_error.mp4" type="video/mp4">
+        </video>
+      </div>
 
-<p class="body">The iOS client is a SwiftUI app with a contact-list metaphor: each persona is a contact you can DM (text) or FaceTime (voice). A status indicator on the DM view reports whether the inference stack is reachable.</p>
+    </div>
 
-<div class="footer">Mason Thompson · Berkeley, California</div>
+  </div>
+
+  <div class="comparison-card">
+
+    <h3>Ghost Audio</h3>
+
+    <div class="comparison-panel">
+
+      <div class="transcript-box">
+
+        <p><strong>Vader:</strong> “Obi-Wan never told you what happened to your father.”</p>
+
+        <p><strong>Luke:</strong> “He told me enough. He told me you killed him!”</p>
+
+        <p><strong>Luke:</strong> “No, no. That’s not true. That’s impossible!”</p>
+
+      </div>
+
+      <div class="video-box">
+        <video controls preload="metadata">
+          <source src="both_ghosts.mp4" type="video/mp4">
+        </video>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Mason Thompson · Berkeley, California</span>
+  <a href="forensics.html">&larr; Transcript Fidelity</a>
+</div>
+
 </main>
 
-<script>
-window.NAV_ANCHORS = [
-  { href: '#stage1', label: '1 · Training Data' },
-  { href: '#stage2', label: '2 · Chatbots' },
-  { href: '#stage3', label: '3 · Inference' },
-];
-</script>
-<script src="nav-loader.js" data-page="architecture"></script>
 </body>
 </html>
