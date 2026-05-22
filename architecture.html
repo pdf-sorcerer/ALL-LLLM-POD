@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALL-LLM Pod Architecture | Mason Thompson</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runtime Architecture | ALL-LLM Pod</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
     :root {
       --green: #76b900;
       --green-dim: rgba(118, 185, 0, 0.12);
       --bg: #f9f9f9;
       --surface: #ffffff;
       --border: #e4e4e4;
-      --code-bg: #0d1117;
       --text: #1a1a1a;
       --muted: #6b6b6b;
-      --faint: #aaaaaa;
+      --faint: #8c8c8c;
       --nav-width: 220px;
     }
 
@@ -74,9 +76,6 @@
       padding: 7px 24px;
       border-left: 2px solid transparent;
       transition: color 0.15s, border-color 0.15s, background 0.15s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .nav-item:hover {
@@ -129,11 +128,9 @@
       font-size: 14px;
       line-height: 1.75;
       color: #3a3a3a;
-      max-width: 680px;
-      margin-bottom: 52px;
+      max-width: 700px;
+      margin-bottom: 42px;
     }
-
-    .lead strong { font-weight: 600; color: var(--text); }
 
     .section-heading {
       display: flex;
@@ -153,171 +150,17 @@
       color: var(--text);
     }
 
-    h3 {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--text);
-      margin-top: 28px;
-      margin-bottom: 10px;
-    }
-
-    .stage-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--green);
-      margin-right: 8px;
-    }
-
     p.body {
       font-size: 13.5px;
       line-height: 1.75;
       color: #3a3a3a;
-      margin-bottom: 14px;
+      margin-bottom: 18px;
       max-width: 720px;
     }
 
-    p.body a {
-      color: var(--green);
-      text-decoration: none;
-      border-bottom: 1px solid var(--green-dim);
-    }
-
-    p.body a:hover {
-      border-bottom-color: var(--green);
-    }
-
-    p.body strong { font-weight: 600; color: var(--text); }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    th {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 10px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-    }
-
-    td {
-      padding: 11px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      color: #3a3a3a;
-      background: var(--surface);
-    }
-
-    td:first-child {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--text);
-    }
-
-    tr.total-row td {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 14px;
+    p.body strong {
       font-weight: 600;
-      border-bottom: none;
-    }
-
-    tr.group-row td {
-      background: var(--bg);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--green);
-      padding: 8px 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .diagram {
-      background: var(--code-bg);
-      border: 1px solid #1e2530;
-      border-radius: 3px;
-      padding: 22px 24px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      line-height: 1.9;
-      color: #c9d1d9;
-      white-space: pre-wrap;
-    }
-
-    .diagram-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-      margin-top: 24px;
-    }
-
-    .pullquote {
-      border-left: 2px solid var(--green);
-      padding: 4px 0 4px 18px;
-      margin: 18px 0 22px 0;
-      font-size: 13.5px;
-      line-height: 1.7;
-      color: #3a3a3a;
-      max-width: 700px;
-    }
-
-    .pullquote .quote-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .footnote {
-      font-size: 11px;
-      line-height: 1.6;
-      color: var(--muted);
-      margin-top: 16px;
-      max-width: 680px;
-    }
-
-    .footer {
-      margin-top: 80px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
       color: var(--text);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .footer a {
-      color: var(--muted);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: color 0.15s, border-color 0.15s;
-    }
-
-    .footer a:hover {
-      color: var(--green);
-      border-bottom-color: var(--green-dim);
     }
 
     .architecture-block {
@@ -328,17 +171,24 @@
       display: block;
       width: 100%;
       max-width: 760px;
-      height: auto;
       border: 1px solid var(--border);
       border-radius: 3px;
       background: var(--surface);
       cursor: zoom-in;
+      padding: 0;
       transition: border-color 0.15s, box-shadow 0.15s;
     }
 
     .architecture-thumb:hover {
       border-color: var(--green);
       box-shadow: 0 2px 12px rgba(118, 185, 0, 0.08);
+    }
+
+    .architecture-thumb img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 2px;
     }
 
     .architecture-caption {
@@ -369,10 +219,8 @@
     .lightbox img {
       max-width: 100%;
       max-height: 100%;
-      width: auto;
-      height: auto;
       border-radius: 3px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
 
     .lightbox-close {
@@ -383,163 +231,175 @@
       font-size: 11px;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255,255,255,0.7);
       background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255,255,255,0.25);
       border-radius: 3px;
       padding: 6px 14px;
       cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
     }
 
-    .lightbox-close:hover {
-      color: white;
-      border-color: rgba(255, 255, 255, 0.6);
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: var(--green);
     }
 
     @media (max-width: 768px) {
       nav { display: none; }
       main { padding: 32px 24px 80px; }
       .footer { flex-direction: column; align-items: flex-start; }
-      .lightbox { padding: 16px; }
     }
   </style>
 </head>
+
 <body>
 
-  <nav id="shared-nav"></nav>
+<nav id="shared-nav">
+  <div class="nav-logo">ALL-LLM Pod</div>
+
+  <div class="nav-section-label">Project</div>
+  <a class="nav-item" href="index.html">Overview</a>
+  <a class="nav-item active" href="architecture.html">Runtime Architecture</a>
+  <a class="nav-item" href="forensics.html">Transcript Fidelity</a>
+  <a class="nav-item" href="chasing_ghosts.html">Ghost Audio</a>
+  <a class="nav-item" href="v1.html">V1 Archive</a>
+
+  <div class="nav-footer">
+    Mason Thompson<br>
+    Berkeley, California
+  </div>
+</nav>
 
 <main>
-  <p class="page-eyebrow">System Architecture</p>
 
-  <h1>Runtime Architecture</h1>
+<p class="page-eyebrow">System Runtime</p>
 
-  <p class="lead">
-    <strong>ALL-LLM Pod is a distributed AI system for realtime text, voice, and multi-person persona conversations.</strong><br><br>
+<h1>Runtime Architecture</h1>
 
-    The system runs across three machines connected through Tailscale: an iPhone client, a Windows GPU orchestration server, and an Apple Silicon laptop for local inference. The iPhone handles the user experience. The Windows PC handles speech recognition, voice synthesis, memory, RAG, and routing. The Mac runs Qwen3-30B-A3B locally.
-  </p>
+<p class="lead">
+ALL-LLM Pod runs across a deliberately strange stack: an iPhone frontend, a Windows GPU orchestration server, and an Apple Silicon inference runtime serving local Qwen models through oMLX. The goal of this page is to show where inference happens, how audio and text move through the system, where latency accumulates, and which constraints currently shape the runtime.
+</p>
 
-  <div class="architecture-block">
-    <img class="architecture-thumb"
-         src="architecture-discord.png"
-         alt="ALL-LLM Pod internal runtime, training data pipeline, and Discord inference path"
-         onclick="openLightbox(this.src, this.alt)">
-    <p class="architecture-caption">Internal runtime, training-data pipeline, and Discord inference path</p>
-  </div>
+<div class="architecture-block">
+    <button type="button" class="architecture-thumb" aria-label="Enlarge ALL-LLM Pod runtime architecture diagram"
+        onclick="openLightbox('architecture.png', 'ALL-LLM Pod runtime architecture diagram enlarged')">
+        <img src="architecture.png"
+            alt="ALL-LLM Pod runtime architecture showing iOS client, Windows orchestration server, Apple Silicon inference runtime, transcript systems, memory systems, and Discord integration">
+    </button>
+    <p class="architecture-caption">Click to enlarge &middot; Runtime topology and infrastructure boundaries</p>
+</div>
 
-  <div class="section-heading"><h2>Why the System Is Split</h2></div>
+<div class="section-heading">
+    <h2>Operational Flow</h2>
+</div>
 
-  <p class="body">
-    The first version ran on a single Windows PC with a 12 GB RTX 4070 Super. It worked, but everything competed for the same GPU memory: speech recognition, local inference, voice synthesis, and runtime control.
-  </p>
+<p class="body">
+    <strong>iOS Runtime</strong><br>
+    SwiftUI frontend with a FaceTime-style conversational interface, realtime transcript rendering, streamed TTS playback, and animated persona presentation. The client primarily acts as an orchestration surface while inference and audio generation occur remotely.
+</p>
 
-  <p class="body">
-    Moving inference to Apple Silicon started as a VRAM workaround. Whisper-small had been running on CPU because the GPU could not comfortably support both ASR and local inference. Once the language model moved to the Mac, the Windows machine could focus on audio, routing, memory, and orchestration while the Mac handled Qwen3-30B-A3B in 4-bit quantization.
-  </p>
+<p class="body">
+    <strong>Windows GPU Orchestration Server</strong><br>
+    The orchestration layer handles WhisperX ASR, F5-TTS synthesis, websocket routing, transcript retrieval, memory injection, queue coordination, and runtime state management. Most realtime synchronization problems emerge here.
+</p>
 
-  <p class="body">
-    The immediate gain was richer persona behavior. The larger shift was architectural: bigger context windows, persistent memory, and additional persona systems became feasible once inference and orchestration no longer fought for the same hardware resources.
-  </p>
+<p class="body">
+    <strong>Apple Silicon Inference Runtime</strong><br>
+    Local Qwen3 30B inference runs through oMLX on an M4 MacBook Pro, pinned into unified memory with prompt caching and long-context execution enabled. The runtime is reachable independently by both Windows and iOS, effectively behaving like a lightweight local inference appliance.
+</p>
 
-  <div class="section-heading"><h2>Runtime Flow</h2></div>
+<p class="body">
+    <strong>Discord Runtime Surface</strong><br>
+    Discord extends the same infrastructure into a shared multi-user environment. The underlying runtime remains identical — only the interaction surface changes.
+</p>
 
-  <p class="body">
-    A request enters through the iPhone app or Discord. Voice requests first pass through WhisperX speech recognition. The orchestrator then assembles the persona prompt, recent conversation, retrieved transcript context, and memory before sending the request to the Mac for local inference.
-  </p>
+<div class="section-heading">
+    <h2>Operational Constraints</h2>
+</div>
 
-  <p class="body">
-    Text responses can return directly to the client. Voice responses continue through F5-TTS on the Windows PC before streaming back as audio. This keeps the product surface simple while the backend coordinates several specialized services behind it.
-  </p>
+<p class="body">
+    <strong>Queueing Pressure</strong><br>
+    Serialized inference and TTS contention create the clearest runtime bottleneck. The system runs surprisingly well on consumer hardware, but every additional user interaction increases queue depth, coordination overhead, and perceived latency.
+</p>
 
-  <div class="section-heading"><h2>Training Data as Infrastructure</h2></div>
+<p class="body">
+    <strong>Realtime Coordination</strong><br>
+    The runtime continuously synchronizes ASR → inference → TTS → playback while preserving conversational flow and persona continuity. Small timing delays compound quickly once transcript state, streamed audio, and UI animation all need to remain aligned.
+</p>
 
-  <p class="body">
-    The personas depend on speaker-labeled podcast transcripts. Those transcripts are not just source material; they are infrastructure. They feed persona prompts, RAG retrieval, memory injection, and voice-reference selection.
-  </p>
+<p class="body">
+    <strong>Model Residency</strong><br>
+    Keeping Qwen3 resident inside unified memory avoids repeated cold-start penalties, but introduces tradeoffs around memory pressure, runtime persistence, fallback behavior, and prompt cache invalidation.
+</p>
 
-  <p class="body">
-    That made transcript fidelity a first-order systems problem. Short utterances, cross-talk, dropped audio, and speaker-label drift do not merely make the transcript messier. They change what the personas learn, retrieve, and imitate.
-  </p>
+<div class="section-heading">
+    <h2>Retrieval Direction</h2>
+</div>
 
-  <p class="body">
-    The most important lesson from the training pipeline was that inference quality is only as useful as the data it is grounded in. A better model can still produce worse behavior if the underlying transcript labels are wrong.
-  </p>
+<p class="body">
+    The current retrieval stack leans a little too heavily on embeddings and topic exemplars. It works reasonably well today, but the underlying transcript data is already highly structured: speakers, timestamps, episode boundaries, conversational flow, repaired segments, and attribution metadata.
+</p>
 
-  <div class="section-heading"><h2>Runtime Queueing</h2></div>
+<p class="body">
+    Long-term, I’ll likely move toward simpler SQL-style retrieval with semantic search layered on top only where it materially improves recall. The goal is not to make retrieval more impressive. The goal is to make it more reliable.
+</p>
 
-  <p class="body">
-    Right now, the system processes expensive requests one at a time. A single user can have a smooth experience because speech recognition, language-model inference, and voice synthesis move through the pipeline cleanly.
-  </p>
+<div class="footer">
+  <span>Mason Thompson &middot; Berkeley, California</span>
+  <a href="forensics.html">Transcript Fidelity &rarr;</a>
+  <a href="chasing_ghosts.html">Ghost Audio &rarr;</a>
+</div>
 
-  <div class="architecture-block">
-    <img class="architecture-thumb"
-         src="queueing.png"
-         alt="Single-lane request queue through local LLM inference and F5-TTS"
-         onclick="openLightbox(this.src, this.alt)">
-    <p class="architecture-caption">Single-lane inference and TTS queueing model</p>
-  </div>
-
-  <div class="section-heading"><h2>Why Queueing Matters</h2></div>
-
-  <p class="body">
-    Queueing is the difference between a demo and a multi-user system. Multiple simultaneous users create contention: text and voice requests compete for the same inference lane, while voice requests continue into a second serialized TTS lane.
-  </p>
-
-  <p class="body">
-    Scaling therefore becomes a scheduling problem: which requests can wait, which should stream immediately, which should bypass voice synthesis, and which should route to lighter inference paths.
-  </p>
-
-  <div class="section-heading"><h2>Discord as External Runtime</h2></div>
-
-  <p class="body">
-    Discord changes the project from a personal app into a shared system people can interact with together. Users can summon personas into channels, receive text replies, hear synthesized voice responses in voice chat, and eventually trigger panel-style conversations between multiple hosts.
-  </p>
-
-  <p class="body">
-    The first Discord version should stay simple: text input, voice output. A user selects a persona, sends a prompt, receives a generated response, and hears the reply spoken back into the channel. Live speech input can come later.
-  </p>
-
-  <p class="body">
-    Longer term, the goal is for the personas to operate more independently: gathering stories, discussing topics with one another throughout the week, and eventually generating their own mirror episode of the podcast.
-  </p>
-
-  <div class="footer">
-    <span>Mason Thompson &middot; Berkeley, California</span>
-    <a href="index.html">Overview &rarr;</a>
-    <a href="forensics.html">Transcript Forensics &rarr;</a>
-    <a href="v1.html">V1 Archive &rarr;</a>
-  </div>
 </main>
 
-  <!-- Lightbox overlay for architecture diagram -->
-  <div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
-    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">Close &times;</button>
-    <img id="lightboxImage" src="architecture-discord.png" alt="Architecture diagram enlarged">
-  </div>
+<div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
+  <button type="button" class="lightbox-close" onclick="closeLightbox()">Close ×</button>
+  <img id="lightboxImage" src="" alt="">
+</div>
 
-  <script>
-    window.NAV_ANCHORS = [];
+<script>
+  function openLightbox(src, alt) {
+    const lightbox = document.getElementById('architectureLightbox');
+    const image = document.getElementById('lightboxImage');
 
-    function openLightbox(src, alt) {
-      const lightbox = document.getElementById('architectureLightbox');
-      const image = document.getElementById('lightboxImage');
-      image.src = src;
-      image.alt = alt || 'Architecture diagram enlarged';
-      lightbox.classList.add('is-open');
-      document.body.style.overflow = 'hidden';
-    }
+    image.src = src;
+    image.alt = alt || 'Architecture diagram enlarged';
 
-    function closeLightbox() {
-      document.getElementById('architectureLightbox').classList.remove('is-open');
-      document.body.style.overflow = '';
-    }
+    lightbox.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeLightbox();
-    });
-  </script>
-  <script src="nav-loader.js" data-page="architecture"></script>
+  function closeLightbox() {
+    document.getElementById('architectureLightbox').classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+
+<script src="nav-loader.js" data-page="architecture"></script>
 
 </body>
 </html>
