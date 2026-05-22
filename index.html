@@ -12,8 +12,8 @@
 
   <style>
     :root {
-      --green: #76b900;
-      --green-dim: rgba(118, 185, 0, 0.12);
+      --green: #0A84FF;
+      --green-dim: rgba(10, 132, 255, 0.12);
       --bg: #f9f9f9;
       --surface: #ffffff;
       --border: #e4e4e4;
@@ -192,7 +192,7 @@
 
     .architecture-thumb:hover {
       border-color: var(--green);
-      box-shadow: 0 2px 12px rgba(118, 185, 0, 0.08);
+      box-shadow: 0 2px 12px rgba(10, 132, 255, 0.08);
     }
 
     .architecture-thumb:focus-visible {
@@ -316,10 +316,11 @@
       <div class="nav-fallback">
         <div class="nav-logo">ALL-LLM Pod</div>
         <a class="nav-item" href="index.html">Overview</a>
-        <a class="nav-item" href="architecture.html">Runtime Architecture</a>
-        <a class="nav-item" href="forensics.html">Transcript Fidelity</a>
-        <a class="nav-item" href="chasing_ghosts.html">Ghost Audio</a>
-        <a class="nav-item" href="v1.html">V1 Archive</a>
+        <a class="nav-item" href="architecture.html">Architecture</a>
+        <a class="nav-item" href="chasing_ghosts.html">Chasing Ghosts</a>
+        <a class="nav-item" href="voice_classifier.html">Transcription</a>
+        <a class="nav-item" href="heuristics.html">HITL</a>
+        <a class="nav-item" href="performance.html">Metrics &amp; Media</a>
       </div>
     </noscript>
   </nav>
@@ -345,16 +346,16 @@
 Hey, everyone! Welcome to <strong>ALL-LLM Pod</strong>: a technically serious AI system built around an intentionally unserious premise:
 having conversations with chatbot parodies of the ALL-In Podcast hosts.
 <br><br>   
-These personalities are reconstructed from podcast episodes and other publicly available audio using an open-source CUDA pipeline for ASR, transcription, diarization and classification. Speaker_id mapping and transcript review are all human-in-the-loop.  I have ethical grumblings about the nature of this work, and where the line is between parody and impersonation. But comody is legal again and tech leaders who broadcast not knowing what iPhone model they're using should expect some light teasing.
+These personalities are reconstructed from podcast episodes and other publicly available audio using an open-source CUDA pipeline for ASR, transcription, diarization and classification. Speaker_id mapping and transcript review are all human-in-the-loop.  I have ethical grumblings about the nature of this work, and where the line is between parody and impersonation. But comedy is legal again, and tech leaders who broadcast not knowing what iPhone model they're using should expect some light teasing.
     <br><br>  
     
 Transcripts ended up being the most rewarding part of the project — and easily the hardest. They're not glamorous, but transcripts matter much, much more than they look. The easily-scraped text is already baked into frontier LLMs. 
-    Going forward, real content — people sharing knowledge — is scarce, and what exists is locked in multimedia that first has to be converted, transcribed, segmented, labeled, and repaired into reliable, ground-truth text. In my experience, that process turns out to be suprisingly fragile.
+    Going forward, real content — people sharing knowledge — is scarce, and what exists is locked in multimedia that first has to be converted, transcribed, segmented, labeled, and repaired into reliable, ground-truth text. In my experience, that process turns out to be surprisingly fragile.
 
   <div class="footer">
     <span>Mason Thompson &middot; Berkeley, California</span>
-    <a href="forensics.html">Transcript Fidelity &rarr;</a>
-    <a href="v1.html">V1 Architecture &middot; Archive &rarr;</a>
+    <a href="architecture.html">Architecture &rarr;</a>
+    <a href="chasing_ghosts.html">Chasing Ghosts &rarr;</a>
   </div>
 </main>
 
