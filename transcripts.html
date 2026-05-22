@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcript Fidelity | ALL-LLM Pod</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --green: #76b900;
+            --green-dim: rgba(118, 185, 0, 0.12);
+            --bg: #f9f9f9;
+            --surface: #ffffff;
+            --border: #e4e4e4;
+            --code-bg: #0d1117;
+            --text: #1a1a1a;
+            --muted: #6b6b6b;
+            --faint: #8c8c8c;
+            --nav-width: 220px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: var(--nav-width);
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 0;
+            overflow-y: auto;
+        }
+
+        .nav-logo {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--green);
+            padding: 0 24px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-section-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--faint);
+            padding: 20px 24px 8px;
+        }
+
+        .nav-item {
+            display: block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 7px 24px;
+            border-left: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nav-item:hover {
+            color: var(--text);
+            background: var(--bg);
+            border-left-color: var(--border);
+        }
+
+        .nav-item.active {
+            color: var(--green);
+            border-left-color: var(--green);
+            background: var(--green-dim);
+        }
+
+        .nav-footer {
+            margin-top: auto;
+            padding: 20px 24px 0;
+            border-top: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--faint);
+            line-height: 1.6;
+        }
+
+        main {
+            flex: 1;
+            padding: 56px 64px 120px;
+            max-width: 860px;
+        }
+
+        .page-eyebrow {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+
+        .lead {
+            font-size: 14px;
+            line-height: 1.75;
+            color: #3a3a3a;
+            max-width: 680px;
+            margin-bottom: 52px;
+        }
+
+        .lead strong {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .iteration-list {
+            margin: 18px 0 18px 28px;
+            padding-left: 12px;
+            border-left: 2px solid var(--green-dim);
+        }
+
+        .iteration-step {
+            margin-bottom: 22px;
+            font-size: 14px;
+            line-height: 1.75;
+            color: #3a3a3a;
+            max-width: 680px;
+        }
+
+        .iteration-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            margin-top: 52px;
+        }
+
+        h2 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text);
+        }
+
+        p.body {
+            font-size: 13.5px;
+            line-height: 1.75;
+            color: #3a3a3a;
+            margin-bottom: 14px;
+            max-width: 720px;
+        }
+
+        p.body a {
+            color: var(--green);
+            text-decoration: none;
+            border-bottom: 1px solid var(--green-dim);
+        }
+
+        p.body a:hover {
+            border-bottom-color: var(--green);
+        }
+
+        p.body strong {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .accordion {
+            max-width: 720px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            background: var(--surface);
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .accordion summary {
+            cursor: pointer;
+            list-style: none;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text);
+            padding: 13px 14px;
+            border-left: 2px solid transparent;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+
+        .accordion summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .accordion summary::after {
+            content: '+';
+            float: right;
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .accordion[open] summary {
+            background: var(--green-dim);
+            border-left-color: var(--green);
+            color: var(--green);
+        }
+
+        .accordion[open] summary::after {
+            content: '–';
+        }
+
+        .accordion-content {
+            padding: 14px 16px 4px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer {
+            margin-top: 80px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer a {
+            color: var(--muted);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+        }
+
+        .footer a:hover {
+            color: var(--green);
+            border-bottom-color: var(--green-dim);
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+
+            main {
+                padding: 32px 24px 80px;
+            }
+
+            .footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="shared-nav">
+        <div class="nav-logo">ALL-LLM Pod</div>
+
+        <div class="nav-section-label">Project</div>
+        <a class="nav-item" href="index.html">Overview</a>
+        <a class="nav-item" href="architecture.html">Runtime Architecture</a>
+        <a class="nav-item active" href="forensics.html">Transcript Fidelity</a>
+        <a class="nav-item" href="chasing_ghosts.html">Ghost Audio</a>
+        <a class="nav-item" href="v1.html">V1 Archive</a>
+
+        <div class="nav-footer">
+            Mason Thompson<br>
+            Berkeley, CA
+        </div>
+    </nav>
+
+    <main>
+        <p class="page-eyebrow">Transcript Fidelity</p>
+
+        <h1>Transcript Fidelity</h1>
+
+        <p class="lead">
+            Transcripts became a genuine hero’s journey. Early on, my mindset was to speedrun development by moving fast
+            and running code for systems I didn’t yet fully understand.
+            <br><br>
+            There’s honestly a novel’s worth of failures, lessons learned, and cursed experiments buried inside this
+            pipeline. Keeping things high-level, the final architecture evolved through several major iterations:
+        </p>
+
+        <div class="iteration-list">
+            <div class="iteration-step">
+                <strong>1.</strong> I replaced Pyannote with NVIDIA NeMo. NeMo was much more accurate identifying unique speakers, and produced tighter embeddings. 
+                picture // picture 
+            </div>
+
+            <div class="iteration-step">
+                <strong>2.</strong> NeMo’s RTTM diarization boundaries warped the transcript into fragmentation patterns
+                like:
+                <br><br>
+                <strong>Mason:</strong> I<br>
+                <strong>UNKNOWN:</strong> like<br>
+                <strong>Mason:</strong> tacos
+                <br><br>
+            </div>
+
+
+            <div class="iteration-step">
+                <strong>4.</strong> From there, I built lightweight HITL heuristics to identify suspicious transcript
+                artifacts: ellipsis boundaries, lowercase continuations, dangling sentence terminators, speaker
+                sandwiches, and other structural fingerprints that reliably surfaced hidden attribution failures.
+            </div>
+        </div>
+
+        <p class="lead">
+            WhisperX transcripts are word-level aligned to the millisecond, so I used them rather than rely on NeMo's RTTM data. Good decision. 
+            <br><br>
+
+        </p>
+
+        <div class="section-heading">
+            <h2>Boundary Integrity Flags</h2>
+        </div>
+
+        <p class="body">
+            Transcript failures often leave recognizable structural fingerprints. Over time, a small set of heuristic
+            flags emerged that reliably surfaced suspicious segments for Human-in-the-Loop review.
+        </p>
+
+        <details class="accordion">
+            <summary>1 — Ellipsis Boundary</summary>
+            <div class="accordion-content">
+                <p class="body">
+                    A segment presents as one continuous speaker turn, but often contains two speakers (although this doesn't happen when Friedberg is speaking). Fingerprint:
+                    mid-segment ellipsis followed by conversational continuation.
+                </p>
+                <p class="body">
+                    <strong>Before</strong><br>
+                    Sacks: “Interest rates just have to go up to a point that…”<br>
+                    Sacks: “To what's happening in Japan, right?”
+                </p>
+                <p class="body">
+                    <strong>After</strong><br>
+                    Sacks: “Interest rates just have to go up to a point that…”<br>
+                    Jcal: “To what's happening in Japan, right?”
+                </p>
+            </div>
+        </details>
+
+        <details class="accordion">
+            <summary>2 — Speaker Collapse Blob</summary>
+            <div class="accordion-content">
+                <p class="body">
+                    A single speaker_id absorbs a long multi-speaker exchange. Fingerprint: unusually long monologue
+                    segments containing clearly distinct conversational voices.
+                </p>
+            </div>
+        </details>
+
+        <details class="accordion">
+            <summary>3 — Backchannel Bleed</summary>
+            <div class="accordion-content">
+                <p class="body">
+                    Short acknowledgements (“okay,” “yeah,” “got it”) become absorbed into the acoustically dominant
+                    nearby speaker because the embedding window is too short for reliable classification.
+                </p>
+                <p class="body">
+                    <strong>Before</strong><br>
+                    Sacks: “...tell them I said hi too.”<br>
+                    Jcal: “Oh, okay.”<br>
+                    Sacks: “Got it.”
+                </p>
+                <p class="body">
+                    <strong>After</strong><br>
+                    Sacks: “...tell them I said hi too.”<br>
+                    Jcal: “Oh, okay. Got it.”
+                </p>
+            </div>
+        </details>
+
+        <details class="accordion">
+            <summary>4 — Lowercase Continuation</summary>
+            <div class="accordion-content">
+                <p class="body">
+                    ASR systems often capitalize new conversational turns automatically. A lowercase opening strongly
+                    suggests the segment is actually a continuation from the prior speaker.
+                </p>
+            </div>
+        </details>
+
+        <details class="accordion">
+            <summary>5 — Third-Person Self Reference</summary>
+            <div class="accordion-content">
+                <p class="body">
+                    The attributed speaker refers to themselves by name inside their own segment — usually a strong
+                    signal the segment belongs to someone else.
+                </p>
+            </div>
+        </details>
+
+        <details class="accordion">
+            <summary>6 — Speaker Sandwich</summary>
+            <div class="accordion-content">
+                <p class="body">
+                    Three adjacent segments form an A→B→A pattern where the middle speaker never actually spoke.
+                    Fingerprint: middle segment ends in ellipsis, third segment resumes as a lowercase continuation.
+                </p>
+            </div>
+        </details>
+
+        <div class="footer">
+            <span>Mason Thompson &middot; Berkeley, California</span>
+            <a href="chasing_ghosts.html">Ghost Audio &rarr;</a>
+            <a href="architecture.html">Runtime Architecture &rarr;</a>
+        </div>
+    </main>
+
+    <script src="nav-loader.js" data-page="forensics"></script>
+</body>
+
+</html>
