@@ -366,11 +366,10 @@ Metadata enrichment
                 <strong>2.</strong> NeMo’s RTTM diarization boundaries warped the transcript into fragmentation patterns
                 like:
                 <div class="transcript-fragment">
-                    <strong>Mason:</strong> I<br>
+                    <strong>Speaker_1:</strong> I<br>
                     <strong>UNKNOWN:</strong> like<br>
-                    <strong>Mason:</strong> tacos
+                    <strong>Speaker_1:</strong> tacos
                 </div>
-                Conversationally, the transcript was broken even when the diarization looked technically reasonable.
             </div>
 
             <div class="iteration-step">
@@ -391,90 +390,9 @@ Metadata enrichment
         </div>
 
         <p class="body">
-            Transcript failures often leave recognizable structural fingerprints. Over time, a small set of heuristic
-            flags emerged that reliably surfaced suspicious segments for Human-in-the-Loop review.
+            AI errors at the transcription stage often leave recognizable fingerprints. Over time, a small set of heuristic
+            flags emerged that reliably surfaced suspicious segments for Human-in-the-Loop review. See that in the next section.
         </p>
-
-        <details class="accordion">
-            <summary>1 — Ellipsis Boundary</summary>
-            <div class="accordion-content">
-                <p class="body">
-                    A segment presents as one continuous speaker turn, but often contains two speakers. Fingerprint:
-                    mid-segment ellipsis followed by conversational continuation.
-                </p>
-                <p class="body">
-                    <strong>Before</strong><br>
-                    Sacks: “Interest rates just have to go up to a point that…”<br>
-                    Sacks: “To what's happening in Japan, right?”
-                </p>
-                <p class="body">
-                    <strong>After</strong><br>
-                    Sacks: “Interest rates just have to go up to a point that…”<br>
-                    Jcal: “To what's happening in Japan, right?”
-                </p>
-            </div>
-        </details>
-
-        <details class="accordion">
-            <summary>2 — Speaker Collapse Blob</summary>
-            <div class="accordion-content">
-                <p class="body">
-                    A single speaker_id absorbs a long multi-speaker exchange. Fingerprint: unusually long monologue
-                    segments containing clearly distinct conversational voices.
-                </p>
-            </div>
-        </details>
-
-        <details class="accordion">
-            <summary>3 — Backchannel Bleed</summary>
-            <div class="accordion-content">
-                <p class="body">
-                    Short acknowledgements (“okay,” “yeah,” “got it”) become absorbed into the acoustically dominant
-                    nearby speaker because the embedding window is too short for reliable classification.
-                </p>
-                <p class="body">
-                    <strong>Before</strong><br>
-                    Sacks: “...tell them I said hi too.”<br>
-                    Jcal: “Oh, okay.”<br>
-                    Sacks: “Got it.”
-                </p>
-                <p class="body">
-                    <strong>After</strong><br>
-                    Sacks: “...tell them I said hi too.”<br>
-                    Jcal: “Oh, okay. Got it.”
-                </p>
-            </div>
-        </details>
-
-        <details class="accordion">
-            <summary>4 — Lowercase Continuation</summary>
-            <div class="accordion-content">
-                <p class="body">
-                    ASR systems often capitalize new conversational turns automatically. A lowercase opening strongly
-                    suggests the segment is actually a continuation from the prior speaker.
-                </p>
-            </div>
-        </details>
-
-        <details class="accordion">
-            <summary>5 — Third-Person Self Reference</summary>
-            <div class="accordion-content">
-                <p class="body">
-                    The attributed speaker refers to themselves by name inside their own segment — usually a strong
-                    signal the segment belongs to someone else.
-                </p>
-            </div>
-        </details>
-
-        <details class="accordion">
-            <summary>6 — Speaker Sandwich</summary>
-            <div class="accordion-content">
-                <p class="body">
-                    Three adjacent segments form an A→B→A pattern where the middle speaker never actually spoke.
-                    Fingerprint: middle segment ends in ellipsis, third segment resumes as a lowercase continuation.
-                </p>
-            </div>
-        </details>
 
         <div class="footer">
             <span>Mason Thompson &middot; Berkeley, California</span>
