@@ -26,11 +26,7 @@
             --nav-width: 220px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -140,18 +136,35 @@
             line-height: 1.75;
             color: #3a3a3a;
             max-width: 680px;
-            margin-bottom: 52px;
+            margin-bottom: 32px;
         }
 
-        .lead strong {
-            font-weight: 600;
-            color: var(--text);
+        .lead strong { font-weight: 600; color: var(--text); }
+
+        .pipeline-block {
+            margin: 34px 0 42px;
+            padding: 22px 26px;
+            background: #fcfcfc;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            max-width: 720px;
+            overflow-x: auto;
+        }
+
+        .pipeline-block pre {
+            margin: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            line-height: 1.45;
+            color: #2f2f2f;
+            white-space: pre;
         }
 
         .iteration-list {
             margin: 18px 0 18px 28px;
             padding-left: 12px;
             border-left: 2px solid var(--green-dim);
+            max-width: 720px;
         }
 
         .iteration-step {
@@ -162,8 +175,19 @@
             max-width: 680px;
         }
 
-        .iteration-step:last-child {
-            margin-bottom: 0;
+        .iteration-step:last-child { margin-bottom: 0; }
+
+        .transcript-fragment {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            line-height: 1.75;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 2px solid var(--green);
+            padding: 12px 14px;
+            margin: 12px 0;
+            color: var(--text);
+            max-width: 420px;
         }
 
         .section-heading {
@@ -198,14 +222,8 @@
             border-bottom: 1px solid var(--green-dim);
         }
 
-        p.body a:hover {
-            border-bottom-color: var(--green);
-        }
-
-        p.body strong {
-            font-weight: 600;
-            color: var(--text);
-        }
+        p.body a:hover { border-bottom-color: var(--green); }
+        p.body strong { font-weight: 600; color: var(--text); }
 
         .accordion {
             max-width: 720px;
@@ -230,9 +248,7 @@
             transition: background 0.15s, border-color 0.15s, color 0.15s;
         }
 
-        .accordion summary::-webkit-details-marker {
-            display: none;
-        }
+        .accordion summary::-webkit-details-marker { display: none; }
 
         .accordion summary::after {
             content: '+';
@@ -247,9 +263,7 @@
             color: var(--green);
         }
 
-        .accordion[open] summary::after {
-            content: '–';
-        }
+        .accordion[open] summary::after { content: '–'; }
 
         .accordion-content {
             padding: 14px 16px 4px;
@@ -285,18 +299,9 @@
         }
 
         @media (max-width: 768px) {
-            nav {
-                display: none;
-            }
-
-            main {
-                padding: 32px 24px 80px;
-            }
-
-            .footer {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+            nav { display: none; }
+            main { padding: 32px 24px 80px; }
+            .footer { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -326,21 +331,10 @@
         <p class="lead">
             Transcripts became a genuine hero’s journey. Early on, my mindset was to speedrun development by moving fast
             and running code for systems I didn’t yet fully understand.
-<div class="pipeline-block">
+        </p>
 
-<pre>
-SOURCE MATERIAL: 538 ALL-IN PODCAST EPISODES
-<h1>Transcript Fidelity</h1>
-
-<p class="lead">
-    Transcripts became a genuine hero’s journey. Early on, my mindset was to speedrun development by moving fast
-    and running code for systems I didn’t yet fully understand.
-</p>
-
-<div class="pipeline-block">
-
-<pre>
-SOURCE MATERIAL: 538 ALL-IN PODCAST EPISODES
+        <div class="pipeline-block">
+<pre>SOURCE MATERIAL: 538 ALL-IN PODCAST EPISODES
 
 
 TEXT PIPELINE                     AUDIO PIPELINE
@@ -354,32 +348,36 @@ Metadata enrichment
         ↓                                 ↓
 
    persona language                  persona voice
-      training signal                 conditioning input
-</pre>
+      training signal                 conditioning input</pre>
+        </div>
 
-</div>
-
-<p class="lead">
-    There’s honestly a novel’s worth of failures, cursed experiments, and lessons learned buried inside this
-    pipeline. Keeping things high-level, the final architecture evolved through several major iterations:
-</p>
+        <p class="lead">
+            There’s honestly a novel’s worth of failures, cursed experiments, and lessons learned buried inside this
+            pipeline. Keeping things high-level, the final architecture evolved through several major iterations:
+        </p>
 
         <div class="iteration-list">
             <div class="iteration-step">
-                <strong>1.</strong> I replaced Pyannote with NVIDIA NeMo. NeMo was much more accurate identifying unique speakers, and produced tighter embeddings. 
-                picture // picture 
+                <strong>1.</strong> I replaced Pyannote with NVIDIA NeMo. NeMo produced significantly cleaner speaker
+                separation and tighter embeddings.
             </div>
 
             <div class="iteration-step">
                 <strong>2.</strong> NeMo’s RTTM diarization boundaries warped the transcript into fragmentation patterns
                 like:
-                <br><br>
-                <strong>Mason:</strong> I<br>
-                <strong>UNKNOWN:</strong> like<br>
-                <strong>Mason:</strong> tacos
-                <br><br>
+                <div class="transcript-fragment">
+                    <strong>Mason:</strong> I<br>
+                    <strong>UNKNOWN:</strong> like<br>
+                    <strong>Mason:</strong> tacos
+                </div>
+                Conversationally, the transcript was broken even when the diarization looked technically reasonable.
             </div>
 
+            <div class="iteration-step">
+                <strong>3.</strong> WhisperX transcripts are word-level aligned to the millisecond, so they became the
+                canonical source of truth rather than relying directly on NeMo RTTM boundaries. NeMo was constrained to
+                classify speech only inside those existing transcript windows.
+            </div>
 
             <div class="iteration-step">
                 <strong>4.</strong> From there, I built lightweight HITL heuristics to identify suspicious transcript
@@ -387,12 +385,6 @@ Metadata enrichment
                 sandwiches, and other structural fingerprints that reliably surfaced hidden attribution failures.
             </div>
         </div>
-
-        <p class="lead">
-            WhisperX transcripts are word-level aligned to the millisecond, so I used them rather than rely on NeMo's RTTM data. Good decision. 
-            <br><br>
-
-        </p>
 
         <div class="section-heading">
             <h2>Boundary Integrity Flags</h2>
@@ -407,7 +399,7 @@ Metadata enrichment
             <summary>1 — Ellipsis Boundary</summary>
             <div class="accordion-content">
                 <p class="body">
-                    A segment presents as one continuous speaker turn, but often contains two speakers (although this doesn't happen when Friedberg is speaking). Fingerprint:
+                    A segment presents as one continuous speaker turn, but often contains two speakers. Fingerprint:
                     mid-segment ellipsis followed by conversational continuation.
                 </p>
                 <p class="body">
