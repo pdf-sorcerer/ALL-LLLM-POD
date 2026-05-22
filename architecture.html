@@ -297,7 +297,7 @@
 <h1>Runtime Architecture</h1>
 
 <p class="lead">
-ALL-LLM Pod runs across a deliberately strange stack: an iPhone frontend, a Windows GPU orchestration server, and an Apple Silicon inference runtime serving local Qwen models through oMLX. The goal of this page is to show where inference happens, how audio and text move through the system, where latency accumulates, and which constraints currently shape the runtime.
+  Three runtimes, one inference backend. This page covers where inference runs, how audio and text move through the system, where latency builds up, and what constraints are actually shaping things right now.
 </p>
 
 <div class="architecture-block">
@@ -314,54 +314,54 @@ ALL-LLM Pod runs across a deliberately strange stack: an iPhone frontend, a Wind
 </div>
 
 <p class="body">
-    <strong>iOS Runtime</strong><br>
-    SwiftUI frontend with a FaceTime-style conversational interface, realtime transcript rendering, streamed TTS playback, and animated persona presentation. The client primarily acts as an orchestration surface while inference and audio generation occur remotely.
+  <strong>iOS</strong><br>
+  SwiftUI app with a FaceTime-style interface. Handles transcript display, streamed TTS playback, and persona animation. The phone doesn't do inference — it's a frontend. Audio and text generation happen on the server.
 </p>
 
 <p class="body">
-    <strong>Windows GPU Orchestration Server</strong><br>
-    The orchestration layer handles WhisperX ASR, F5-TTS synthesis, websocket routing, transcript retrieval, memory injection, queue coordination, and runtime state management. Most realtime synchronization problems emerge here.
+  <strong>Windows Orchestration Server</strong><br>
+  This is where most of the work happens: WhisperX for speech-to-text, F5-TTS for audio generation, websocket routing, memory injection, queue management, and runtime state. Most timing problems originate here.
 </p>
 
 <p class="body">
-    <strong>Apple Silicon Inference Runtime</strong><br>
-    Local Qwen3 30B inference runs through oMLX on an M4 MacBook Pro, pinned into unified memory with prompt caching and long-context execution enabled. The runtime is reachable independently by both Windows and iOS, effectively behaving like a lightweight local inference appliance.
+  <strong>Apple Silicon Inference (M4 MacBook Pro)</strong><br>
+  Qwen3 30B runs locally via mlx, kept resident in unified memory with prompt caching enabled. Both the Windows server and the iOS client can talk to it directly. It functions like a dedicated inference box sitting on the local network.
 </p>
 
 <p class="body">
-    <strong>Discord Runtime Surface</strong><br>
-    Discord extends the same infrastructure into a shared multi-user environment. The underlying runtime remains identical — only the interaction surface changes.
-</p>
-
-<div class="section-heading">
-    <h2>Operational Constraints</h2>
-</div>
-
-<p class="body">
-    <strong>Queueing Pressure</strong><br>
-    Serialized inference and TTS contention create the clearest runtime bottleneck. The system runs surprisingly well on consumer hardware, but every additional user interaction increases queue depth, coordination overhead, and perceived latency.
-</p>
-
-<p class="body">
-    <strong>Realtime Coordination</strong><br>
-    The runtime continuously synchronizes ASR → inference → TTS → playback while preserving conversational flow and persona continuity. Small timing delays compound quickly once transcript state, streamed audio, and UI animation all need to remain aligned.
-</p>
-
-<p class="body">
-    <strong>Model Residency</strong><br>
-    Keeping Qwen3 resident inside unified memory avoids repeated cold-start penalties, but introduces tradeoffs around memory pressure, runtime persistence, fallback behavior, and prompt cache invalidation.
+  <strong>Discord</strong><br>
+  Same stack, different surface. Discord adds multi-user access without changing anything underneath.
 </p>
 
 <div class="section-heading">
-    <h2>Retrieval Direction</h2>
+    <h2>Bottlenecks</h2>
 </div>
 
 <p class="body">
-    The current retrieval stack leans a little too heavily on embeddings and topic exemplars. It works reasonably well today, but the underlying transcript data is already highly structured: speakers, timestamps, episode boundaries, conversational flow, repaired segments, and attribution metadata.
+  <strong>Queue pressure</strong><br>
+  Inference and TTS are serialized. One user at a time works fine. Each additional user adds queue depth and wait time. This is the most obvious constraint on the system.
 </p>
 
 <p class="body">
-    Long-term, I’ll likely move toward simpler SQL-style retrieval with semantic search layered on top only where it materially improves recall. The goal is not to make retrieval more impressive. The goal is to make it more reliable.
+  <strong>Timing</strong><br>
+  The pipeline is ASR → inference → TTS → playback → UI animation. That's a long chain. Small delays at any step compound. Keeping transcript state, audio, and animation synchronized is the main coordination problem, and it lives on the Windows server.
+</p>
+
+<p class="body">
+  <strong>Model residency</strong><br>
+  Keeping Qwen3 loaded avoids cold-start delays, but it holds memory permanently. The tradeoffs are memory pressure, what happens if the runtime crashes, and how prompt cache invalidation is handled when context changes.
+</p>
+
+<div class="section-heading">
+    <h2>Retrieval</h2>
+</div>
+
+<p class="body">
+  The current retrieval setup leans too heavily on embeddings. It works, but the transcript data is already well-structured — speakers, timestamps, episode boundaries, segment repairs, attribution. That structure isn't being used.
+</p>
+
+<p class="body">
+  The plan is to move toward SQL-first retrieval and only add semantic search where it actually improves results. The goal isn't a more sophisticated retrieval system. The goal is one that breaks less often.
 </p>
 
 <div class="footer">
