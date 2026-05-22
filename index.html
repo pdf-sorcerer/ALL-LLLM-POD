@@ -177,6 +177,43 @@
     /* ── Architecture image + lightbox ────────────────────────────── */
     .architecture-block { margin: 0 0 52px 0; }
 
+    /* ── Header banner (cast art as a site header) ────────────────── */
+    .site-banner {
+      /* full-bleed: cancel main's horizontal padding so it spans edge-to-edge */
+      margin: -56px -64px 40px -64px;
+      display: block;
+      width: calc(100% + 128px);   /* 100% + the two 64px paddings we cancelled */
+      border: 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--code-bg);
+      cursor: zoom-in;
+      padding: 0;
+      position: relative;
+    }
+
+    .site-banner img {
+      display: block;
+      width: 100%;
+      height: 200px;            /* banner band height */
+      object-fit: cover;        /* crop to a horizontal slice */
+      object-position: center 38%;  /* bias toward the faces, not dead-center */
+    }
+
+    .site-banner:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: -2px;
+    }
+
+    .banner-caption {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: -28px 0 36px 0;
+      text-transform: uppercase;
+    }
+
+
     .architecture-thumb {
       display: block;
       width: 100%;
@@ -326,20 +363,18 @@
   </nav>
 
 <main>
+  <button type="button"
+          class="site-banner"
+          aria-label="Enlarge ALL-LLM Pod cast art"
+          onclick="openLightbox('all-llm-pod.png', 'ALL-LLM Podcast cast art (enlarged)')">
+    <img src="all-llm-pod.png"
+         alt="ALL-LLM Podcast cast: satirical portraits of Chamath, JCal, Sacks, and Friedberg">
+  </button>
+  <p class="banner-caption">Click to enlarge &middot; Satirical ALL-In personas</p>
+
   <p class="page-eyebrow">Multi-Agent LLM System</p>
 
   <h1>ALL-LLM Pod</h1>
-
-  <div class="architecture-block">
-    <button type="button"
-            class="architecture-thumb"
-            aria-label="Enlarge system architecture diagram"
-            onclick="openLightbox('all-llm-pod.png', 'ALL-LLM Pod system architecture (enlarged)')">
-      <img src="all-llm-pod.png"
-           alt="ALL-LLM Pod system architecture: iPhone, M4 Mac, and PC across live runtime and offline training data">
-    </button>
-    <p class="architecture-caption">Click to enlarge &middot; Live runtime and offline training pipeline</p>
-  </div>
 
   <p class="lead">
 
