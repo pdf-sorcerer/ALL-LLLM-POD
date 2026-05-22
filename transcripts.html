@@ -326,10 +326,43 @@
         <p class="lead">
             Transcripts became a genuine hero’s journey. Early on, my mindset was to speedrun development by moving fast
             and running code for systems I didn’t yet fully understand.
-            <br><br>
-            There’s honestly a novel’s worth of failures, lessons learned, and cursed experiments buried inside this
-            pipeline. Keeping things high-level, the final architecture evolved through several major iterations:
-        </p>
+<div class="pipeline-block">
+
+<pre>
+SOURCE MATERIAL: 538 ALL-IN PODCAST EPISODES
+<h1>Transcript Fidelity</h1>
+
+<p class="lead">
+    Transcripts became a genuine hero’s journey. Early on, my mindset was to speedrun development by moving fast
+    and running code for systems I didn’t yet fully understand.
+</p>
+
+<div class="pipeline-block">
+
+<pre>
+SOURCE MATERIAL: 538 ALL-IN PODCAST EPISODES
+
+
+TEXT PIPELINE                     AUDIO PIPELINE
+─────────────                     ──────────────
+WhisperX transcription            Clip extraction
+Speaker attribution               Quality filtering
+Forensic transcript repair        Prosody indexing
+Boundary integrity review         Reference pooling
+Metadata enrichment
+
+        ↓                                 ↓
+
+   persona language                  persona voice
+      training signal                 conditioning input
+</pre>
+
+</div>
+
+<p class="lead">
+    There’s honestly a novel’s worth of failures, cursed experiments, and lessons learned buried inside this
+    pipeline. Keeping things high-level, the final architecture evolved through several major iterations:
+</p>
 
         <div class="iteration-list">
             <div class="iteration-step">
