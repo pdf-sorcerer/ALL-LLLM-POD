@@ -308,6 +308,12 @@
 Late in the project, I switched from a hodgepodge of YouTube podcast audio to full episode masters from Libsyn. The assumption seemed obvious: higher-quality source audio should produce higher-quality transcripts. Instead, I found older transcripts generated from objectively worse YouTube audio sometimes contained dialogue missing entirely from the cleaner Libsyn rebuilds. I coined this phenomenon <strong>Ghost Audio</strong> because root-causing it felt like a paranormal investigation from the 1990s TV show <em>Sightings</em>: time-consuming, frustrating, and rarely ending with a clean explanation.
 </p>
 
+        <div class="video-box">
+        <video controls preload="metadata">
+          <source src="both_ghosts.mp4" type="video/mp4">
+        </video>
+      </div>
+
 <p class="body">
 The early tip-off came from Episode 136. Friedberg’s quiet “oh my god” appeared in an older transcript but vanished entirely from the Libsyn rebuild. Brad Gerstner said nearly the exact same phrase moments later — also missing. Acoustic inspection confirmed Friedberg’s utterance physically existed: VAD-positive, RMS energy present, recoverable pitch after spectral subtraction, and faint activation visible in the cross-attention map. The model was not “deaf” to the audio. The decoder perceived the utterance and still failed to emit tokens for it.
 </p>
@@ -386,7 +392,7 @@ The easiest way to understand the difference is through a scene where one missin
 
       <div class="video-box">
         <video controls preload="metadata">
-          <source src="both_ghosts.mp4" type="video/mp4">
+          <source src="ghost_audio.mp4" type="video/mp4">
         </video>
       </div>
 
