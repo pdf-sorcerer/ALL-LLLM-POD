@@ -379,11 +379,15 @@
   <p class="lead">
 
 Hey, everybody Welcome to the number one <strong>ALL-LLM Pod</strong>: a technically serious AI system built around an intentionally unserious premise:
-having conversations with chatbot parodies of the <i>ALL-In Podcast</i> hosts through conventional text messaging and video chat (both 1:1 and group).
-<br><br>   
-These personalities are reconstructed from podcast episodes and other publicly available audio using an open-source CUDA pipeline for ASR, transcription, diarization and classification. Speaker_id mapping and transcript review are all human-in-the-loop.  I have ethical grumblings about the nature of this work, and where the line is between parody and impersonation. But comedy is legal again, and tech leaders who broadcast not knowing what iPhone model they're using should expect some light teasing.
+having conversations with chatbot parodies of the <i>ALL-In Podcast</i> hosts through text messaging and video chat.
+    <br><br>
+These personalities are reconstructed from podcast episodes using an open-source CUDA pipeline for ASR, transcription, diarization and classification. Speaker_id mapping and transcript review are all human-in-the-loop.  
+    <br><br>
+    The frontend is polished, but most of the engineering effort went into the distributed backend: local Qwen3 inference running on Apple Silicon alongside my PC serving as model orchestrator and CUDA accelerated processing.
+
+
     <br><br>  
-  Transcripts ended up being the most rewarding part of the project. They may not be glamorous, but they matter for the future of LLM development because all of the easily-scraped Internet is already baked into frontier LLMs. New knowledge won't come as easily or as cheaply. Much of it will arrive as audio and video — podcasts, talks, interviews — which then has to be converted, transcribed, segmented, labeled, and repaired into reliable, ground-truth text. In my experience, that process is surprisingly fragile.
+  I have ethical grumblings about the nature of this work, and where the line is between parody and impersonation. But comedy is legal again, and tech leaders who broadcast not knowing what iPhone model they're using should expect some light teasing. This project was a massive amount of work, and transcripts ended up being the most rewarding part. They may not be glamorous, but they matter for the future of LLM development because all of the easily-scraped Internet is already baked into frontier LLMs. New knowledge won't come as easily or as cheaply. Much of it will arrive as audio and video — podcasts, talks, interviews — which then has to be converted, transcribed, segmented, labeled, and repaired into reliable, ground-truth text. In my experience, that process is surprisingly fragile.
 
   <div class="footer">
     <span>Mason Thompson &middot; Berkeley, California</span>
