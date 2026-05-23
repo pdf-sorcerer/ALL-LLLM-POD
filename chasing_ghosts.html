@@ -778,7 +778,7 @@
   </div>
 
   <p class="body">
-    The working fix is <code>without_timestamps=False</code>. WhisperX with timestamps enabled recovers Friedberg at every beam size tested. Why exactly this combination fails — what beam search scores differently without timestamp tokens — isn't fully understood. Timestamp tokens are trained jointly with text in Whisper, not bolted on. Removing them changes how the decoder scores competing paths in non-obvious ways. CTranslate2 doesn't expose decoder internals for inspection.
+    One working fix is the setting <code>without_timestamps=False</code>, aka: 'timestamps are ON'. WhisperX with timestamps enabled recovers Friedberg at every beam size tested. Why exactly this combination fails — what beam search scores differently without timestamp tokens — isn't fully understood. Timestamp tokens are trained jointly with text in Whisper, not bolted on. Removing them changes how the decoder scores competing paths in non-obvious ways. CTranslate2 doesn't expose decoder internals for inspection.
   </p>
 
   <div class="section-heading">
