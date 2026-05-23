@@ -482,6 +482,203 @@
   </style>
 </head>
 
+<!-- ============================================================
+     DROP-IN REPLACEMENT for the existing .video-block
+     Two columns: video (left) + toggleable transcript (right)
+     Tabs: YouTube / Libsyn
+     Paste your transcript text into the marked panels below.
+     ============================================================ -->
+
+<!-- 1) Add this CSS to your existing <style> block ------------ -->
+<style>
+  /* Two-part video + transcript layout */
+  .vt-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 28px 0 36px;
+    max-width: 760px;
+    align-items: start;
+  }
+
+  /* Left: video, reusing the .video-block look */
+  .vt-video {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #111;
+  }
+
+  .vt-video video {
+    display: block;
+    width: 100%;
+  }
+
+  .vt-video .video-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+
+  /* Right: transcript panel */
+  .vt-transcript {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    /* Match the video's height; transcript scrolls if longer */
+    max-height: 100%;
+  }
+
+  .vt-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: #fafafa;
+  }
+
+  .vt-tab {
+    flex: 1;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+
+  .vt-tab:hover {
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  .vt-tab.active {
+    color: var(--green);
+    border-bottom-color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .vt-panel {
+    display: none;
+    padding: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--text);
+    overflow-y: auto;
+  }
+
+  .vt-panel.active {
+    display: block;
+  }
+
+  .vt-panel p {
+    margin-bottom: 10px;
+  }
+
+  .vt-panel p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Optional helpers, mirroring the page's existing transcript styles */
+  .vt-panel .speaker {
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .vt-panel .ts {
+    color: var(--faint);
+    font-size: 10px;
+  }
+
+  .vt-panel .ghost-line {
+    color: var(--red);
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+
+  .vt-panel .placeholder {
+    color: var(--faint);
+    font-style: italic;
+  }
+
+  @media (max-width: 900px) {
+    .vt-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+
+<!-- 2) Replace your existing .video-block with this markup ----- -->
+<div class="vt-grid">
+
+  <!-- LEFT: video -->
+  <div class="vt-video">
+    <video controls preload="metadata">
+      <source src="both_ghosts.mp4" type="video/mp4">
+    </video>
+    <div class="video-caption">Episode 136 · Both ghost regions · ~20–29s</div>
+  </div>
+
+  <!-- RIGHT: transcript with YouTube / Libsyn toggle -->
+  <div class="vt-transcript">
+    <div class="vt-tabs" role="tablist">
+      <button class="vt-tab active" role="tab" aria-selected="true"
+              data-target="panel-youtube">YouTube</button>
+      <button class="vt-tab" role="tab" aria-selected="false"
+              data-target="panel-libsyn">Libsyn</button>
+    </div>
+
+<!-- ===== YouTube transcript ===== -->
+<div class="vt-panel active" id="panel-youtube" role="tabpanel">
+  <p><span class="ts">00:17</span> <span class="speaker">Chamath:</span> The shortest, that's the fattest. And the fattest, that's the dumbest.</p>
+  <p><span class="ts">00:21</span> <span class="speaker">Friedberg:</span> Oh, my God. He's not even here. You can't do that. It's awful. That's just bullying. It's awful.</p>
+</div>
+    
+    <!-- ===== Libsyn transcript ===== -->
+    <div class="vt-panel" id="panel-libsyn" role="tabpanel">
+<!-- ===== YouTube transcript ===== -->
+<div class="vt-panel active" id="panel-youtube" role="tabpanel">
+  <p><span class="ts">00:17</span> <span class="speaker">Chamath:</span> The shortest, that's the fattest. And the fattest, that's the dumbest.</p>
+  <p><span class="ts">00:25</span> <span class="speaker">Friedberg:</span> He's not even here. You can't do that. It's awful. That's just bullying. It's awful.</p>
+</div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- 3) Add this script once, before </body> ------------------- -->
+<script>
+  document.querySelectorAll('.vt-transcript').forEach(function (panel) {
+    var tabs = panel.querySelectorAll('.vt-tab');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var targetId = tab.getAttribute('data-target');
+        tabs.forEach(function (t) {
+          var on = t === tab;
+          t.classList.toggle('active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        panel.querySelectorAll('.vt-panel').forEach(function (p) {
+          p.classList.toggle('active', p.id === targetId);
+        });
+      });
+    });
+  });
+</script>
+  
 <body>
 
 <nav>
