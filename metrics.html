@@ -331,19 +331,16 @@
 
   <p class="page-eyebrow">Realtime Voice Inference</p>
 
-  <h1>Performance Metrics</h1>
+  <h1>Performance </h1>
 
-  <p class="lead">
-    ALL-LLM Pod prioritizes responsiveness during 1:1 video chat. The local LLM emits sentence-length completions incrementally, allowing F5-TTS on the Windows orchestration server to begin audio synthesis as early as possible. Because F5-TTS generates audio faster than realtime playback, a playback queue naturally forms while earlier speech is still playing, enabling uninterrupted audio delivery on iOS and Discord.
-  </p>
 
   <div class="section-heading">
     <h2>Realtime Metrics</h2>
   </div>
 
-  <p class="body">
-    The system is optimized to feel responsive during live conversation, not just score well on raw throughput benchmarks. Most runtime tuning focused on reducing prompt orchestration overhead, minimizing blocking operations, and allowing TTS synthesis to begin as early as possible once the model starts responding.
-  </p>
+<p class="body">
+  The system is optimized to feel responsive during live conversation, not just score well on raw throughput benchmarks. Runtime tuning focused on reducing prompt orchestration overhead, minimizing blocking operations, and starting F5-TTS synthesis as early as possible during streaming generation. Different runtime configurations — including reasoning-enabled inference, richer system prompts, and alternative TTS models like VibeVoice — trade latency for response quality, personality fidelity, and conversational realism.
+</p>
 
   <table class="metrics-summary">
     <thead>
@@ -378,7 +375,7 @@
   </table>
 
   <div class="section-heading">
-    <h2>Benchmark Questions</h2>
+    <h2>Benchmarks</h2>
   </div>
 
   <div class="benchmark-wrap">
