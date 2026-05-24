@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALL-LLM Pod | Metrics</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #0A84FF;
+      --green-dim: rgba(10, 132, 255, 0.12);
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --border: #e4e4e4;
+      --code-bg: #0d1117;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --faint: #8c8c8c;
+      --nav-width: 220px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: var(--nav-width);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 32px 0;
+    }
+
+    .nav-logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-item {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 24px;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .nav-item:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: var(--green-dim);
+    }
+
+    main {
+      flex: 1;
+      max-width: 980px;
+      padding: 56px 64px 120px;
+    }
+
+    .page-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 32px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+
+    .lead {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #3a3a3a;
+      max-width: 760px;
+      margin-bottom: 48px;
+    }
+
+    .section {
+      margin-top: 56px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h2 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    p.body {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #3a3a3a;
+      margin-bottom: 18px;
+      max-width: 760px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+      margin-bottom: 40px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .metric-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 10px;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      margin-top: 20px;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--faint);
+      background: #fafafa;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      line-height: 1.6;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    code {
+      background: var(--green-dim);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+    }
+
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+      }
+
+      main {
+        padding: 32px 24px 80px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      td, th {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">ALL-LLM Pod</div>
+
+  <a class="nav-item" href="index.html">Overview</a>
+  <a class="nav-item" href="architecture.html">Architecture</a>
+  <a class="nav-item" href="transcripts.html">Transcripts</a>
+  <a class="nav-item active" href="metrics.html">Metrics</a>
+</nav>
+
+<main>
+
+  <p class="page-eyebrow">Realtime Voice Inference</p>
+
+  <h1>Performance Metrics</h1>
+
+  <p class="lead">
+    The ALL-LLM Pod stack is designed around low-latency conversational inference rather than batch-oriented chatbot interaction.
+    These measurements capture the evolution from oversized prompt orchestration toward a genuinely realtime-feeling local AI system.
+  </p>
+
+  <div class="metrics-grid">
+
+    <div class="metric-card">
+      <div class="metric-label">ASR Runtime</div>
+      <div class="metric-value">0.16–0.29s</div>
+      <div class="metric-sub">
+        Whisper transcription runtime for authoritative pass.
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">MLX TTFT</div>
+      <div class="metric-value">0.40–0.78s</div>
+      <div class="metric-sub">
+        Time-to-first-token on lean prompts with minimal RAG.
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">TTFA</div>
+      <div class="metric-value">3.8–4.5s</div>
+      <div class="metric-sub">
+        Time-to-first-audio on minimal-context turns.
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Prompt Size</div>
+      <div class="metric-value">1.4k–4.3k</div>
+      <div class="metric-sub">
+        Runtime system prompts after orchestration refactor.
+      </div>
+    </div>
+
+  </div>
+
+  <section class="section">
+
+    <div class="section-heading">
+      <h2>Benchmark Questions</h2>
+    </div>
+
+    <p class="body">
+      Latency benchmarks were intentionally designed around short conversational prompts to isolate realtime inference behavior from long-form reasoning or retrieval-heavy generation.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Prompt Size</th>
+          <th>TTFT</th>
+          <th>TTFA</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr>
+          <td>“What’s 2 plus 2?”</td>
+          <td>1442 chars</td>
+          <td>0.40s</td>
+          <td>~4.3s</td>
+          <td>Fastest clean baseline with no retrieval.</td>
+        </tr>
+
+        <tr>
+          <td>“Say one sentence about San Francisco.”</td>
+          <td>1682 chars</td>
+          <td>0.56s</td>
+          <td>~4.1s</td>
+          <td>Minimal orchestration overhead.</td>
+        </tr>
+
+        <tr>
+          <td>“Quick answer only: favorite color?”</td>
+          <td>1880 chars</td>
+          <td>0.68s</td>
+          <td>~3.8s</td>
+          <td>Very low generation pressure.</td>
+        </tr>
+
+        <tr>
+          <td>“Complete this sentence. AI is...”</td>
+          <td>4325 chars</td>
+          <td>2.74s</td>
+          <td>~5.8s</td>
+          <td>Heavy AI-topic RAG injection.</td>
+        </tr>
+
+        <tr>
+          <td>“What’s a startup?”</td>
+          <td>3841 chars</td>
+          <td>2.10s</td>
+          <td>~4.9s</td>
+          <td>Venture-topic retrieval inflation.</td>
+        </tr>
+
+        <tr>
+          <td>“Sacks, quick take on AI regulation.”</td>
+          <td>4150 chars</td>
+          <td>2.32s</td>
+          <td>~5.7s</td>
+          <td>Representative end-to-end persona benchmark.</td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </section>
+
+  <section class="section">
+
+    <div class="section-heading">
+      <h2>Architectural Observations</h2>
+    </div>
+
+    <p class="body">
+      The largest latency breakthrough came from eliminating oversized system prompts and moving visible-thought generation out of the synchronous inference path.
+    </p>
+
+    <p class="body">
+      Earlier versions of the stack routinely exceeded <code>10k–13k</code> prompt sizes, causing severe TTFT degradation and long conversational dead zones.
+      Current runtime prompts generally operate between <code>1400–4300</code> characters depending on memory and retrieval injection.
+    </p>
+
+    <p class="body">
+      Remaining latency spikes correlate strongly with:
+    </p>
+
+    <p class="body">
+      • character_rag injection<br>
+      • agentic memory retrieval<br>
+      • long sliding-window orchestration blocks
+    </p>
+
+  </section>
+
+  <section class="section">
+
+    <div class="section-heading">
+      <h2>Current Bottleneck</h2>
+    </div>
+
+    <p class="body">
+      The system is no longer fundamentally model-bound. Current latency overhead is dominated by orchestration and contextual augmentation rather than raw inference throughput.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>ASR</td>
+          <td>Healthy / realtime</td>
+        </tr>
+
+        <tr>
+          <td>MLX inference</td>
+          <td>Fast</td>
+        </tr>
+
+        <tr>
+          <td>F5-TTS</td>
+          <td>Acceptable realtime synthesis</td>
+        </tr>
+
+        <tr>
+          <td>Primary latency source</td>
+          <td>Context inflation from RAG + memory injection</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <div class="footer">
+    <span>ALL-LLM Pod · Realtime Metrics</span>
+    <span>Local AI Inference Stack</span>
+  </div>
+
+</main>
+
+</body>
+</html>
