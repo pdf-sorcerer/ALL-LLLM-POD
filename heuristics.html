@@ -7,7 +7,7 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
     :root {
-      --green: #76b900; --green-dim: rgba(118, 185, 0, 0.12); --bg: #f9f9f9; --surface: #ffffff; --border: #e4e4e4; --code-bg: #0d1117; --text: #1a1a1a; --muted: #6b6b6b; --faint: #aaaaaa; --nav-width: 220px; --red: #c0392b;
+      --green: #0A84FF; --green-dim: rgba(10, 132, 255, 0.12); --bg: #f9f9f9; --surface: #ffffff; --border: #e4e4e4; --code-bg: #0d1117; --text: #1a1a1a; --muted: #6b6b6b; --faint: #aaaaaa; --nav-width: 220px; --red: #c0392b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
@@ -79,14 +79,28 @@
       <p class="page-eyebrow">Heuristic Diarization Repair</p>
       <h1>Transcript Forensics and Repair</h1>
       <p class="lead">
-        WhisperX establishes canonical segment and word-level timestamps; NeMo is constrained to operate
-        within those boundaries to assign speaker identity. Generally (so far) this creates a single failure mode: NeMo tags the wrong speaker. This surfaces
-        in two ways — either a segment boundary is misplaced, or the assigned speaker on a correctly-bounded segment is wrong.<br><br>
+        WhisperX establishes canonical segment and word-level timestamps; NeMo operates within those boundaries to assign speaker identity. In practice, this creates two dominant failure modes: either a segment boundary is wrong, or the assigned speaker on a correctly-bounded segment is wrong.<br><br>
         Both leave fingerprints in the transcript. Some are structural — patterns in how segments begin or end. Others are subtler relics: statements that appear grammatically complete but carry cues that the system was operating at the edge of its confidence.<br><br>
-        <strong>Why it matters:</strong> The downstream model trains on this data. A misattributed segment means the wrong persona learns the wrong words — LoRA adapters trained on corrupted labels will interpolate between speakers, and the resulting voice won't sound like anyone. At 460 hours across 538 episodes, even a 2% error rate poisons thousands of training examples.<br><br>
-        <strong>The solution:</strong> Human-in-the-Loop heuristic repair — flagging suspect segments using lexical patterns, then routing them for human review, where the transcript and audio-file timestamp are presented rather than re-processing the entire corpus.
-        <a href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank">↗ Episode 115 HITL review</a>
+        <strong>Why it matters:</strong> the downstream model trains on this data. A misattributed segment means the wrong persona learns the wrong words. LoRA adapters trained on corrupted labels begin interpolating between speakers, and the resulting voice stops sounding like anyone in particular.<br><br>
+        At 460 hours across 538 episodes, even a 2% error rate poisons thousands of training examples.
       </p>
+
+      <div class="block open">
+        <div class="block-header">
+          <div class="block-header-left">
+            <span class="block-id">HITL</span>
+            <span class="block-title">heuristic repair pipeline</span>
+          </div>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="block-body">
+          <div class="block-why">
+            The solution was human-in-the-loop heuristic repair: flagging suspect transcript segments using lexical and structural patterns, then routing only those segments for review instead of re-processing the entire corpus.<br><br>
+            Review surfaces the transcript, synchronized audio, and timestamp boundaries directly — turning transcript repair into a fast auditing workflow rather than a full retranscription pass.<br><br>
+            <a href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank">↗ Episode 115 HITL review</a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="section-heading">
