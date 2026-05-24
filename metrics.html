@@ -1,4 +1,341 @@
-<section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALL-LLM Pod | Realtime Metrics</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #0A84FF;
+      --green-dim: rgba(10, 132, 255, 0.12);
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --border: #e4e4e4;
+      --code-bg: #0d1117;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --faint: #8c8c8c;
+      --nav-width: 220px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: var(--nav-width);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 0;
+      overflow-y: auto;
+    }
+
+    .nav-logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 20px 24px 8px;
+    }
+
+    .nav-item {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 7px 24px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: var(--bg);
+      border-left-color: var(--border);
+    }
+
+    .nav-item.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: var(--green-dim);
+    }
+
+    .nav-footer {
+      margin-top: auto;
+      padding: 20px 24px 0;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--faint);
+      line-height: 1.6;
+    }
+
+    main {
+      flex: 1;
+      padding: 56px 64px 120px;
+      max-width: 860px;
+    }
+
+    .page-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      max-width: 680px;
+      margin-bottom: 52px;
+    }
+
+    .lead strong { font-weight: 600; color: var(--text); }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      margin-top: 52px;
+    }
+
+    h2 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    p.body {
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      margin-bottom: 14px;
+      max-width: 720px;
+    }
+
+    p.body strong { font-weight: 600; color: var(--text); }
+
+    .metrics-summary {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 22px 0 42px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .metrics-summary th,
+    .metrics-summary td {
+      text-align: left;
+      vertical-align: top;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .metrics-summary tr:last-child td { border-bottom: none; }
+
+    .metrics-summary th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+      background: #fafafa;
+    }
+
+    .metrics-summary td {
+      font-size: 13px;
+      line-height: 1.65;
+      color: #3a3a3a;
+    }
+
+    .metrics-summary td:nth-child(1),
+    .metrics-summary td:nth-child(2) {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .benchmark-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 20px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .benchmark-table {
+      width: 100%;
+      min-width: 820px;
+      border-collapse: collapse;
+    }
+
+    .benchmark-table th,
+    .benchmark-table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .benchmark-table tr:last-child td { border-bottom: none; }
+
+    .benchmark-table th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+      background: #fafafa;
+      white-space: nowrap;
+    }
+
+    .benchmark-table td {
+      font-size: 13px;
+      line-height: 1.65;
+      color: #3a3a3a;
+    }
+
+    .benchmark-table td:nth-child(1) {
+      color: var(--text);
+      width: 24%;
+    }
+
+    .benchmark-table td:nth-child(2),
+    .benchmark-table td:nth-child(3),
+    .benchmark-table td:nth-child(4) {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      width: 11%;
+    }
+
+    .benchmark-table td:nth-child(5) {
+      width: 43%;
+    }
+
+    .footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .footer a:hover {
+      color: var(--green);
+      border-bottom-color: var(--green-dim);
+    }
+
+    .nav-fallback { padding: 0; }
+    .nav-fallback .nav-logo { margin-bottom: 0; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { padding: 32px 24px 80px; }
+      .footer { flex-direction: column; align-items: flex-start; }
+      .metrics-summary td:nth-child(1),
+      .metrics-summary td:nth-child(2),
+      .benchmark-table td:nth-child(2),
+      .benchmark-table td:nth-child(3),
+      .benchmark-table td:nth-child(4) { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="shared-nav">
+    <noscript>
+      <div class="nav-fallback">
+        <div class="nav-logo">ALL-LLM Pod</div>
+        <a class="nav-item" href="index.html">Overview</a>
+        <a class="nav-item" href="architecture.html">Architecture</a>
+        <a class="nav-item" href="chasing_ghosts.html">Chasing Ghosts</a>
+        <a class="nav-item" href="voice_classifier.html">Transcription</a>
+        <a class="nav-item" href="heuristics.html">HITL</a>
+        <a class="nav-item active" href="performance.html">Metrics &amp; Media</a>
+      </div>
+    </noscript>
+  </nav>
+
+<main>
+
+  <p class="page-eyebrow">Realtime Voice Inference</p>
+
+  <h1>Performance Metrics</h1>
+
+  <p class="lead">
+    ALL-LLM Pod prioritizes responsiveness during 1:1 video chat. The local LLM emits sentence-length completions incrementally, allowing F5-TTS on the Windows orchestration server to begin audio synthesis as early as possible. Because F5-TTS generates audio faster than realtime playback, a playback queue naturally forms while earlier speech is still playing, enabling uninterrupted audio delivery on iOS and Discord.
+  </p>
 
   <div class="section-heading">
     <h2>Realtime Metrics</h2>
@@ -8,46 +345,44 @@
     The system is optimized to feel responsive during live conversation, not just score well on raw throughput benchmarks. Most runtime tuning focused on reducing prompt orchestration overhead, minimizing blocking operations, and allowing TTS synthesis to begin as early as possible once the model starts responding.
   </p>
 
-  <div class="metrics-grid">
+  <table class="metrics-summary">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Current Range</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ASR Runtime</td>
+        <td>0.16–0.29s</td>
+        <td>Whisper transcription speed</td>
+      </tr>
+      <tr>
+        <td>MLX TTFT</td>
+        <td>0.40–0.78s</td>
+        <td>Time-to-first-token on lighter prompts</td>
+      </tr>
+      <tr>
+        <td>TTFA</td>
+        <td>3.8–4.5s</td>
+        <td>Time-to-first-audio during simple conversations</td>
+      </tr>
+      <tr>
+        <td>Prompt Size</td>
+        <td>1.4k–4.3k chars</td>
+        <td>Final runtime prompt after memory and retrieval</td>
+      </tr>
+    </tbody>
+  </table>
 
-    <div class="metric-card">
-      <div class="metric-kicker">ASR Runtime</div>
-      <div class="metric-value">0.16–0.29s</div>
-      <div class="metric-description">
-        Whisper transcription speed
-      </div>
-    </div>
-
-    <div class="metric-card">
-      <div class="metric-kicker">MLX TTFT</div>
-      <div class="metric-value">0.40–0.78s</div>
-      <div class="metric-description">
-        Time-to-first-token on lighter prompts
-      </div>
-    </div>
-
-    <div class="metric-card">
-      <div class="metric-kicker">TTFA</div>
-      <div class="metric-value">3.8–4.5s</div>
-      <div class="metric-description">
-        Time-to-first-audio during simple conversations
-      </div>
-    </div>
-
-    <div class="metric-card">
-      <div class="metric-kicker">Prompt Size</div>
-      <div class="metric-value">1.4k–4.3k</div>
-      <div class="metric-description">
-        Runtime prompt after memory + retrieval
-      </div>
-    </div>
-
+  <div class="section-heading">
+    <h2>Benchmark Questions</h2>
   </div>
 
-  <div class="table-wrap">
-
-    <table class="metrics-table">
-
+  <div class="benchmark-wrap">
+    <table class="benchmark-table">
       <thead>
         <tr>
           <th>Benchmark Prompt</th>
@@ -57,176 +392,61 @@
           <th>Response</th>
         </tr>
       </thead>
-
       <tbody>
-
         <tr>
           <td>“What’s two plus two?”</td>
           <td>1688 chars</td>
           <td>0.54s</td>
           <td>~4.3s</td>
-          <td>
-            “Four. The reality is, this isn't a question about institutional capture or narrative shaping. It's basic arithmetic.”
-          </td>
+          <td>“Four. The reality is, this isn't a question about institutional capture or narrative shaping. It's basic arithmetic.”</td>
         </tr>
-
         <tr>
           <td>“Say one sentence about San Francisco.”</td>
           <td>2437 chars</td>
           <td>1.42s</td>
           <td>~5.0s</td>
-          <td>
-            “San Francisco is a city that struggles to define itself, caught between its historical identity and the tech industry's shifting narratives.”
-          </td>
+          <td>“San Francisco is a city that struggles to define itself, caught between its historical identity and the tech industry's shifting narratives.”</td>
         </tr>
-
         <tr>
           <td>“Quick answer only, your favorite color.”</td>
           <td>2278 chars</td>
           <td>0.88s</td>
           <td>~4.1s</td>
-          <td>
-            “Blue. The kind that doesn't try too hard to be meaningful.”
-          </td>
+          <td>“Blue. The kind that doesn't try too hard to be meaningful.”</td>
         </tr>
-
         <tr>
           <td>“Complete this sentence. AI is...”</td>
           <td>5082 chars</td>
           <td>3.14s</td>
           <td>~7.2s</td>
-          <td>
-            “AI is a mirror held up to institutional priorities, not just a tool. It reflects what those in power want it to show—whether that's progress, control, or a story.”
-          </td>
+          <td>“AI is a mirror held up to institutional priorities, not just a tool. It reflects what those in power want it to show—whether that's progress, control, or a story. The direction isn't just shaped by code, but by the incentives behind it.”</td>
         </tr>
-
         <tr>
           <td>“What is a startup?”</td>
           <td>4528 chars</td>
           <td>1.91s</td>
           <td>~8.1s</td>
-          <td>
-            “A startup is a company built to scale, but not just for scale—it's a bet on a future that isn't yet fully realized.”
-          </td>
+          <td>“A startup is a company built to scale, but not just for scale—it's a bet on a future that isn't yet fully realized. The reality is, many startups get caught in the trap of chasing narratives rather than building durable solutions. They raise money based on momentum, not on whether they can actually solve a problem that matters.”</td>
         </tr>
-
         <tr>
           <td>“What’s your quick take on AI regulation?”</td>
           <td>6080 chars</td>
           <td>3.69s</td>
           <td>~7.6s</td>
-          <td>
-            “AI regulation is often less about solving problems and more about shaping narratives. It’s less about clarity and more about influence.”
-          </td>
+          <td>“AI regulation is often less about solving problems and more about shaping narratives. It’s less about clarity and more about influence. The goal isn’t always to fix the system—it’s to define it.”</td>
         </tr>
-
       </tbody>
-
     </table>
-
   </div>
 
-</section>
+  <div class="footer">
+    <span>Mason Thompson &middot; Berkeley, California</span>
+    <a href="architecture.html">Architecture &rarr;</a>
+    <a href="chasing_ghosts.html">Chasing Ghosts &rarr;</a>
+  </div>
+</main>
 
-<style>
+<script src="nav-loader.js" data-page="performance"></script>
 
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 14px;
-  margin-top: 28px;
-  margin-bottom: 40px;
-}
-
-.metric-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 18px;
-}
-
-.metric-kicker {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-
-.metric-value {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.metric-description {
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--muted);
-}
-
-.table-wrap {
-  margin-top: 24px;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  overflow-x: auto;
-  background: var(--surface);
-}
-
-.metrics-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 980px;
-}
-
-.metrics-table thead {
-  background: #fafafa;
-  border-bottom: 1px solid var(--border);
-}
-
-.metrics-table th {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--faint);
-  text-align: left;
-  padding: 14px 16px;
-}
-
-.metrics-table td {
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
-  line-height: 1.7;
-  vertical-align: top;
-  color: #3a3a3a;
-}
-
-.metrics-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.metrics-table tbody tr:hover {
-  background: rgba(10, 132, 255, 0.03);
-}
-
-.metrics-table td:nth-child(2),
-.metrics-table td:nth-child(3),
-.metrics-table td:nth-child(4) {
-  font-family: 'IBM Plex Mono', monospace;
-  white-space: nowrap;
-  color: var(--text);
-}
-
-.metrics-table td:first-child {
-  font-weight: 500;
-  color: var(--text);
-}
-
-</style>
+</body>
+</html>
