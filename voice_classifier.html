@@ -287,13 +287,25 @@ Confirmed host-only classification feasibility, but identified critical confusio
 
 <p class="lead">
 V2 was made possible via a custom HITL tool I created called <strong>Clownfish</strong>.
-Clownfish ingested the original V1 transcripts and let me manually review and re-map <code>pyannote</code> speaker_ids to structured <code>custom_speaker</code> labels, with side-by-side audio examples and video screengrabs for cross-validation.
+Clownfish ingested the original V1 transcripts and let me manually review and re-map <code>Pyannote</code> speaker_ids to <code>custom_speaker</code> labels, with side-by-side audio examples and video screengrabs for cross-validation. Proved to be an excellent, scalable process to find and extract host and guest audio.
+Once a speaker was validated and assigned, the transcript was automatically backfilled with the corrected labels. Audio for each segment was then extracted into clean, per-speaker directories. This produced the first reliable, guest-inclusive dataset and established a disciplined labeling pipeline.
+
 <br><br>
 <a href="https://www.youtube.com/watch?v=UPnnOCWqiAw" target="_blank" style="display:block;margin:20px 0;max-width:480px;">
   <img src="https://img.youtube.com/vi/UPnnOCWqiAw/maxresdefault.jpg" alt="Clownfish demo on YouTube" style="width:100%;border:1px solid var(--border);border-radius:4px;display:block;transition:transform .15s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
 </a>
 
-Once a speaker was validated and assigned, the transcript was automatically backfilled with the corrected labels. Audio for each segment was then extracted into clean, per-speaker directories. This produced the first reliable, guest-inclusive dataset and established a disciplined labeling pipeline.
+<p class="lead">
+Clownfish was so wildly effective, I began collecting more episodes growing. Also replaced Pyannote with Nvidia NeMo, which provided higher quality embeddings and restored confidence in the classification pipeline.
+Clusters became tighter, cosine distances became reliable, and label consistency improved across the entire dataset.
+</p>
+
+<div class="image-grid">
+  <img src="images/pyannote.png" onclick="openModal(this)" alt="Pyannote embedding visualization">
+  <img src="images/nemo.png" onclick="openModal(this)" alt="NeMo embedding visualization">
+</div>
+
+  
 </p>
 
 <div class="block">
@@ -321,16 +333,7 @@ V2 moved from simple MLP feasibility to a higher-quality, pre-production pipelin
 
 <h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
 
-<p class="lead">
-Episode count grew to 387. V3 replaced Pyannote embeddings with Nvidia NeMo / TitaNet, immediately stabilizing the embedding space.
-Clusters became tighter, cosine distances became reliable, and label consistency improved across the entire dataset.
-Accuracy dipped slightly, but the geometry and confidence improved.
-</p>
 
-<div class="image-grid">
-  <img src="images/pyannote.png" onclick="openModal(this)" alt="Pyannote embedding visualization">
-  <img src="images/nemo.png" onclick="openModal(this)" alt="NeMo embedding visualization">
-</div>
 
 <div class="block">
   <div class="block-header">V3 — Core Signals</div>
