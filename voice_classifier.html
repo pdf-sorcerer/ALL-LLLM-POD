@@ -292,6 +292,11 @@ At the same time, I replaced Pyannote embeddings with Nvidia NeMo / TitaNet, whi
 Clownfish eventually extracted 85,619 labeled samples across five classes with 97.98% held-out accuracy. More importantly, the embedding space finally behaved consistently enough to trust operationally: the Chamath↔JCal overlap largely disappeared, and boundary failures became interpretable instead of stochastic.
 </p>
 
+  <div class="image-grid">
+  <img src="images/v4_error_1" onclick="openModal(this)" alt="Pyannote embedding visualization">
+  <img src="images/v4_error_2" onclick="openModal(this)" alt="NeMo embedding visualization">
+</div>
+
 <h2 id="v3">V3 — Structural Failure</h2>
 
 <p class="lead">
