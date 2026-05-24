@@ -1,111 +1,198 @@
-<div class="section-heading">
+<section>
+  <div class="section-heading">
     <h2>Realtime Metrics</h2>
-</div>
+  </div>
 
-<p class="body">
-  The current runtime is optimized around conversational responsiveness rather than maximizing raw throughput. Performance tuning focused primarily on reducing prompt orchestration overhead, minimizing blocking operations, and allowing TTS synthesis to begin as early as possible during streaming generation.
-</p>
+  <p class="body">
+    The system is optimized to feel responsive during live conversation, not just score well on raw throughput benchmarks. Most runtime tuning focused on reducing prompt orchestration overhead, minimizing blocking operations, and allowing TTS synthesis to begin as early as possible once the model starts responding.
+  </p>
 
-<div class="metrics-grid">
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">ASR Runtime</div>
+      <div class="metric-value">0.16–0.29s</div>
+      <div class="metric-note">Whisper transcription speed</div>
+    </div>
 
-  <div class="metric-card">
-    <div class="metric-label">ASR Runtime</div>
-    <div class="metric-value">0.16–0.29s</div>
-    <div class="metric-sub">
-      Whisper authoritative transcription pass.
+    <div class="metric-card">
+      <div class="metric-label">MLX TTFT</div>
+      <div class="metric-value">0.40–0.78s</div>
+      <div class="metric-note">Time-to-first-token on lighter prompts</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">TTFA</div>
+      <div class="metric-value">3.8–4.5s</div>
+      <div class="metric-note">Time-to-first-audio during simple conversations</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Prompt Size</div>
+      <div class="metric-value">1.4k–4.3k</div>
+      <div class="metric-note">Runtime prompt after memory + retrieval</div>
     </div>
   </div>
 
-  <div class="metric-card">
-    <div class="metric-label">MLX TTFT</div>
-    <div class="metric-value">0.40–0.78s</div>
-    <div class="metric-sub">
-      Time-to-first-token on low-context prompts.
-    </div>
+  <div class="benchmark-table-wrap">
+    <table class="benchmark-table">
+      <thead>
+        <tr>
+          <th>Benchmark Prompt</th>
+          <th>Prompt Size</th>
+          <th>TTFT</th>
+          <th>TTFA</th>
+          <th>Response</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>“What’s two plus two?”</td>
+          <td>1688 chars</td>
+          <td>0.54s</td>
+          <td>~4.3s</td>
+          <td>“Four. The reality is, this isn't a question about institutional capture or narrative shaping. It's basic arithmetic.”</td>
+        </tr>
+
+        <tr>
+          <td>“Say one sentence about San Francisco.”</td>
+          <td>2437 chars</td>
+          <td>1.42s</td>
+          <td>~5.0s</td>
+          <td>“San Francisco is a city that struggles to define itself, caught between its historical identity and the tech industry's shifting narratives.”</td>
+        </tr>
+
+        <tr>
+          <td>“Quick answer only, your favorite color.”</td>
+          <td>2278 chars</td>
+          <td>0.88s</td>
+          <td>~4.1s</td>
+          <td>“Blue. The kind that doesn't try too hard to be meaningful.”</td>
+        </tr>
+
+        <tr>
+          <td>“Complete this sentence. AI is...”</td>
+          <td>5082 chars</td>
+          <td>3.14s</td>
+          <td>~7.2s</td>
+          <td>“AI is a mirror held up to institutional priorities, not just a tool. It reflects what those in power want it to show—whether that's progress, control, or a story. The direction isn't just shaped by code, but by the incentives behind it.”</td>
+        </tr>
+
+        <tr>
+          <td>“What is a startup?”</td>
+          <td>4528 chars</td>
+          <td>1.91s</td>
+          <td>~8.1s</td>
+          <td>“A startup is a company built to scale, but not just for scale—it's a bet on a future that isn't yet fully realized.”</td>
+        </tr>
+
+        <tr>
+          <td>“What’s your quick take on AI regulation?”</td>
+          <td>6080 chars</td>
+          <td>3.69s</td>
+          <td>~7.6s</td>
+          <td>“AI regulation is often less about solving problems and more about shaping narratives. It’s less about clarity and more about influence.”</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+</section>
 
-  <div class="metric-card">
-    <div class="metric-label">TTFA</div>
-    <div class="metric-value">3.8–4.5s</div>
-    <div class="metric-sub">
-      Time-to-first-audio during lightweight conversational turns.
-    </div>
-  </div>
+<style>
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin: 28px 0 36px;
+}
 
-  <div class="metric-card">
-    <div class="metric-label">Prompt Size</div>
-    <div class="metric-value">1.4k–4.3k</div>
-    <div class="metric-sub">
-      Runtime prompt size after retrieval and memory injection.
-    </div>
-  </div>
+.metric-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
 
-</div>
+.metric-card:hover {
+  border-color: var(--green);
+  box-shadow: 0 2px 12px rgba(10, 132, 255, 0.08);
+}
 
-<p class="body">
-  Earlier versions of the orchestration stack routinely exceeded 10k–13k character prompts, causing severe TTFT degradation and noticeable conversational dead air. The current system operates with substantially smaller prompts and asynchronously generated UI events, producing a significantly more realtime-feeling interaction loop.
-</p>
+.metric-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
 
-<table>
-  <thead>
-    <tr>
-      <th>Benchmark Prompt</th>
-      <th>Prompt Size</th>
-      <th>TTFT</th>
-      <th>TTFA</th>
-      <th>Notes</th>
-    </tr>
-  </thead>
+.metric-value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
 
-  <tbody>
+.metric-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
 
-    <tr>
-      <td>“What’s 2 plus 2?”</td>
-      <td>1442 chars</td>
-      <td>0.40s</td>
-      <td>~4.3s</td>
-      <td>Baseline low-context inference path.</td>
-    </tr>
+.benchmark-table-wrap {
+  margin-top: 32px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+}
 
-    <tr>
-      <td>“Say one sentence about San Francisco.”</td>
-      <td>1682 chars</td>
-      <td>0.56s</td>
-      <td>~4.1s</td>
-      <td>Minimal orchestration overhead.</td>
-    </tr>
+.benchmark-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 920px;
+}
 
-    <tr>
-      <td>“Quick answer only: favorite color?”</td>
-      <td>1880 chars</td>
-      <td>0.68s</td>
-      <td>~3.8s</td>
-      <td>Very lightweight generation.</td>
-    </tr>
+.benchmark-table thead {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
 
-    <tr>
-      <td>“Complete this sentence. AI is...”</td>
-      <td>4325 chars</td>
-      <td>2.74s</td>
-      <td>~5.8s</td>
-      <td>Heavy AI-topic retrieval injection.</td>
-    </tr>
+.benchmark-table th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  text-align: left;
+  padding: 14px 16px;
+}
 
-    <tr>
-      <td>“What’s a startup?”</td>
-      <td>3841 chars</td>
-      <td>2.10s</td>
-      <td>~4.9s</td>
-      <td>Venture-topic retrieval inflation.</td>
-    </tr>
+.benchmark-table td {
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+  color: #3a3a3a;
+}
 
-    <tr>
-      <td>“Sacks, quick take on AI regulation.”</td>
-      <td>4150 chars</td>
-      <td>2.32s</td>
-      <td>~5.7s</td>
-      <td>Representative end-to-end persona benchmark.</td>
-    </tr>
+.benchmark-table tr:last-child td {
+  border-bottom: none;
+}
 
-  </tbody>
-</table>
+.benchmark-table tbody tr:hover {
+  background: rgba(10, 132, 255, 0.03);
+}
+
+.benchmark-table td:nth-child(2),
+.benchmark-table td:nth-child(3),
+.benchmark-table td:nth-child(4) {
+  font-family: 'IBM Plex Mono', monospace;
+  white-space: nowrap;
+  color: var(--text);
+}
+</style>
