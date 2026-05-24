@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ALL-LLM Pod | Mason Thompson</title>
 
-  <!-- Fonts moved to head with preconnect (faster than CSS @import) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     :root {
@@ -20,11 +19,15 @@
       --code-bg: #0d1117;
       --text: #1a1a1a;
       --muted: #6b6b6b;
-      --faint: #8c8c8c; /* darkened from #aaaaaa for WCAG AA contrast on white */
+      --faint: #8c8c8c;
       --nav-width: 220px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -59,16 +62,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .nav-section-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 20px 24px 8px;
-    }
-
     .nav-item {
       display: block;
       font-family: 'IBM Plex Mono', monospace;
@@ -78,9 +71,6 @@
       padding: 7px 24px;
       border-left: 2px solid transparent;
       transition: color 0.15s, border-color 0.15s, background 0.15s;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .nav-item:hover {
@@ -95,20 +85,39 @@
       background: var(--green-dim);
     }
 
-    .nav-footer {
-      margin-top: auto;
-      padding: 20px 24px 0;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      line-height: 1.6;
-    }
-
     main {
       flex: 1;
       padding: 56px 64px 120px;
       max-width: 860px;
+    }
+
+    .site-banner {
+      margin: -56px -64px 40px -64px;
+      display: block;
+      width: calc(100% + 128px);
+      border: 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--code-bg);
+      cursor: zoom-in;
+      padding: 0;
+      position: relative;
+    }
+
+    .site-banner img {
+      display: block;
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      object-position: center 38%;
+    }
+
+    .banner-caption {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: -28px 0 36px 0;
+      text-transform: uppercase;
     }
 
     .page-eyebrow {
@@ -133,178 +142,17 @@
       font-size: 14px;
       line-height: 1.75;
       color: #3a3a3a;
-      max-width: 680px;
+      max-width: 720px;
       margin-bottom: 52px;
     }
 
-    .lead strong { font-weight: 600; color: var(--text); }
-
-    .section-heading {
-      display: flex;
-      align-items: baseline;
-      gap: 16px;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-      margin-top: 52px;
-    }
-
-    h2 {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+    .lead strong {
+      font-weight: 600;
       color: var(--text);
     }
 
-    p.body {
-      font-size: 13.5px;
-      line-height: 1.75;
-      color: #3a3a3a;
-      margin-bottom: 14px;
-      max-width: 720px;
-    }
-
-    p.body a {
-      color: var(--green);
-      text-decoration: none;
-      border-bottom: 1px solid var(--green-dim);
-    }
-
-    p.body a:hover { border-bottom-color: var(--green); }
-    p.body strong { font-weight: 600; color: var(--text); }
-
-    /* ── Architecture image + lightbox ────────────────────────────── */
-    .architecture-block { margin: 0 0 52px 0; }
-
-    /* ── Header banner (cast art as a site header) ────────────────── */
-    .site-banner {
-      /* full-bleed: cancel main's horizontal padding so it spans edge-to-edge */
-      margin: -56px -64px 40px -64px;
-      display: block;
-      width: calc(100% + 128px);   /* 100% + the two 64px paddings we cancelled */
-      border: 0;
-      border-bottom: 1px solid var(--border);
-      background: var(--code-bg);
-      cursor: zoom-in;
-      padding: 0;
-      position: relative;
-    }
-
-    .site-banner img {
-      display: block;
-      width: 100%;
-      height: 200px;            /* banner band height */
-      object-fit: cover;        /* crop to a horizontal slice */
-      object-position: center 38%;  /* bias toward the faces, not dead-center */
-    }
-
-    .site-banner:focus-visible {
-      outline: 2px solid var(--green);
-      outline-offset: -2px;
-    }
-
-    .banner-caption {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      margin: -28px 0 36px 0;
-      text-transform: uppercase;
-    }
-
-
-    .architecture-thumb {
-      display: block;
-      width: 100%;
-      max-width: 760px;
-      height: auto;
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      background: var(--surface);
-      cursor: zoom-in;
-      padding: 0;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .architecture-thumb:hover {
-      border-color: var(--green);
-      box-shadow: 0 2px 12px rgba(10, 132, 255, 0.08);
-    }
-
-    .architecture-thumb:focus-visible {
-      outline: 2px solid var(--green);
-      outline-offset: 2px;
-    }
-
-    .architecture-thumb img {
-      display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 2px;
-    }
-
-    .architecture-caption {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      margin-top: 8px;
-      text-transform: uppercase;
-    }
-
-    .lightbox {
-      position: fixed;
-      inset: 0;
-      background: rgba(13, 17, 23, 0.92);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      cursor: zoom-out;
-      padding: 32px;
-    }
-
-    .lightbox.is-open { display: flex; }
-
-    .lightbox img {
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      border-radius: 3px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    }
-
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 24px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.7);
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 3px;
-      padding: 6px 14px;
-      cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
-    }
-
-    .lightbox-close:hover {
-      color: white;
-      border-color: rgba(255, 255, 255, 0.6);
-    }
-
-    .lightbox-close:focus-visible {
-      outline: 2px solid var(--green);
-      outline-offset: 2px;
-    }
-
     .footer {
-      margin-top: 80px;
+      margin-top: 72px;
       padding-top: 24px;
       border-top: 1px solid var(--border);
       font-family: 'IBM Plex Mono', monospace;
@@ -331,104 +179,191 @@
       border-bottom-color: var(--green-dim);
     }
 
-    /* Fallback nav shown only when JS-injected nav is empty */
-    .nav-fallback { padding: 0; }
-    .nav-fallback .nav-logo { margin-bottom: 0; }
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: zoom-out;
+      padding: 32px;
+    }
+
+    .lightbox.is-open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 3px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 3px;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
 
     @media (max-width: 768px) {
-      nav { display: none; }
-      main { padding: 32px 24px 80px; }
-      .footer { flex-direction: column; align-items: flex-start; }
-      .lightbox { padding: 16px; }
+      nav {
+        display: none;
+      }
+
+      main {
+        padding: 32px 24px 80px;
+      }
+
+      .footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Nav is populated at runtime by nav-loader.js -> nav.html.
-       The <noscript> block below is the graceful-degradation fallback
-       if JS is disabled or nav.html fails to load. -->
   <nav id="shared-nav">
     <noscript>
-      <div class="nav-fallback">
-        <div class="nav-logo">ALL-LLM Pod</div>
-        <a class="nav-item" href="index.html">Overview</a>
-        <a class="nav-item" href="architecture.html">Architecture</a>
-        <a class="nav-item" href="chasing_ghosts.html">Chasing Ghosts</a>
-        <a class="nav-item" href="voice_classifier.html">Transcription</a>
-        <a class="nav-item" href="heuristics.html">HITL</a>
-        <a class="nav-item" href="performance.html">Metrics &amp; Media</a>
-      </div>
+      <div class="nav-logo">ALL-LLM Pod</div>
+      <a class="nav-item active" href="index.html">Overview</a>
+      <a class="nav-item" href="architecture.html">Architecture</a>
+      <a class="nav-item" href="chasing_ghosts.html">Chasing Ghosts</a>
+      <a class="nav-item" href="voice_classifier.html">Transcription</a>
+      <a class="nav-item" href="heuristics.html">HITL</a>
+      <a class="nav-item" href="metrics.html">Metrics & Media</a>
     </noscript>
   </nav>
 
-<main>
-  <button type="button"
-          class="site-banner"
-          aria-label="Enlarge ALL-LLM Pod cast art"
-          onclick="openLightbox('all-llm-pod.png', 'ALL-LLM Podcast cast art (enlarged)')">
-    <img src="all-llm-pod.png"
-         alt="ALL-LLM Podcast cast: satirical portraits of Chamath, JCal, Sacks, and Friedberg">
-  </button>
-  <p class="banner-caption">Click to enlarge &middot; Satirical ALL-In personas</p>
+  <main>
 
-  <p class="page-eyebrow">Multi-Agent LLM System</p>
+    <button
+      type="button"
+      class="site-banner"
+      aria-label="Enlarge ALL-LLM Pod cast art"
+      onclick="openLightbox('all-llm-pod.png', 'ALL-LLM Podcast cast art')">
 
-  <h1>ALL-LLM Pod</h1>
+      <img
+        src="all-llm-pod.png"
+        alt="ALL-LLM Podcast cast: satirical portraits of Chamath, JCal, Sacks, and Friedberg">
+    </button>
 
-  <p class="lead">
+    <p class="banner-caption">
+      Click to enlarge &middot; Satirical ALL-In personas
+    </p>
 
-Hey, everybody — welcome to the number one <strong>ALL-LLM Pod</strong>: a technically serious AI system built around an intentionally unserious premise: having conversations 
-with chatbot parodies of the <i>All-In Podcast</i> hosts 
-through text messaging and video chat.
+    <p class="page-eyebrow">Multi-Agent LLM System</p>
 
-    <br><br>
-The personalities are reconstructed from hundreds of podcast episodes using an open-source CUDA pipeline for ASR, transcription, diarization, speaker classification, and transcript repair. The resulting datasets feed persona-specific orchestration and fine-tuning workflows designed to preserve speaker identity, tone, and conversational behavior.
+    <h1>ALL-LLM Pod</h1>
 
-The project spans data pipelines, inference orchestration, voice synthesis, iOS interfaces, and multi-agent runtime systems.
+    <p class="lead">
 
-<br><br>
-There are probably ethical gray areas here, but I wager that since comedy is legal again, tech leaders who confidently broadcast not knowing what 
-model iPhone they are using should probably expect at least a little teasing from people who know how to figure things like that out.    
-<br><br>
+      Hey, everybody — welcome to the number one <strong>ALL-LLM Pod</strong>:
+      a technically serious AI system built around an intentionally unserious premise:
+      conversational chatbot parodies of the <i>All-In Podcast</i> hosts across
+      text messaging and video chat.
 
-<strong>Important</strong> Optional sections below get into the nuts and bolts of the system, shifting writing styles cover transcript pipeline iteration, runtime architecture, HITL tooling, and one literal ghost investigation where speaker audio 
-existed but was never transcribed.
-  
-      <div class="footer">
-    <span>Mason Thompson &middot; Berkeley, California</span>
-    <a href="architecture.html">Architecture &rarr;</a>
-    <a href="chasing_ghosts.html">Chasing Ghosts &rarr;</a>
-  </div>
-</main>
+      <br><br>
 
-  <!-- Lightbox overlay. Image is now parameterized via openLightbox(). -->
-  <div class="lightbox" id="architectureLightbox" role="dialog" aria-modal="true" aria-label="Enlarged architecture diagram" onclick="closeLightbox()">
-    <button type="button" class="lightbox-close" onclick="closeLightbox()" aria-label="Close enlarged image">Close &times;</button>
+      The personalities are reconstructed from hundreds of podcast episodes using
+      an open-source CUDA pipeline for ASR, transcription, diarization, speaker
+      classification, and transcript repair. The resulting datasets feed
+      persona-specific orchestration and fine-tuning workflows designed to preserve
+      speaker identity, tone, and conversational behavior.
+
+      <br><br>
+
+      The project spans data pipelines, inference orchestration, voice synthesis,
+      iOS interfaces, and multi-agent runtime systems.
+
+      <br><br>
+
+      There are probably ethical gray areas here, but I wager that since comedy
+      is legal again, tech leaders who confidently broadcast not knowing which
+      iPhone they use should probably expect at least a little teasing from people
+      who know how to figure things like that out.
+
+      <br><br>
+
+      <strong>Technical Notes</strong><br>
+      Optional sections below get into the nuts and bolts of the system, shifting
+      writing styles to cover transcript pipeline iteration, runtime architecture,
+      HITL tooling, and one literal ghost investigation where speaker audio existed
+      but was never transcribed.
+
+      <br><br>
+
+      A congenital defect resulted in me not being born with hands. Most of this
+      project was built through voice dictation.
+
+    </p>
+
+    <div class="footer">
+      <span>Mason Thompson &middot; Berkeley, California</span>
+
+      <div>
+        <a href="architecture.html">Architecture &rarr;</a>
+        &nbsp;&nbsp;
+        <a href="chasing_ghosts.html">Chasing Ghosts &rarr;</a>
+      </div>
+    </div>
+
+  </main>
+
+  <div
+    class="lightbox"
+    id="architectureLightbox"
+    role="dialog"
+    aria-modal="true"
+    onclick="closeLightbox()">
+
+    <button
+      type="button"
+      class="lightbox-close"
+      onclick="closeLightbox()">
+      Close &times;
+    </button>
+
     <img id="lightboxImage" src="" alt="">
   </div>
 
   <script>
-    window.NAV_ANCHORS = [];
-
     var _lastFocused = null;
 
     function openLightbox(src, alt) {
       var lightbox = document.getElementById('architectureLightbox');
       var image = document.getElementById('lightboxImage');
+
       image.src = src;
-      image.alt = alt || 'Architecture diagram enlarged';
+      image.alt = alt || '';
+
       lightbox.classList.add('is-open');
       document.body.style.overflow = 'hidden';
-      // Move focus into the dialog and remember where to return it
+
       _lastFocused = document.activeElement;
       lightbox.querySelector('.lightbox-close').focus();
     }
 
     function closeLightbox() {
       var lightbox = document.getElementById('architectureLightbox');
+
       lightbox.classList.remove('is-open');
       document.body.style.overflow = '';
+
       if (_lastFocused && typeof _lastFocused.focus === 'function') {
         _lastFocused.focus();
         _lastFocused = null;
@@ -436,9 +371,12 @@ existed but was never transcribed.
     }
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
     });
   </script>
+
   <script src="nav-loader.js" data-page="index"></script>
 
 </body>
