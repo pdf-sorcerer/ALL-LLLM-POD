@@ -1,4 +1,5 @@
 <section>
+
   <div class="section-heading">
     <h2>Realtime Metrics</h2>
   </div>
@@ -8,33 +9,45 @@
   </p>
 
   <div class="metrics-grid">
+
     <div class="metric-card">
-      <div class="metric-label">ASR Runtime</div>
+      <div class="metric-kicker">ASR Runtime</div>
       <div class="metric-value">0.16–0.29s</div>
-      <div class="metric-note">Whisper transcription speed</div>
+      <div class="metric-description">
+        Whisper transcription speed
+      </div>
     </div>
 
     <div class="metric-card">
-      <div class="metric-label">MLX TTFT</div>
+      <div class="metric-kicker">MLX TTFT</div>
       <div class="metric-value">0.40–0.78s</div>
-      <div class="metric-note">Time-to-first-token on lighter prompts</div>
+      <div class="metric-description">
+        Time-to-first-token on lighter prompts
+      </div>
     </div>
 
     <div class="metric-card">
-      <div class="metric-label">TTFA</div>
+      <div class="metric-kicker">TTFA</div>
       <div class="metric-value">3.8–4.5s</div>
-      <div class="metric-note">Time-to-first-audio during simple conversations</div>
+      <div class="metric-description">
+        Time-to-first-audio during simple conversations
+      </div>
     </div>
 
     <div class="metric-card">
-      <div class="metric-label">Prompt Size</div>
+      <div class="metric-kicker">Prompt Size</div>
       <div class="metric-value">1.4k–4.3k</div>
-      <div class="metric-note">Runtime prompt after memory + retrieval</div>
+      <div class="metric-description">
+        Runtime prompt after memory + retrieval
+      </div>
     </div>
+
   </div>
 
-  <div class="benchmark-table-wrap">
-    <table class="benchmark-table">
+  <div class="table-wrap">
+
+    <table class="metrics-table">
+
       <thead>
         <tr>
           <th>Benchmark Prompt</th>
@@ -46,12 +59,15 @@
       </thead>
 
       <tbody>
+
         <tr>
           <td>“What’s two plus two?”</td>
           <td>1688 chars</td>
           <td>0.54s</td>
           <td>~4.3s</td>
-          <td>“Four. The reality is, this isn't a question about institutional capture or narrative shaping. It's basic arithmetic.”</td>
+          <td>
+            “Four. The reality is, this isn't a question about institutional capture or narrative shaping. It's basic arithmetic.”
+          </td>
         </tr>
 
         <tr>
@@ -59,7 +75,9 @@
           <td>2437 chars</td>
           <td>1.42s</td>
           <td>~5.0s</td>
-          <td>“San Francisco is a city that struggles to define itself, caught between its historical identity and the tech industry's shifting narratives.”</td>
+          <td>
+            “San Francisco is a city that struggles to define itself, caught between its historical identity and the tech industry's shifting narratives.”
+          </td>
         </tr>
 
         <tr>
@@ -67,7 +85,9 @@
           <td>2278 chars</td>
           <td>0.88s</td>
           <td>~4.1s</td>
-          <td>“Blue. The kind that doesn't try too hard to be meaningful.”</td>
+          <td>
+            “Blue. The kind that doesn't try too hard to be meaningful.”
+          </td>
         </tr>
 
         <tr>
@@ -75,7 +95,9 @@
           <td>5082 chars</td>
           <td>3.14s</td>
           <td>~7.2s</td>
-          <td>“AI is a mirror held up to institutional priorities, not just a tool. It reflects what those in power want it to show—whether that's progress, control, or a story. The direction isn't just shaped by code, but by the incentives behind it.”</td>
+          <td>
+            “AI is a mirror held up to institutional priorities, not just a tool. It reflects what those in power want it to show—whether that's progress, control, or a story.”
+          </td>
         </tr>
 
         <tr>
@@ -83,7 +105,9 @@
           <td>4528 chars</td>
           <td>1.91s</td>
           <td>~8.1s</td>
-          <td>“A startup is a company built to scale, but not just for scale—it's a bet on a future that isn't yet fully realized.”</td>
+          <td>
+            “A startup is a company built to scale, but not just for scale—it's a bet on a future that isn't yet fully realized.”
+          </td>
         </tr>
 
         <tr>
@@ -91,108 +115,118 @@
           <td>6080 chars</td>
           <td>3.69s</td>
           <td>~7.6s</td>
-          <td>“AI regulation is often less about solving problems and more about shaping narratives. It’s less about clarity and more about influence.”</td>
+          <td>
+            “AI regulation is often less about solving problems and more about shaping narratives. It’s less about clarity and more about influence.”
+          </td>
         </tr>
+
       </tbody>
+
     </table>
+
   </div>
+
 </section>
 
 <style>
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
-  margin: 28px 0 36px;
+  margin-top: 28px;
+  margin-bottom: 40px;
 }
 
 .metric-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
   padding: 18px;
-  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.metric-card:hover {
-  border-color: var(--green);
-  box-shadow: 0 2px 12px rgba(10, 132, 255, 0.08);
-}
-
-.metric-label {
+.metric-kicker {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  text-transform: uppercase;
+  font-weight: 600;
   letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--muted);
   margin-bottom: 10px;
 }
 
 .metric-value {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--text);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
-.metric-note {
+.metric-description {
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--muted);
 }
 
-.benchmark-table-wrap {
-  margin-top: 32px;
-  overflow-x: auto;
+.table-wrap {
+  margin-top: 24px;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
+  overflow-x: auto;
   background: var(--surface);
 }
 
-.benchmark-table {
+.metrics-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 920px;
+  min-width: 980px;
 }
 
-.benchmark-table thead {
-  background: var(--bg);
+.metrics-table thead {
+  background: #fafafa;
   border-bottom: 1px solid var(--border);
 }
 
-.benchmark-table th {
+.metrics-table th {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  text-transform: uppercase;
+  font-weight: 600;
   letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--faint);
   text-align: left;
   padding: 14px 16px;
 }
 
-.benchmark-table td {
+.metrics-table td {
   padding: 16px;
+  border-bottom: 1px solid var(--border);
   font-size: 13px;
   line-height: 1.7;
   vertical-align: top;
-  border-bottom: 1px solid var(--border);
   color: #3a3a3a;
 }
 
-.benchmark-table tr:last-child td {
+.metrics-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.benchmark-table tbody tr:hover {
+.metrics-table tbody tr:hover {
   background: rgba(10, 132, 255, 0.03);
 }
 
-.benchmark-table td:nth-child(2),
-.benchmark-table td:nth-child(3),
-.benchmark-table td:nth-child(4) {
+.metrics-table td:nth-child(2),
+.metrics-table td:nth-child(3),
+.metrics-table td:nth-child(4) {
   font-family: 'IBM Plex Mono', monospace;
   white-space: nowrap;
   color: var(--text);
 }
+
+.metrics-table td:first-child {
+  font-weight: 500;
+  color: var(--text);
+}
+
 </style>
