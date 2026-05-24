@@ -255,49 +255,32 @@ main{padding:32px 24px;}
 <p class="page-eyebrow">Speaker Identification Architecture</p>
 <h1>Speaker Classification Policy Evolution</h1>
 
-<h2 id="v1">V1 — Host-Only Classifier</h2>
+<h2 id="v1">V1 — Host-Only Classification</h2>
 
 <p class="lead">
-The first iteration of a multi-speaker classifier was created using four binary classifiers to extract about 9,000 audio files for the hosts from 98 podcast episodes. WhisperX handled ASR processing, and Pyannote embeddings drove speaker mapping. These steps produced the first 187 transcripts for the app.
+The first system used four binary classifiers trained on ~9,000 clips pulled from 98 episodes using WhisperX and Pyannote. It reached 97.9% validation accuracy, though Chamath and JCal consistently overlapped due to similar cadence and speaking patterns.
 <br><br>
-Noteworthy: Guests were deliberately excluded. Guest audio was difficult to reliably gather at scale. Despite this, the system did <em>not</em> misclassify guests as hosts — a fifth "unknown" class was unexpectedly created during training, and low-confidence guest segments were correctly absorbed into it. Even so, the system was basic and fragile, and required a redesign.
+The unexpected problem was guests. I had excluded guest audio entirely because guests were irrelevant to my goals, not realizing I needed hard negative examples. Without them, the classifier would happily force unknown speakers into the closest-matching host class even when the probability of a true match was effectively zero. Pretty embarrassing. I took a couple days and made a movie to document it, which was cathartic.
 </p>
 
-<div class="block">
-  <div class="block-header">V1 — Core Signals</div>
-  <div class="block-body">V1 Summary:
-• 9,000 host-only clips (98 episodes) using WhisperX + Pyannote
-• (Inexplicable) Guest Handling: "Unknown" class emerged to absorb guest audio
-• Output: First 187 functional transcripts
+<a href="https://www.youtube.com/watch?v=RpVeED6ExNQ" target="_blank" style="display:block;margin:22px 0 36px;max-width:520px;">
+  <img src="https://img.youtube.com/vi/RpVeED6ExNQ/maxresdefault.jpg" alt="V1 classifier failure short film on YouTube" style="width:100%;border:1px solid var(--border);border-radius:4px;display:block;transition:transform .15s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+</a>
 
-Dataset Balance:
-• Sacks: 1602 | JCal: 1601 | Friedberg: 1573 | Chamath: 1810
-→ Achieved near-perfect host class balance
-
-Model Performance:
-• Best Model: MLP (97.9% Val / 0.953 Test Accuracy)
-• Sacks F1: 0.97 | JCal F1: 0.96 | Friedberg F1: 0.95
-• Chamath F1: 0.94 (High Recall 0.99 → boundary over-calling)
-
-Key Insight:
-Confirmed host-only classification feasibility, but identified critical confusion between Chamath ↔ JCal due to fast-speech similarity. Architecture lacked production robustness.</div>
-</div>
-
-<h2 id="v2">V2 — Guest-Aware Scaling</h2>
+<h2 id="v2">V2 — Human-in-the-Loop Scaling &amp; Embedding Stability</h2>
 
 <p class="lead">
-V2 was made possible via a custom HITL tool I created called <strong>Clownfish</strong>.
-Clownfish ingested the original V1 transcripts and let me manually review and re-map <code>Pyannote</code> speaker_ids to <code>custom_speaker</code> labels, with side-by-side audio examples and video screengrabs for cross-validation. Proved to be an excellent, scalable process to find and extract host and guest audio.
-Once a speaker was validated and assigned, the transcript was automatically backfilled with the corrected labels. Audio for each segment was then extracted into clean, per-speaker directories. This produced the first reliable, guest-inclusive dataset and established a disciplined labeling pipeline.
-
+The next iteration introduced <strong>Clownfish</strong>, a Streamlit-based review system for manually remapping Pyannote speaker IDs into verified speaker labels using synchronized transcript, audio, and video review. Each correction automatically propagated through the transcript and sorted audio into clean per-speaker datasets.
 <br><br>
-<a href="https://www.youtube.com/watch?v=UPnnOCWqiAw" target="_blank" style="display:block;margin:20px 0;max-width:480px;">
+This workflow was enormously effective and allowed me to build the first reliable guest-inclusive corpus. Here is how quickly an episode could be processed:
+</p>
+
+<a href="https://www.youtube.com/watch?v=UPnnOCWqiAw" target="_blank" style="display:block;margin:22px 0 36px;max-width:520px;">
   <img src="https://img.youtube.com/vi/UPnnOCWqiAw/maxresdefault.jpg" alt="Clownfish demo on YouTube" style="width:100%;border:1px solid var(--border);border-radius:4px;display:block;transition:transform .15s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
 </a>
 
 <p class="lead">
-Clownfish was so wildly effective, I began collecting more episodes growing. Also replaced Pyannote with Nvidia NeMo, which provided higher quality embeddings and restored confidence in the classification pipeline.
-Clusters became tighter, cosine distances became reliable, and label consistency improved across the entire dataset.
+At the same time, I replaced Pyannote embeddings with Nvidia NeMo / TitaNet, which produced tighter clustering and more stable cosine separation across hundreds of episodes. Episode E136 eventually became the failure case that exposed the system's underlying geometric instability.
 </p>
 
 <div class="image-grid">
@@ -305,96 +288,29 @@ Clusters became tighter, cosine distances became reliable, and label consistency
   <img src="images/nemo.png" onclick="openModal(this)" alt="NeMo embedding visualization">
 </div>
 
-  
+<p class="lead">
+Clownfish eventually extracted 85,619 labeled samples across five classes with 97.98% held-out accuracy. More importantly, the embedding space finally behaved consistently enough to trust operationally: the Chamath↔JCal overlap largely disappeared, and boundary failures became interpretable instead of stochastic.
 </p>
 
-<div class="block">
-  <div class="block-header">V2 — Core Signals</div>
-  <div class="block-body">V2 Summary:
-• Integrated HITL pipeline (Clownfish) with clusterID/audio/video cross-validation
-• Massive scale-up: 85,619 total audio samples (70/15/15 split)
-• Transcript backfill applied after each speaker confirmation
-
-Dataset Distribution (Pre-balancing):
-• Chamath: 22,930 (26.8%) | JCal: 21,915 (25.6%)
-• Sacks: 13,696 (16.0%)   | Friedberg: 13,103 (15.3%)
-• Guest: 13,975 (16.3%)
-→ Introduced robust "Guest" class for negative sampling
-
-Performance Metrics:
-• Test Accuracy: 0.9798 (97.98%)
-• Sacks F1: 0.9851 | Chamath F1: 0.9823
-• Guest F1: 0.9879 (Highest recall at 0.9895)
-• JCal F1: 0.9708 (Main source of noise: 48 misclassified as Chamath)
-
-Key Shift:
-V2 moved from simple MLP feasibility to a higher-quality, pre-production pipeline. While training hit 100% accuracy, the test set's 98% performance across 12,843 samples proved the model's ability to generalize once guest segments and class-weight balancing were properly implemented, ensuring evaluation metrics were no longer inflated by host-only domain constraints.</div>
-</div>
-
-<h2 id="v3">V3 — Embedding Upgrade (NeMo / TitaNet)</h2>
-
-
-
-<div class="block">
-  <div class="block-header">V3 — Core Signals</div>
-  <div class="block-body">Embedding Metrics (NeMo / TitaNet):
-• Intra-class distance: 0.2502
-• Inter-class distance: 0.9914
-• Separation ratio: 3.96×
-
-Classifier Performance:
-• Accuracy: 96% on &gt;5s segments
-• Test size: 11,373 clips
-• Speaker classes: 5 (incl. OTHER)
-• Intra/Inter ratio: 4.18×
-
-Confusion Structure:
-• Friedberg ↔ JCal: ~1–1.5%
-• Chamath ↔ JCal: ~2%
-• Sacks errors: ~0.5%
-• OTHER F1: 95–97%
-
-Behavioral Shifts:
-• Confusion asymmetry eliminated
-• Clusters became compact and cosine-stable
-• Boundary errors now reflect real acoustic difficulty
-• Generalization improved across 387 episodes
-• &gt;5s segment requirement removed false-short artifacts
-
-Key Insight:
-V3 is the first version with correct embedding geometry —
-tight clusters, stable cosine structure, balanced error flows, and reproducible behavior across real-world audio domains.</div>
-</div>
-
-<h2 id="v4">V4 — Duration Constraint &amp; Production Reality</h2>
+<h2 id="v3">V3 — Structural Failure</h2>
 
 <p class="lead">
-Whitepapers warn that sub-5s audio destabilizes embeddings, and this matched what I observed in my corpus.
+The final classifier failed for a more fundamental reason: the label space itself was not cleanly separable.
+<br><br>
+The system trained only on longer-form audio (&gt;5 seconds). Those segments were classified directly by speaker, and the labels were then propagated back onto shorter clips through shared NeMo cluster IDs.
+<br><br>
+In episode E136, Brad Gerstner's embeddings overlapped directly with multiple hosts — including JCal, who was not even present in the episode. Some Brad segments sat closer to JCal's voice than JCal's own clips sat to each other, likely because of JCal's unusually dynamic cadence.
+<br><br>
+Even more concerning, Gerstner was frequently misattributed as Friedberg, who actually was present in the episode. I caught the issue while manually reviewing longer clips that should have been classified directly instead of inheriting propagated labels.
 </p>
 
-<div class="image-grid">
-  <img src="images/v4_error_1.png" onclick="openModal(this)" alt="V4 error example 1">
-  <img src="images/v4_error_2.png" onclick="openModal(this)" alt="V4 error example 2">
+<div class="block open">
+  <div class="block-header">Silent Failure</div>
+  <div class="block-body">The system had been failing silently while reporting near-perfect confidence.</div>
 </div>
 
 <p class="lead">
-Community advice was to drop short segments entirely — which makes sense: shorter audio is more likely to be mislabeled, and contains less acoustic identity.
-But roughly 50% of All-In segments are under 4 seconds, and discarding half the dataset this early wasn't acceptable.
-<br><br>
-My working hypothesis became:
-<br>1. Train the classifier only on host and guest audio longer than 5 seconds
-<br>2. Limit the classifier to segments longer than 5s, leaving all short segments untouched
-<br>3. Propagate speaker labels to short segments using NeMo <code>cluster_id</code>, which had proven remarkably reliable across dozens of episodes
-</p>
-
-<h2 id="v5">Classifier Removal — Structural Failure</h2>
-
-<p class="lead">
-V4 was retired when embedding geometry made the core problem undeniable. Brad Gerstner's voice didn't sit in guest space — it overlapped directly with host clusters. His minimum cosine distance to JCal (0.2507) fell below JCal's own intra-class baseline (0.4842). His distances to Sacks (0.7774) and Friedberg (0.8007) both landed below the 0.8740 inter-host floor. No classifier trained on this label space could resolve those cases — the geometry itself was the failure, not the model.
-<br><br>
-High-confidence scores made it worse, not better. A segment misclassified at 0.9999 confidence is harder to catch than a low-confidence flag — it passes every threshold and surfaces nothing for review. The system wasn't degrading visibly; it was failing silently. The two JSON blocks below capture the contradiction: a long segment with near-certain confidence and a short one with zero — both wrong, both labeled Friedberg, both actually Brad.
-<br><br>
-The classifier was dropped. NeMo's <code>speaker_id</code> backbone and Streamlit HITL review replaced stochastic label assignment with something auditable. It also exposed me directly to working with transcripts at scale, revealing a new class of problems that a classifier score would have steamrolled over. The decision and the episode that forced it are covered on the <a href="about.html" style="color:var(--green);text-decoration:none;font-family:'IBM Plex Mono',monospace;">About page ↗</a>.
+Dogfooding the transcripts saved me, and the classifier was removed entirely. I ultimately settled on NeMo clustering plus human-in-the-loop mapping and review, which proved reliable enough that I later expanded the same workflow to catch entirely different classes of transcript corruption discussed elsewhere in the project.
 </p>
 
 <div class="two-col">
@@ -403,12 +319,12 @@ The classifier was dropped. NeMo's <code>speaker_id</code> backbone and Streamli
     <div class="panel-label">Long Segment · Misclassified</div>
     <div class="code">
 <pre>{
-  "speaker_id": "SPEAKER_03", //Brad's ID
+  "speaker_id": "SPEAKER_03", // Brad's ID
   "is_lizard": false,
-  <span style="color:#ff6b6b;">"custom_speaker": "friedberg",</span> //Brad
+  <span style="color:#ff6b6b;">"custom_speaker": "friedberg",</span> // actually Brad
   "confidence": 0.9999877,
   "duration": 10.4119,
-  "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan, remember that text-based social networks were where it started there.",
+  "text": "Number one, if we flashback to what went on in China with Toutiao and Douyan...",
   <span style="color:#ff6b6b;">"speaker_id_propagated": true</span>
 }</pre>
     </div>
@@ -418,12 +334,12 @@ The classifier was dropped. NeMo's <code>speaker_id</code> backbone and Streamli
     <div class="panel-label">Short Segment · Also Misclassified</div>
     <div class="code">
 <pre>{
-  "speaker_id": "SPEAKER_04", //Friedberg's ID
+  "speaker_id": "SPEAKER_04", // Friedberg's ID
   "is_lizard": true,
-  <span style="color:#ff6b6b;">"custom_speaker": "friedberg",</span> //Brad
+  <span style="color:#ff6b6b;">"custom_speaker": "friedberg",</span> // actually Brad
   "confidence": 0.0,
   "duration": 0.3200,
-  "text": "Where is Jcal?", //Brad is talking
+  "text": "Where is JCal?", // Brad is talking
   "speaker_id_propagated": true
 }</pre>
     </div>
@@ -433,16 +349,15 @@ The classifier was dropped. NeMo's <code>speaker_id</code> backbone and Streamli
 
 <div class="block">
   <div class="block-header">Brad — Embedding Geometry</div>
-  <div class="block-body">Inter-host baseline (mean cosine distance between any two hosts): 0.8740
-JCal intra-class baseline (within-speaker distance): 0.4842
+  <div class="block-body">Inter-host baseline:        0.8740
+JCal intra-class baseline:  0.4842
 
 Brad → Chamath:   0.9181  (above inter-host baseline)
 Brad → Sacks:     0.7774  (below inter-host baseline)
 Brad → Friedberg: 0.8007  (below inter-host baseline)
 Brad → JCal min:  0.2507  (below JCal's own intra-class baseline)
 
-Some of Brad's segments are geometrically closer to JCal than JCal's own clips are to each other.
-A label space built on these embeddings wasn't ground truth — it was confident slop.</div>
+Some of Brad's segments were geometrically closer to JCal than JCal's own clips were to each other. A label space built on these embeddings wasn't ground truth — it was confident slop.</div>
 </div>
 
 </main>
@@ -472,9 +387,7 @@ function closeModal(){
 window.NAV_ANCHORS = [
   { href: '#v1', label: 'V1' },
   { href: '#v2', label: 'V2' },
-  { href: '#v3', label: 'V3' },
-  { href: '#v4', label: 'V4' },
-  { href: '#v5', label: 'Classifier Removal' }
+  { href: '#v3', label: 'V3' }
 ];
 </script>
 <script src="nav-loader.js" data-page="voice_classifier"></script>
