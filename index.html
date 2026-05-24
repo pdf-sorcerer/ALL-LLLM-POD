@@ -383,16 +383,16 @@ with chatbot parodies of the <i>All-In Podcast</i> hosts
 through text messaging and video chat.
 
     <br><br>
-These personalities are reconstructed from podcast episodes using an open-source CUDA pipeline for ASR, transcription, diarization, and speaker classification. More about that in the transcript, orchestration, and architecture sections.
+The personalities are reconstructed from hundreds of podcast episodes using an open-source CUDA pipeline for ASR, transcription, diarization, speaker classification, and transcript repair. The resulting datasets feed persona-specific orchestration and fine-tuning workflows designed to preserve speaker identity, tone, and conversational behavior.
 
+The project spans data pipelines, inference orchestration, voice synthesis, iOS interfaces, and multi-agent runtime systems.
 
 <br><br>
-I have minor ethical grumblings about the nature of this work and where the line exists between parody 
-and impersonation. But I wager that since comedy is legal again, tech leaders who candidly admit not knowing what 
+There are probably ethical gray areas here, but I wager that since comedy is legal again, tech leaders who confidently broadcast not knowing what 
 model iPhone they are using should probably expect at least a little teasing from people who know how to figure things like that out.    
 <br><br>
-  Technical Notes
-Optional sections below get into the nuts and bolts of the system, shifting writing styles to cover transcript pipeline iteration, runtime architecture, HITL tooling, and one literal ghost investigation where speaker audio 
+
+<strong>Important</strong> Optional sections below get into the nuts and bolts of the system, shifting writing styles cover transcript pipeline iteration, runtime architecture, HITL tooling, and one literal ghost investigation where speaker audio 
 existed but was never transcribed.
   
       <div class="footer">
