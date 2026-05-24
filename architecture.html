@@ -297,7 +297,7 @@
 <h1>Runtime Architecture</h1>
 
 <p class="lead">
- This page summarizes how I (and others) engage with the chatbot personas, how audio and text move through the system, how performative it is, operational constraints, and things to-do. 
+ This page summarizes the systems involved to interact with the chatbots
 </p>
 
 <div class="architecture-block">
@@ -319,18 +319,18 @@
 </p>
 
 <p class="body">
-  <strong>Windows Orchestration Server</strong><br>
+  <strong>Windows Orchestration</strong><br>
   This is where most of the work happens: WhisperX for speech-to-text, F5-TTS for audio generation, websocket routing, memory injection, queue management, and runtime state. Most timing problems originate here.
 </p>
 
 <p class="body">
   <strong>Apple Silicon Inference (M4 MacBook Pro)</strong><br>
-  Qwen3 30B runs locally via mlx, kept resident in unified memory with prompt caching enabled. Both the Windows server and the iOS client can talk to it directly. It functions like a dedicated inference box sitting on the local network.
+  Qwen3 30B MOE runs locally via omlx, kept resident in unified memory with prompt caching enabled. Both the Windows server and the iOS client can talk to it directly. 
 </p>
 
 <p class="body">
   <strong>Discord</strong><br>
-  Same stack, different surface. Discord adds multi-user access without changing anything underneath.
+Discord adds multi-user access without changing anything underneath. Impressive setup time, ~30 minutes. 
 </p>
 
 <div class="section-heading">
@@ -352,17 +352,6 @@
   Keeping Qwen3 loaded avoids cold-start delays, but it holds memory permanently. The tradeoffs are memory pressure, what happens if the runtime crashes, and how prompt cache invalidation is handled when context changes.
 </p>
 
-<div class="section-heading">
-    <h2>Retrieval</h2>
-</div>
-
-<p class="body">
-  The current retrieval setup leans too heavily on embeddings. It works, but the transcript data is already well-structured — speakers, timestamps, episode boundaries, segment repairs, attribution. That structure isn't being used.
-</p>
-
-<p class="body">
-  The plan is to move toward SQL-first retrieval and only add semantic search where it actually improves results. The goal isn't a more sophisticated retrieval system. The goal is one that breaks less often.
-</p>
 
 <div class="footer">
   <span>Mason Thompson &middot; Berkeley, California</span>
