@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ALL-LLM Pod | Argument Pipeline</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --green: #0A84FF;
+      --green-dim: rgba(10, 132, 255, 0.12);
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --border: #e4e4e4;
+      --code-bg: #0d1117;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --faint: #8c8c8c;
+      --nav-width: 220px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: var(--nav-width);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 0;
+      overflow-y: auto;
+    }
+
+    .nav-logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 20px 24px 8px;
+    }
+
+    .nav-item {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 7px 24px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-item:hover { color: var(--text); background: var(--bg); border-left-color: var(--border); }
+    .nav-item.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
+
+    main {
+      flex: 1;
+      padding: 56px 64px 120px;
+      max-width: 920px;
+    }
+
+    .page-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .lead {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      max-width: 740px;
+      margin-bottom: 34px;
+    }
+
+    .lead p { margin-bottom: 16px; }
+    .lead strong { font-weight: 600; color: var(--text); }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin: 42px 0 6px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--faint);
+    }
+
+    .block {
+      margin-bottom: 2px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      padding: 14px 18px;
+      gap: 12px;
+      transition: background 0.1s;
+    }
+
+    .block-header:hover { background: var(--bg); }
+    .block-header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+    .block-id {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-dim);
+      padding: 2px 7px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .block-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chevron { font-size: 10px; color: var(--faint); transition: transform 0.2s ease; flex-shrink: 0; }
+    .block.open .chevron { transform: rotate(180deg); }
+    .block-body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--border); }
+    .block.open .block-body { display: block; }
+
+    .block-why {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      padding: 14px 0 12px;
+      max-width: 760px;
+    }
+
+    .code-card {
+      background: var(--code-bg);
+      border-radius: 3px;
+      padding: 16px 18px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #c9d1d9;
+      border: 1px solid #1e2530;
+      border-top: 2px solid var(--green);
+      white-space: pre-wrap;
+      margin-top: 8px;
+    }
+
+    .argument-card {
+      background: var(--code-bg);
+      border: 1px solid #1e2530;
+      border-top: 2px solid var(--green);
+      border-radius: 3px;
+      padding: 18px;
+      margin-top: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: #c9d1d9;
+    }
+
+    .arg-row {
+      display: grid;
+      grid-template-columns: 108px 118px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 10px 0;
+      border-bottom: 1px solid #1e2530;
+      font-size: 11px;
+      line-height: 1.65;
+    }
+
+    .arg-row:last-child { border-bottom: 0; }
+    .speaker { color: var(--green); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .event { color: #8b9eb0; text-transform: uppercase; letter-spacing: 0.08em; }
+    .arg-text { color: #c9d1d9; }
+
+    .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(10, 132, 255, 0.18);
+      border-radius: 999px;
+      padding: 5px 8px;
+    }
+
+    .footer {
+      margin-top: 72px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid transparent; transition: color 0.15s, border-color 0.15s; }
+    .footer a:hover { color: var(--green); border-bottom-color: var(--green-dim); }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { padding: 32px 24px 80px; }
+      .footer { flex-direction: column; align-items: flex-start; }
+      .block-title { white-space: normal; }
+      .arg-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav id="shared-nav">
+    <noscript>
+      <div class="nav-logo">ALL-LLM Pod</div>
+      <a class="nav-item" href="index.html">Overview</a>
+      <a class="nav-item" href="architecture.html">Architecture</a>
+      <a class="nav-item" href="chasing_ghosts.html">Chasing Ghosts</a>
+      <a class="nav-item" href="voice_classifier.html">Transcription</a>
+      <a class="nav-item" href="heuristics.html">HITL</a>
+      <a class="nav-item" href="motion_dna.html">Motion DNA</a>
+      <a class="nav-item active" href="argument_pipeline.html">Argument Pipeline</a>
+      <a class="nav-item" href="metrics.html">Metrics & Media</a>
+    </noscript>
+  </nav>
+
+  <main>
+    <section id="intro">
+      <p class="page-eyebrow">Semantic Discourse Extraction</p>
+      <h1>Argument Pipeline</h1>
+
+      <div class="lead">
+        <p>The labeled transcripts already contained thousands of prompt-completion pairs. That part was never the problem.</p>
+        <p>Given enough transcript data, a LoRA will absolutely learn cadence, vocabulary, sentence rhythm, conversational tics, and topic familiarity. You can get something that sounds remarkably close to the hosts.</p>
+        <p>But after a while I realized the model was mostly learning the shape of the hosts, not the structure underneath them.</p>
+        <p><strong>Transcripts preserve style. They do not necessarily preserve reasoning.</strong></p>
+        <p>They do not preserve what each speaker actually believes, which claims they repeatedly defend, how disagreements evolve, where positions remain unresolved, or how viewpoints drift over time. A transcript captures words. It does not automatically capture the machinery producing those words.</p>
+        <p>That realization eventually led to the argument pipeline.</p>
+      </div>
+    </section>
+
+    <div class="section-heading" id="problem">
+      <h2>The Problem</h2>
+      <span class="section-count">style transfer is not persona reconstruction</span>
+    </div>
+
+    <div class="block open">
+      <div class="block-header">
+        <div class="block-header-left">
+          <span class="block-id">WHY</span>
+          <span class="block-title">transcripts flatten the machinery underneath speech</span>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="block-body">
+        <div class="block-why">
+          The hosts were not just speaking differently. They were reasoning differently. They had recurring arguments, recurring disagreements, recurring alliances, and recurring ways of responding to pressure. A normal transcript keeps the words, but loses a lot of that structure.
+        </div>
+        <div class="pill-row">
+          <span class="pill">beliefs</span>
+          <span class="pill">claims</span>
+          <span class="pill">counterclaims</span>
+          <span class="pill">pressure</span>
+          <span class="pill">alliances</span>
+          <span class="pill">drift over time</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-heading" id="events">
+      <h2>Discourse Events</h2>
+      <span class="section-count">the conversation as structured signal</span>
+    </div>
+
+    <div class="block open">
+      <div class="block-header">
+        <div class="block-header-left">
+          <span class="block-id">EVENTS</span>
+          <span class="block-title">what the extractor tries to preserve</span>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="block-body">
+        <div class="block-why">
+          The goal was never summarization. Summaries flatten conversations. They collapse disagreements, remove rebuttal structure, strip away uncertainty, and lose provenance. Instead, the pipeline attempts to preserve conversational state.
+        </div>
+        <div class="code-card">claim
+counterclaim
+disagreement
+question
+explanation
+rebuttal
+agreement
+topic pivot
+joke</div>
+      </div>
+    </div>
+
+    <div class="section-heading" id="chain">
+      <h2>Argument Chains</h2>
+      <span class="section-count">who said what, who pushed back, what survived</span>
+    </div>
+
+    <div class="block open">
+      <div class="block-header">
+        <div class="block-header-left">
+          <span class="block-id">CHAIN</span>
+          <span class="block-title">example structure</span>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="block-body">
+        <div class="block-why">
+          An argument chain is not a summary of a topic. It is the local machinery of the conversation: who made the claim, who challenged it, who clarified it, who agreed, and which position each speaker ultimately held.
+        </div>
+        <div class="argument-card" aria-label="Example argument chain">
+          <div class="arg-row">
+            <div class="speaker">Chamath</div>
+            <div class="event">claim</div>
+            <div class="arg-text">Frames a position and attaches a market, product, or incentive explanation to it.</div>
+          </div>
+          <div class="arg-row">
+            <div class="speaker">Sacks</div>
+            <div class="event">rebuttal</div>
+            <div class="arg-text">Pushes back on the framing and redirects the argument toward institutional incentives or policy consequences.</div>
+          </div>
+          <div class="arg-row">
+            <div class="speaker">Friedberg</div>
+            <div class="event">explanation</div>
+            <div class="arg-text">Breaks the issue into mechanisms, probabilities, or second-order effects.</div>
+          </div>
+          <div class="arg-row">
+            <div class="speaker">JCal</div>
+            <div class="event">question</div>
+            <div class="arg-text">Forces the argument back into plain language, audience framing, or practical stakes.</div>
+          </div>
+          <div class="arg-row">
+            <div class="speaker">Group</div>
+            <div class="event">position</div>
+            <div class="arg-text">The final state records where the speakers landed, where they disagreed, and what remained unresolved.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-heading" id="pipeline">
+      <h2>Pipeline</h2>
+      <span class="section-count">from transcript to persona memory</span>
+    </div>
+
+    <div class="block open">
+      <div class="block-header">
+        <div class="block-header-left">
+          <span class="block-id">FLOW</span>
+          <span class="block-title">semantic discourse pipeline</span>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="block-body">
+        <div class="code-card">labeled transcript
+    ↓
+topic windows
+    ↓
+topic arcs
+    ↓
+discourse events
+    ↓
+argument chains
+    ↓
+speaker positions
+    ↓
+persona memory</div>
+      </div>
+    </div>
+
+    <div class="section-heading" id="runtime">
+      <h2>Runtime Use</h2>
+      <span class="section-count">reasoning tendencies, not just style</span>
+    </div>
+
+    <div class="block open">
+      <div class="block-header">
+        <div class="block-header-left">
+          <span class="block-id">APP</span>
+          <span class="block-title">argument memory becomes persona texture</span>
+        </div>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="block-body">
+        <div class="block-why">
+          The resulting system extracts discourse events, argument chains, speaker positions, and persona memories that can be referenced later during inference. The point is not to make the model recite old episodes. The point is to preserve the reasoning tendencies underneath the speech.
+          <br><br>
+          Motion DNA attempts to recover behavioral tendencies.<br>
+          The argument pipeline attempts to recover reasoning tendencies.
+          <br><br>
+          One models how the hosts carry themselves.<br>
+          The other models how they carry ideas.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Mason Thompson &middot; Berkeley, California</span>
+      <div>
+        <a href="motion_dna.html">Motion DNA &rarr;</a>
+        &nbsp;&nbsp;
+        <a href="heuristics.html">Transcript Forensics &rarr;</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.block').forEach(function(block) {
+      block.querySelector('.block-header').addEventListener('click', function() {
+        block.classList.toggle('open');
+      });
+    });
+
+    window.NAV_ANCHORS = [
+      { href: '#intro', label: 'Intro' },
+      { href: '#problem', label: 'Problem' },
+      { href: '#events', label: 'Discourse events' },
+      { href: '#chain', label: 'Argument chains' },
+      { href: '#pipeline', label: 'Pipeline' },
+      { href: '#runtime', label: 'Runtime use' }
+    ];
+  </script>
+  <script src="nav-loader.js" data-page="argument_pipeline"></script>
+</body>
+</html>
