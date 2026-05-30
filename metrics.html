@@ -381,63 +381,125 @@
     <h2>Benchmarks</h2>
   </div>
 
+  <p class="body">
+    I replaced toy prompts with memory benchmarks built from the actual transcript corpus. The test set uses roughly 75,000 real speaker-labeled transcript segments from 563 All-In Podcast episodes, then injects controlled memory facts into realistic conversation history.
+  </p>
+  <p class="body">
+    The goal was not to prove the model can answer trivia. It was to measure the practical cost of conversational memory: how much prior context can be injected before latency becomes unacceptable, and whether buried facts remain retrievable.
+  </p>
+
   <div class="benchmark-wrap">
     <table class="benchmark-table">
       <thead>
         <tr>
-          <th>Benchmark Prompt</th>
-          <th>Prompt Size</th>
-          <th>TTFT</th>
-          <th>TTFA</th>
-          <th>Response</th>
+          <th>Context Ingestion Test</th>
+          <th>Actual Context</th>
+          <th>p50 TTFT</th>
+          <th>Equivalent</th>
+          <th>Finding</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>“What’s two plus two?”</td>
-          <td>1688 chars</td>
-          <td>0.54s</td>
-          <td>~4.3s</td>
-          <td>“Four. The reality is, this isn't a question about institutional capture or narrative shaping. It's basic arithmetic.”</td>
+          <td>No memory</td>
+          <td>0 tokens</td>
+          <td>0.52s</td>
+          <td>0 words</td>
+          <td>Baseline request with no retained conversation history.</td>
         </tr>
         <tr>
-          <td>“Say one sentence about San Francisco.”</td>
-          <td>2437 chars</td>
-          <td>1.42s</td>
-          <td>~5.0s</td>
-          <td>“San Francisco is a city that struggles to define itself, caught between its historical identity and the tech industry's shifting narratives.”</td>
+          <td>Short memory</td>
+          <td>~390 tokens</td>
+          <td>1.32s</td>
+          <td>~271 words / ~1.2 min</td>
+          <td>Small memory windows are cheap enough for realtime voice.</td>
         </tr>
         <tr>
-          <td>“Quick answer only, your favorite color.”</td>
-          <td>2278 chars</td>
-          <td>0.88s</td>
-          <td>~4.1s</td>
-          <td>“Blue. The kind that doesn't try too hard to be meaningful.”</td>
+          <td>Moderate memory</td>
+          <td>~680 tokens</td>
+          <td>1.84s</td>
+          <td>~481 words / ~2.5 min</td>
+          <td>Still responsive, with enough context for normal back-and-forth continuity.</td>
         </tr>
         <tr>
-          <td>“Complete this sentence. AI is...”</td>
-          <td>5082 chars</td>
-          <td>3.14s</td>
-          <td>~7.2s</td>
-          <td>“AI is a mirror held up to institutional priorities, not just a tool. It reflects what those in power want it to show—whether that's progress, control, or a story. The direction isn't just shaped by code, but by the incentives behind it.”</td>
+          <td>Heavy memory</td>
+          <td>~1,940 tokens</td>
+          <td>4.50s</td>
+          <td>~1,425 words / ~6.5 min</td>
+          <td>Usable for text chat, but starts to feel heavy for realtime voice.</td>
         </tr>
         <tr>
-          <td>“What is a startup?”</td>
-          <td>4528 chars</td>
-          <td>1.91s</td>
-          <td>~8.1s</td>
-          <td>“A startup is a company built to scale, but not just for scale—it's a bet on a future that isn't yet fully realized. The reality is, many startups get caught in the trap of chasing narratives rather than building durable solutions. They raise money based on momentum, not on whether they can actually solve a problem that matters.”</td>
+          <td>Long conversation</td>
+          <td>~3,983 tokens</td>
+          <td>9.81s</td>
+          <td>~2,870 words / ~14.5 min</td>
+          <td>Latency becomes the dominant constraint, not context-window capacity.</td>
         </tr>
         <tr>
-          <td>“What’s your quick take on AI regulation?”</td>
-          <td>6080 chars</td>
-          <td>3.69s</td>
-          <td>~7.6s</td>
-          <td>“AI regulation is often less about solving problems and more about shaping narratives. It’s less about clarity and more about influence. The goal isn’t always to fix the system—it’s to define it.”</td>
+          <td>Stress window</td>
+          <td>~7,794 tokens</td>
+          <td>22.38s</td>
+          <td>~5,670 words / ~30 min</td>
+          <td>Too slow for interactive voice, useful only as an offline stress test.</td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <p class="body">
+    This established the latency curve. The second question was whether the model could actually recover information buried inside that context.
+  </p>
+
+  <div class="benchmark-wrap">
+    <table class="benchmark-table">
+      <thead>
+        <tr>
+          <th>Retrieval Test</th>
+          <th>Setup</th>
+          <th>Result</th>
+          <th>What It Measured</th>
+          <th>Takeaway</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Explicit user memory</td>
+          <td><code>USER: I like turtles.</code></td>
+          <td>~100%</td>
+          <td>Can the model recover a clearly marked user fact?</td>
+          <td>When memory is explicitly labeled and directly queried, retrieval was effectively perfect.</td>
+        </tr>
+        <tr>
+          <td>Mixed fact bank</td>
+          <td>Polaris, Blue Mango, 207 episodes, concise responses, swallow airspeed</td>
+          <td>~100%</td>
+          <td>Can the model recover arbitrary facts from realistic transcript noise?</td>
+          <td>Specific retrieval cues worked very well; the model could pull out numbers, names, preferences, and identifiers.</td>
+        </tr>
+        <tr>
+          <td>Embedded sentence</td>
+          <td>Fact appended inside an existing transcript line</td>
+          <td>20–60%</td>
+          <td>Can the model identify an inserted sentence without formatting help?</td>
+          <td>The task became harder because the model had to distinguish the injected fact from naturally weird podcast dialogue.</td>
+        </tr>
+        <tr>
+          <td>Anomaly prompt</td>
+          <td>“What was unusual?”</td>
+          <td>Unstable</td>
+          <td>Can the model select the intended anomaly?</td>
+          <td>This measured salience, not memory. The corpus already contains strange jokes, pivots, and fragments, so the model often chose a different “weird” sentence.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="body">
+    The useful conclusion was that memory survived better than expected. The model could usually recover explicitly marked or clearly cued facts from realistic transcript context. The harder problem was not raw recall; it was attention and salience. If a fact blended naturally into the surrounding conversation, the model sometimes selected a more noticeable competing detail instead.
+  </p>
+  <p class="body">
+    For the realtime product, this makes the design constraint clearer: the practical memory limit is user patience and latency, not whether Qwen can technically ingest the context. The current runtime therefore favors smaller sliding windows for voice interaction, with larger context reserved for slower text or analysis modes.
+  </p>
 
   <div class="footer">
     <span>Mason Thompson &middot; Berkeley, California</span>
