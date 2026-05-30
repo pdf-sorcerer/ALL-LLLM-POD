@@ -200,6 +200,16 @@
       color: #3a3a3a;
     }
 
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      background: var(--green-dim);
+      color: var(--text);
+      padding: 2px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
     .metrics-summary td:nth-child(1),
     .metrics-summary td:nth-child(2) {
       font-family: 'IBM Plex Mono', monospace;
@@ -450,49 +460,37 @@
     This established the latency curve. The second question was whether the model could actually recover information buried inside that context.
   </p>
 
-  <div class="benchmark-wrap">
-    <table class="benchmark-table">
-      <thead>
-        <tr>
-          <th>Retrieval Test</th>
-          <th>Setup</th>
-          <th>Result</th>
-          <th>What It Measured</th>
-          <th>Takeaway</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Explicit user memory</td>
-          <td><code>USER: I like turtles.</code></td>
-          <td>~100%</td>
-          <td>Can the model recover a clearly marked user fact?</td>
-          <td>When memory is explicitly labeled and directly queried, retrieval was effectively perfect.</td>
-        </tr>
-        <tr>
-          <td>Mixed fact bank</td>
-          <td>Polaris, Blue Mango, 207 episodes, concise responses, swallow airspeed</td>
-          <td>~100%</td>
-          <td>Can the model recover arbitrary facts from realistic transcript noise?</td>
-          <td>Specific retrieval cues worked very well; the model could pull out numbers, names, preferences, and identifiers.</td>
-        </tr>
-        <tr>
-          <td>Embedded sentence</td>
-          <td>Fact appended inside an existing transcript line</td>
-          <td>20–60%</td>
-          <td>Can the model identify an inserted sentence without formatting help?</td>
-          <td>The task became harder because the model had to distinguish the injected fact from naturally weird podcast dialogue.</td>
-        </tr>
-        <tr>
-          <td>Anomaly prompt</td>
-          <td>“What was unusual?”</td>
-          <td>Unstable</td>
-          <td>Can the model select the intended anomaly?</td>
-          <td>This measured salience, not memory. The corpus already contains strange jokes, pivots, and fragments, so the model often chose a different “weird” sentence.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <table class="metrics-summary">
+    <thead>
+      <tr>
+        <th>Retrieval Test</th>
+        <th>Observed Result</th>
+        <th>Finding</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Explicit user memory</td>
+        <td>~100%</td>
+        <td><code>USER: I like turtles.</code> was recovered reliably. Clearly marked user facts were easy for the model to retrieve.</td>
+      </tr>
+      <tr>
+        <td>Targeted fact bank</td>
+        <td>~100%</td>
+        <td>With specific questions, the model recovered names, numbers, preferences, and identifiers such as Polaris, Blue Mango, 207 episodes, and swallow airspeed.</td>
+      </tr>
+      <tr>
+        <td>Embedded sentence</td>
+        <td>20–60%</td>
+        <td>When the fact was hidden inside an ordinary transcript line, retrieval became much harder. The model had to separate the inserted memory from normal podcast noise.</td>
+      </tr>
+      <tr>
+        <td>Anomaly prompt</td>
+        <td>Unstable</td>
+        <td>Asking “what was unusual?” measured salience, not memory. The transcript already contains jokes, fragments, and pivots, so the model often picked a different weird sentence.</td>
+      </tr>
+    </tbody>
+  </table>
 
   <p class="body">
     The useful conclusion was that memory survived better than expected. The model could usually recover explicitly marked or clearly cued facts from realistic transcript context. The harder problem was not raw recall; it was attention and salience. If a fact blended naturally into the surrounding conversation, the model sometimes selected a more noticeable competing detail instead.
