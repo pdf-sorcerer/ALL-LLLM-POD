@@ -276,45 +276,54 @@
     </p>
 
     <pre class="pipeline-table">
-+-----------------------------+--------------------------------------------------+
-| PIPELINE STAGE              | FUNCTION                                         |
-+-----------------------------+--------------------------------------------------+
-|       AUDIO PIPELINE        |                                                  |
-+-----------------------------+--------------------------------------------------+
-| VAD                         | Pyannote: detects speech activity boundaries;    |
-|                             | runs internally within WhisperX prior to ASR     |
-+-----------------------------+--------------------------------------------------+
-| ASR / Transcription         | WhisperX: converts audio to structured text      |
-|                             | with word-level timestamps and segment           |
-|                             | boundaries informed by Pyannote VAD              |
-+-----------------------------+--------------------------------------------------+
-| UEM Generation              | WhisperX segment timestamps written to UEM;      |
-|                             | boundaries are VAD-informed by Pyannote          |
-+-----------------------------+--------------------------------------------------+
-| Diarization (constrained)   | NeMo: answers "who spoke here" within            |
-|                             | Pyannote VAD + WhisperX timestamp windows        |
-+-----------------------------+--------------------------------------------------+
-| Speaker Classification      | NeMo: assigns embedding IDs to diarized segments |
-+-----------------------------+--------------------------------------------------+
-| HITL Classification         | Streamlit: human maps embedding IDs to named     |
-|                             | speakers via audio playback review               |
-+-----------------------------+--------------------------------------------------+
-| Transcript Forensics        | Streamlit: heuristic pass catches detectable     |
-|                             | ASR error patterns and segment boundary errors;  |
-|                             | blind to errors of omission                      |
-+-----------------------------+--------------------------------------------------+
-| Transcript Mining           | Extracts recurring arguments, reasoning          |
-|                             | patterns, and long-term positions                |
-+-----------------------------+--------------------------------------------------+
-|       VIDEO PIPELINE        |                                                  |
-+-----------------------------+--------------------------------------------------+
-| Face & Body Recognition     | Identifies speakers visually across video        |
-+-----------------------------+--------------------------------------------------+
-| Non-Verbal Extraction       | Captures posture, movement, gaze, expression     |
-+-----------------------------+--------------------------------------------------+
-| Voice / TTS                 | Synthesizes speaker voice for inference and      |
-|                             | playback                                         |
-+-----------------------------+--------------------------------------------------+</pre>
++-----------------------------+----------------------+----------------------------+
+| PIPELINE STAGE              |LIBRARY               | FUNCTION                   |
++-----------------------------+----------------------+----------------------------+
+|            AUDIO PIPELINE                                                       |
++-----------------------------+----------------------+----------------------------+
+| VAD                         | Pyannote             | Detects speech activity    |
+|                             |                      | boundaries; runs inside    |
+|                             |                      | WhisperX prior to ASR      |
++-----------------------------+----------------------+----------------------------+
+| ASR / Transcription         | WhisperX             | Converts audio to          |
+|                             |                      | structured text with       |
+|                             |                      | word-level timestamps      |
++-----------------------------+----------------------+----------------------------+
+| UEM Generation              | WhisperX             | Writes segment timestamps  |
+|                             |                      | to UEM; boundaries are     |
+|                             |                      | VAD-informed by Pyannote   |
++-----------------------------+----------------------+----------------------------+
+| Diarization (constrained)   | Nvidia NeMo          | Answers "who spoke here"   |
+|                             |                      | within Pyannote VAD +      |
+|                             |                      | WhisperX timestamp windows |
++-----------------------------+----------------------+----------------------------+
+| Speaker Classification      | Nvidia NeMo          | Assigns embedding IDs to   |
+|                             |                      | diarized segments          |
++-----------------------------+----------------------+----------------------------+
+| HITL Classification         | Streamlit            | Human maps embedding IDs   |
+|                             |                      | to named speakers via      |
+|                             |                      | audio playback review      |
++-----------------------------+----------------------+----------------------------+
+| Transcript Forensics        | Streamlit            | Heuristic pass catches     |
+|                             |                      | ASR errors and segment     |
+|                             |                      | boundary errors; blind to  |
+|                             |                      | errors of omission         |
++-----------------------------+----------------------+----------------------------+
+| Transcript Mining           | Python / terminal    | Extracts recurring         |
+|                             |                      | arguments, reasoning       |
+|                             |                      | patterns, long-term views  |
++-----------------------------+----------------------+----------------------------+
+|            VIDEO PIPELINE                                                       |
++-----------------------------+----------------------+----------------------------+
+| Face & Body Recognition     | InsightFace, OpenCV  | Identifies speakers        |
+|                             |                      | visually across video      |
++-----------------------------+----------------------+----------------------------+
+| Non-Verbal Extraction       | MediaPipe,           | Captures posture,          |
+|                             | ONNX Runtime         | movement, gaze, expression |
++-----------------------------+----------------------+----------------------------+
+| Voice / TTS                 | F5-TTS               | Synthesizes speaker voice  |
+|                             |                      | for inference and playback |
++-----------------------------+----------------------+----------------------------+</pre>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
 
