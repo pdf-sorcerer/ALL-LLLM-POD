@@ -151,6 +151,24 @@
       color: var(--text);
     }
 
+    .pipeline-table {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      background: var(--code-bg);
+      color: #c9d1d9;
+      padding: 28px 32px;
+      border-radius: 4px;
+      overflow-x: auto;
+      white-space: pre;
+      margin-bottom: 52px;
+    }
+
+    .pipeline-table .section-header {
+      color: #0A84FF;
+      font-weight: 600;
+    }
+
     .footer {
       margin-top: 72px;
       padding-top: 24px;
@@ -223,7 +241,7 @@
       <a class="nav-item" href="chasing_ghosts.html">Chasing Ghosts</a>
       <a class="nav-item" href="voice_classifier.html">Transcription</a>
       <a class="nav-item" href="heuristics.html">HITL</a>
-      <a class="nav-item" href="metrics.html">Metrics & Media</a>
+      <a class="nav-item" href="metrics.html">Metrics &amp; Media</a>
     </noscript>
   </nav>
 
@@ -246,16 +264,57 @@
 
     <p class="page-eyebrow">Multi-Agent LLM System</p>
 
-    <h1>ALL-LLLM POD</h1>
+    <h1>ALL-LLM POD</h1>
 
     <p class="lead">
-Hey, everybody! Welcome to the number one <strong>ALL-LLLM POD</strong>: a technically serious generative AI system built around an intentionally unserious premise: conversational chatbot parodies of the <i>All-In Podcast</i> hosts.
-<br><br>
-The <i>All-In Podcast</i> hosts are reconstructed from hundreds of podcast episodes with an open-source pipeline handling ASR, transcription, diarization, speaker classification, and human-in-the-loop transcript repair. The resulting speaker-labeled transcripts are mined for recurring arguments, reasoning patterns, and long-term positions. A second parallel face and body recognition pipeline extracts non-verbal communication patterns such as posture, movement, gaze, and expression.
-<br><br>
-These systems attempt to reconstruct not only what the hosts said, but how they behave, how they reason, and what they consistently believe into a more belivable UIX.
-<br><br>
-   </p>
+      Hey, everybody! Welcome to the number one <strong>ALL-LLM POD</strong>: a technically serious generative AI system built around an intentionally unserious premise: conversational chatbot parodies of the <i>All-In Podcast</i> hosts.
+      <br><br>
+      The <i>All-In Podcast</i> hosts are reconstructed from hundreds of episodes using two parallel pipelines. The <strong>audio pipeline</strong> handles VAD, ASR, diarization, speaker classification, and human-in-the-loop transcript repair. The resulting speaker-labeled transcripts are mined for recurring arguments, reasoning patterns, and long-term positions. The <strong>video pipeline</strong> runs independently, extracting non-verbal communication patterns — posture, movement, gaze, and expression — through face and body recognition.
+      <br><br>
+      Together, these systems attempt to reconstruct not only what the hosts said, but how they behave, how they reason, and what they consistently believe — into a more believable experience.
+      <br><br>
+    </p>
+
+    <pre class="pipeline-table">
++-----------------------------+--------------------------------------------------+
+| PIPELINE STAGE              | FUNCTION                                         |
++-----------------------------+--------------------------------------------------+
+|       AUDIO PIPELINE        |                                                  |
++-----------------------------+--------------------------------------------------+
+| VAD                         | Pyannote: detects speech activity boundaries;    |
+|                             | runs internally within WhisperX prior to ASR     |
++-----------------------------+--------------------------------------------------+
+| ASR / Transcription         | WhisperX: converts audio to structured text      |
+|                             | with word-level timestamps and segment           |
+|                             | boundaries informed by Pyannote VAD              |
++-----------------------------+--------------------------------------------------+
+| UEM Generation              | WhisperX segment timestamps written to UEM;      |
+|                             | boundaries are VAD-informed by Pyannote          |
++-----------------------------+--------------------------------------------------+
+| Diarization (constrained)   | NeMo: answers "who spoke here" within            |
+|                             | Pyannote VAD + WhisperX timestamp windows        |
++-----------------------------+--------------------------------------------------+
+| Speaker Classification      | NeMo: assigns embedding IDs to diarized segments |
++-----------------------------+--------------------------------------------------+
+| HITL Classification         | Streamlit: human maps embedding IDs to named     |
+|                             | speakers via audio playback review               |
++-----------------------------+--------------------------------------------------+
+| Transcript Forensics        | Streamlit: heuristic pass catches detectable     |
+|                             | ASR error patterns and segment boundary errors;  |
+|                             | blind to errors of omission                      |
++-----------------------------+--------------------------------------------------+
+| Transcript Mining           | Extracts recurring arguments, reasoning          |
+|                             | patterns, and long-term positions                |
++-----------------------------+--------------------------------------------------+
+|       VIDEO PIPELINE        |                                                  |
++-----------------------------+--------------------------------------------------+
+| Face & Body Recognition     | Identifies speakers visually across video        |
++-----------------------------+--------------------------------------------------+
+| Non-Verbal Extraction       | Captures posture, movement, gaze, expression     |
++-----------------------------+--------------------------------------------------+
+| Voice / TTS                 | Synthesizes speaker voice for inference and      |
+|                             | playback                                         |
++-----------------------------+--------------------------------------------------+</pre>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
 
