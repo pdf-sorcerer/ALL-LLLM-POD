@@ -169,6 +169,147 @@
       font-weight: 600;
     }
 
+    .tabs-wrapper {
+      margin-bottom: 52px;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .tab-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+    }
+
+    .tab-panel {
+      padding-top: 24px;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .video-cell {
+      background: var(--code-bg);
+      border: 1px solid #2a2a2a;
+      border-radius: 4px;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+
+    .video-cell:hover {
+      border-color: var(--green);
+    }
+
+    .video-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .play-icon {
+      font-size: 28px;
+      color: rgba(255,255,255,0.3);
+      transition: color 0.15s;
+    }
+
+    .video-cell:hover .play-icon {
+      color: var(--green);
+    }
+
+    .video-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 14px;
+      border-top: 1px solid #1e1e1e;
+    }
+
+    .video-lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, 0.96);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      cursor: zoom-out;
+      padding: 32px;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .video-lightbox.is-open {
+      display: flex;
+    }
+
+    .video-lightbox video {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 4px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+
+    .video-lightbox-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .video-lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 3px;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+
     .footer {
       margin-top: 72px;
       padding-top: 24px;
@@ -275,36 +416,45 @@
       <br><br>
     </p>
 
-    <pre class="pipeline-table">
+    <div class="tabs-wrapper">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('pipeline')">Pipeline</button>
+        <button class="tab-btn" onclick="switchTab('videos')">Demo Videos</button>
+      </div>
+
+      <!-- TAB 1: Pipeline -->
+      <div class="tab-panel" id="tab-pipeline">
+        <pre class="pipeline-table" style="display:block">
+        <pre class="pipeline-table">
 +-----------------------------+----------------------+----------------------------+
-| PIPELINE STAGE              |LIBRARY               | FUNCTION                   |
+| PIPELINE STAGE              | TOOL / LIBRARY       | FUNCTION                   |
 +-----------------------------+----------------------+----------------------------+
 |            AUDIO PIPELINE                                                       |
 +-----------------------------+----------------------+----------------------------+
-| VAD                         | Pyannote             | Detects speech activity    |
+| VAD                         | Pyannote (library)   | Detects speech activity    |
 |                             |                      | boundaries; runs inside    |
 |                             |                      | WhisperX prior to ASR      |
 +-----------------------------+----------------------+----------------------------+
-| ASR / Transcription         | WhisperX             | Converts audio to          |
+| ASR / Transcription         | WhisperX (library)   | Converts audio to          |
 |                             |                      | structured text with       |
 |                             |                      | word-level timestamps      |
 +-----------------------------+----------------------+----------------------------+
-| UEM Generation              | WhisperX             | Writes segment timestamps  |
+| UEM Generation              | WhisperX (library)   | Writes segment timestamps  |
 |                             |                      | to UEM; boundaries are     |
 |                             |                      | VAD-informed by Pyannote   |
 +-----------------------------+----------------------+----------------------------+
-| Diarization (constrained)   | Nvidia NeMo          | Answers "who spoke here"   |
+| Diarization (constrained)   | NeMo (toolkit)       | Answers "who spoke here"   |
 |                             |                      | within Pyannote VAD +      |
 |                             |                      | WhisperX timestamp windows |
 +-----------------------------+----------------------+----------------------------+
-| Speaker Classification      | Nvidia NeMo          | Assigns embedding IDs to   |
+| Speaker Classification      | NeMo (toolkit)       | Assigns embedding IDs to   |
 |                             |                      | diarized segments          |
 +-----------------------------+----------------------+----------------------------+
-| HITL Classification         | Streamlit            | Human maps embedding IDs   |
+| HITL Classification         | Streamlit (framework)| Human maps embedding IDs   |
 |                             |                      | to named speakers via      |
 |                             |                      | audio playback review      |
 +-----------------------------+----------------------+----------------------------+
-| Transcript Forensics        | Streamlit            | Heuristic pass catches     |
+| Transcript Forensics        | Streamlit (framework)| Heuristic pass catches     |
 |                             |                      | ASR errors and segment     |
 |                             |                      | boundary errors; blind to  |
 |                             |                      | errors of omission         |
@@ -316,14 +466,38 @@
 |            VIDEO PIPELINE                                                       |
 +-----------------------------+----------------------+----------------------------+
 | Face & Body Recognition     | InsightFace, OpenCV  | Identifies speakers        |
-|                             |                      | visually across video      |
+|                             | (libraries)          | visually across video      |
 +-----------------------------+----------------------+----------------------------+
-| Non-Verbal Extraction       | MediaPipe,           | Captures posture,          |
-|                             | ONNX Runtime         | movement, gaze, expression |
+| Non-Verbal Extraction       | MediaPipe (library), | Captures posture,          |
+|                             | ONNX Runtime (GPU)   | movement, gaze, expression |
 +-----------------------------+----------------------+----------------------------+
-| Voice / TTS                 | F5-TTS               | Synthesizes speaker voice  |
+| Voice / TTS                 | F5-TTS (library)     | Synthesizes speaker voice  |
 |                             |                      | for inference and playback |
 +-----------------------------+----------------------+----------------------------+</pre>
+      </div>
+
+      <!-- TAB 2: Demo Videos -->
+      <div class="tab-panel" id="tab-videos" style="display:none">
+        <div class="video-grid">
+          <button class="video-cell" onclick="openVideoLightbox('app_ui.mp4', 'App UI')">
+            <div class="video-thumb"><div class="play-icon">&#9654;</div></div>
+            <div class="video-label">App UI</div>
+          </button>
+          <button class="video-cell" onclick="openVideoLightbox('dm_mode.mp4', 'DM Mode')">
+            <div class="video-thumb"><div class="play-icon">&#9654;</div></div>
+            <div class="video-label">DM Mode</div>
+          </button>
+          <button class="video-cell" onclick="openVideoLightbox('facetime.mp4', '1:1 Facetime')">
+            <div class="video-thumb"><div class="play-icon">&#9654;</div></div>
+            <div class="video-label">1:1 Facetime</div>
+          </button>
+          <button class="video-cell" onclick="openVideoLightbox('group_chat.mp4', 'Group Chat')">
+            <div class="video-thumb"><div class="play-icon">&#9654;</div></div>
+            <div class="video-label">Group Chat</div>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
 
@@ -377,6 +551,49 @@
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    });
+  </script>
+
+  <div class="video-lightbox" id="videoLightbox" onclick="closeVideoLightbox()">
+    <button type="button" class="video-lightbox-close" onclick="closeVideoLightbox()">Close &times;</button>
+    <video id="lightboxVideo" controls></video>
+    <div class="video-lightbox-label" id="lightboxVideoLabel"></div>
+  </div>
+
+  <script>
+    function switchTab(name) {
+      document.getElementById('tab-pipeline').style.display = name === 'pipeline' ? 'block' : 'none';
+      document.getElementById('tab-videos').style.display = name === 'videos' ? 'block' : 'none';
+      document.querySelectorAll('.tab-btn').forEach(function(btn, i) {
+        btn.classList.toggle('active', (i === 0 && name === 'pipeline') || (i === 1 && name === 'videos'));
+      });
+    }
+
+    function openVideoLightbox(src, label) {
+      var lb = document.getElementById('videoLightbox');
+      var vid = document.getElementById('lightboxVideo');
+      var lbl = document.getElementById('lightboxVideoLabel');
+      vid.src = src;
+      lbl.textContent = label;
+      lb.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      vid.play();
+    }
+
+    function closeVideoLightbox() {
+      var lb = document.getElementById('videoLightbox');
+      var vid = document.getElementById('lightboxVideo');
+      vid.pause();
+      vid.src = '';
+      lb.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeVideoLightbox();
         closeLightbox();
       }
     });
