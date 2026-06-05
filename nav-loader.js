@@ -6,7 +6,7 @@
   // ── ANNOUNCEMENT BANNER ──────────────────────────────────────────────────
   // Full-width top bar injected above all page content.
   // Update BANNER_MESSAGE and BANNER_DATE to change sitewide.
-  const BANNER_ACTIVE  = true;
+  const BANNER_ACTIVE  = false;
   const BANNER_DATE    = new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
