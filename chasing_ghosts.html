@@ -572,13 +572,29 @@
   <p class="page-eyebrow">Transcript Reconstruction</p>
   <h1>Ghost Audio</h1>
 
-  <p class="lead">
-    Late in the project, I switched from YouTube audio to full episode masters from Libsyn. Better source should mean better transcripts. It didn't — older YouTube-derived transcripts sometimes contained dialogue completely absent from the cleaner rebuilds. I called it Ghost Audio.
-  </p>
+<p class="lead">
+  In February 2026, I switched from downloading episode audio from YouTube to downloading full episode masters directly from Libsyn. The change was mostly about convenience: one source, one workflow, fewer moving parts.
+</p>
 
-  <p class="body">
-    The first example came from Episode 136. Friedberg's quiet "oh my god" at ~21s appeared in the older transcript and vanished from the Libsyn rebuild. Gerstner said nearly the same thing moments later — gone from both. Both are audible in the clip below.
-  </p>
+<p class="body">
+  I ran a small batch of episodes through my ASR pipeline and compared the new v2 transcript of Episode 136 side-by-side with its original v1 counterpart. A short line from Friedberg — "Oh, my God" at roughly 20 seconds — was missing from the newer transcript.
+</p>
+
+<p class="body">
+  For completeness, guest Brad Gerstner says nearly the same phrase a few seconds later. He's barely audible; I only noticed the utterance while reviewing the video. Gerstner's line was absent from both transcripts and was never recovered.
+</p>
+
+<p class="body">
+  I coined this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech was clearly audible, yet the missing text left almost no evidence it had ever existed.
+</p>
+
+<p class="body">
+  The missing line itself isn't the problem. The problem is that omissions distort the surrounding conversation. Remove enough speech and speaker turns collapse, context disappears, and downstream training examples begin teaching the wrong relationships between prompts and completions.
+</p>
+
+<p class="body">
+  Here's a relatable (if exaggerated) example of what that can look like:
+</p>
 
   <!-- Video + toggleable transcript (YouTube / Libsyn) -->
   <div class="vt-grid">
