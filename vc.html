@@ -1,0 +1,198 @@
+<p class="page-eyebrow">Speaker Identification Architecture</p>
+<h1>Speaker Classification Policy Evolution</h1>
+
+<p class="lead">
+The original goal was simple: identify who was speaking and generate clean speaker-labeled transcripts at scale.
+</p>
+
+<h2 id="v1">V1 — Host-Only Classification</h2>
+
+<p class="lead">
+The first version used binary classifiers trained on host audio. It worked reasonably well, but guests were routinely forced into the closest host class because the model had never learned what a guest sounded like.
+</p>
+
+<p class="lead">
+I made a short film documenting the failure.
+</p>
+
+<a href="https://www.youtube.com/watch?v=RpVeED6ExNQ" target="_blank" style="display:block;margin:22px 0 48px;max-width:520px;">
+  <img src="https://img.youtube.com/vi/RpVeED6ExNQ/maxresdefault.jpg"
+       alt="V1 classifier failure short film"
+       style="width:100%;border:1px solid var(--border);border-radius:4px;display:block;">
+</a>
+
+<h2 id="v2">V2 — Clownfish</h2>
+
+<p class="lead">
+The second version introduced Clownfish, a human-in-the-loop review tool that mapped speaker identities onto embedding clusters using transcript, audio, and video review.
+</p>
+
+<p class="lead">
+More importantly, it transformed dataset creation from a manual process into something scalable. Instead of hunting through hundreds of podcast episodes for clean audio, I could identify a speaker once and propagate that identity across an entire episode.
+</p>
+
+<div class="image-grid" style="grid-template-columns:1.3fr 1fr 1fr;">
+
+  <div>
+    <div class="panel-label">Clownfish Demo</div>
+    <a href="https://www.youtube.com/watch?v=UPnnOCWqiAw" target="_blank">
+      <img src="https://img.youtube.com/vi/UPnnOCWqiAw/maxresdefault.jpg"
+           alt="Clownfish Demo">
+    </a>
+  </div>
+
+  <div>
+    <div class="panel-label">Pyannote Embeddings</div>
+    <img src="images/pyannote.png"
+         onclick="openModal(this)"
+         alt="Pyannote Embeddings">
+  </div>
+
+  <div>
+    <div class="panel-label">NeMo / TitaNet Embeddings</div>
+    <img src="images/nemo.png"
+         onclick="openModal(this)"
+         alt="NeMo Embeddings">
+  </div>
+
+</div>
+
+<p class="lead">
+Around the same time, I replaced Pyannote embeddings with Nvidia NeMo / TitaNet. I ultimately preferred NeMo's embeddings for clustering and retrieval, and Clownfish became the primary mechanism for extracting and labeling audio at scale.
+</p>
+
+<h2 id="v3">V3 — Looks Great On Paper</h2>
+
+<p class="lead">
+V3 was the culmination of several months of iteration: Nvidia NeMo embeddings, Clownfish-generated datasets, and an XGBoost classifier trained on 143,467 labeled speaker segments.
+</p>
+
+<div class="block open">
+  <div class="block-header">Performance</div>
+  <div class="block-body">
+Training Samples:    143,467
+
+Validation Accuracy: 99.42%
+Test Accuracy:       99.38%
+
+Chamath:             99.59%
+Friedberg:           99.33%
+JCal:                99.35%
+Sacks:               99.00%
+
+  </div>
+</div>
+
+<p class="lead">
+Fantastic results. Error rates continued to fall as clip duration increased, and longer-form speech was classified with near-perfect accuracy.
+</p>
+
+<p class="lead">
+Even so, some of the papers I was reading suggested results this good shouldn't be possible, so I never fully trusted it.
+</p>
+
+<img src="images/duration_analysis.png"
+  onclick="openModal(this)"
+  alt="Duration Analysis"
+  style="width:100%;margin:32px 0;border:1px solid var(--border);cursor:pointer;">
+
+<h1 style="margin-top:80px;">Case Study: Episode 136</h1>
+
+<p class="lead">
+V3 was deliberately trained on longer speech segments. The idea was simple: let the classifier operate only within its strongest regime, then propagate confident predictions back onto shorter segments through shared NeMo speaker IDs.
+</p>
+
+<p class="lead">
+At least, that was the theory.
+</p>
+
+<p class="lead">
+While reviewing Episode 136, I discovered guest Brad Gerstner being confidently classified as David Friedberg on a long-form speech segment.
+</p>
+
+<p class="lead">
+That was the part that bothered me.
+</p>
+
+<p class="lead">
+The failure wasn't occurring in short, noisy clips where mistakes are expected. It was occurring in the exact region where the classifier appeared strongest.
+</p>
+
+<div class="two-col">
+
+  <div>
+    <div class="panel-label">Long Segment · Misclassified</div>
+    <div class="code">
+<pre>{
+  "speaker_id": "SPEAKER_03",
+  "custom_speaker": "friedberg",
+  "confidence": 0.9999877,
+  "duration": 10.4119,
+  "speaker_id_propagated": true
+}</pre>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel-label">Short Segment · Also Misclassified</div>
+    <div class="code">
+<pre>{
+  "speaker_id": "SPEAKER_04",
+  "custom_speaker": "friedberg",
+  "confidence": 0.0,
+  "duration": 0.3200,
+  "speaker_id_propagated": true
+}</pre>
+    </div>
+  </div>
+
+</div>
+
+<p class="lead">
+Digging deeper, some of Gerstner's embeddings sat closer to JCal than JCal's own intra-speaker baseline — despite JCal not appearing in the episode at all.
+</p>
+
+<p class="lead">
+I never fully root-caused the issue, and it still bothers me.
+</p>
+
+<p class="lead">
+Part of it may have been embedding geometry. Part may have been label propagation. Part may have been user error. I still don't know.
+</p>
+
+<p class="lead">
+What I do know is that manually reviewing transcripts uncovered a problem the accuracy metrics did not.
+</p>
+
+<h1 style="margin-top:80px;">What Survived</h1>
+
+<p class="lead">
+The classifier was the original goal.
+</p>
+
+<p class="lead">
+The tooling ended up being more valuable:
+</p>
+
+<ul style="margin:20px 0 30px 24px; line-height:2;">
+  <li>Nvidia NeMo / TitaNet speaker embeddings</li>
+  <li>Clownfish human-in-the-loop review workflows</li>
+  <li>Large-scale speaker audio extraction</li>
+  <li>Dataset inspection and transcript debugging tools</li>
+</ul>
+
+<p class="lead">
+The classifier eventually disappeared.
+</p>
+
+<p class="lead">
+The tooling is still useful.
+</p>
+
+<script>
+window.NAV_ANCHORS = [
+  { href: '#v1', label: 'V1' },
+  { href: '#v2', label: 'Clownfish' },
+  { href: '#v3', label: 'V3' }
+];
+</script>
