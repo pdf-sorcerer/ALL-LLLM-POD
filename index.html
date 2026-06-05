@@ -91,19 +91,26 @@
       max-width: 860px;
     }
 
-     .site-banner {
-        margin: -56px -64px 24px -64px;
-        width: calc(100% + 128px);
-        background: var(--code-bg);
+       .site-banner {
+      margin: 0 0 18px 0;
+      width: 100%;
+      display: block;
+      border: 0;
+      background: var(--code-bg);
+      cursor: zoom-in;
+      padding: 0;
     }
-
-
-
+    
     .site-banner img {
-        width: 100%;
-        height: 280px;
-        object-fit: cover;
-        object-position: center top;
+      display: block;
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      object-position: center top;
+    }
+    
+    .banner-caption {
+      display: none;
     }
 
     .banner-caption {
@@ -356,12 +363,17 @@
     }
 
     @media (max-width: 768px) {
-      nav {
-        display: none;
-      }
-
       main {
-        padding: 32px 24px 80px;
+        padding: 24px 20px 80px;
+      }
+    
+      .site-banner {
+        margin: 0 0 16px 0;
+        width: 100%;
+      }
+    
+      .site-banner img {
+        height: 110px;
       }
     }
   </style>
