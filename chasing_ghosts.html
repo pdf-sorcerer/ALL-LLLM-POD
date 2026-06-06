@@ -581,11 +581,11 @@
 </p>
 
 <p class="body">
-  For completeness, guest Brad Gerstner says nearly the same phrase a few seconds later. He's barely audible; I only noticed the utterance while reviewing the video. Gerstner's line was absent from both transcripts and was never recovered.
+  Guest Brad Gerstner says the exact same phrase a few seconds later. He's barely audible; I only noticed the utterance while reviewing the video.
 </p>
 
 <p class="body">
-  I coined this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech was clearly audible, yet the missing text left almost no evidence it had ever existed.
+  I coined this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech was clearly audible, yet the missing text from the new Libsyn transcript left no evidence it had ever existed. But I had proof it waas there, from the original YouTube audio v1 transcript. 
 </p>
 
 <p class="body">
@@ -596,42 +596,55 @@
   Here's a relatable (if exaggerated) example of what that can look like:
 </p>
 
-  <!-- Video + toggleable transcript (YouTube / Libsyn) -->
-  <div class="vt-grid">
+<h2>Why Transcript Omissions Matter</h2>
 
-    <div class="vt-video">
-      <video controls preload="metadata">
-        <source src="both_ghosts.mp4" type="video/mp4">
-      </video>
-      <div class="video-caption">Episode 136 · Both ghost regions · ~20–29s</div>
-    </div>
+<p>
+Most transcript errors are visible. A wrong word, bad timestamp, or incorrect speaker label gives you something to investigate. Omissions are different: speech disappears entirely, leaving no indication that anything is missing.
+</p>
 
-    <div class="vt-transcript">
-      <div class="vt-tabs" role="tablist">
-        <button class="vt-tab active" role="tab" aria-selected="true"
-                data-target="panel-youtube">YouTube</button>
-        <button class="vt-tab" role="tab" aria-selected="false"
-                data-target="panel-libsyn">Libsyn</button>
-      </div>
+<div class="comparison-card">
+  <h3>Movie Transcript</h3>
+  <div class="transcript-box">
+    <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
+    <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
+    <p><strong>Vader:</strong> "No. I am your father."</p>
+    <p><strong>Luke:</strong> "No, no. That's not true. That's impossible!"</p>
+    <p><strong>Luke:</strong> "Search your feelings! You know it to be true!"</p>
 
-      <!-- ===== YouTube transcript ===== -->
-      <div class="vt-panel active" id="panel-youtube" role="tabpanel">
-        <p><span class="ts">00:17</span> <span class="speaker">Chamath:</span> The shortest, that's the fattest. And the fattest, that's the dumbest.</p>
-        <p><span class="ts">00:21</span> <span class="speaker">Friedberg:</span> <span class="ghost-present">Oh, my God.</span> He's not even here. You can't do that. It's awful. That's just bullying. It's awful.</p>
-      </div>
-
-      <!-- ===== Libsyn transcript ===== -->
-      <div class="vt-panel" id="panel-libsyn" role="tabpanel">
-        <p><span class="ts">00:17</span> <span class="speaker">Chamath:</span> The shortest, that's the fattest. And the fattest, that's the dumbest.</p>
-        <p><span class="ts">00:25</span> <span class="speaker">Friedberg:</span> He's not even here. You can't do that. It's awful. That's just bullying. It's awful.</p>
-      </div>
-    </div>
-
+    
   </div>
+  <div class="video-box">
+    <video controls preload="metadata">
+      <source src="classification_error.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<div class="comparison-card">
+  <h3>Ghost Audio Transcript</h3>
+  <div class="transcript-box">
+    <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
+    <p><strong>Luke:</strong> "He told me enough. He told me you killed him! No, no. That's not true. That's impossible!"</p>
+    <p><strong>Luke:</strong> "Search your feelings! You know it to be true!"</p>
+  </div>
+  </div>
+</div>
+
+</div>
+
+<div class="callout">
+  <p>
+<p>
+If you were creating chatbot personas based on Star Wars characters, the model would learn that Luke is someone who reacts strongly and immediately contradicts himself. It would never learn one of the most important facts in the franchise: that Vader is Luke's father.
+</p>
+
+<p>
+Now, true fans will call out: 'Mason, the scene also contains, <i>"Join me, and together we can rule the galaxy as father and son"</i>. True. Even so, the example illustrates the core problem: transcript omissions don't just remove words. They remove context, causality, and relationships between ideas.
+</p>
+</div>
 
   <p class="body">
-    The audio was there. Spectrogram, RMS energy, and pitch detection all confirmed real speech in both windows. The pipeline knew speech existed there. It just didn't transcribe it.
-  </p>
+ The audio was there. Spectrogram, RMS energy, and pitch detection all confirmed real speech - though pitch was recoverable for only for Friedberg
 
   <p class="body">
     Token chain analysis showed why the two cases are different. At Friedberg's decision point — immediately after the decoder emits the <code>&lt;|19.04|&gt;</code> timestamp — "Oh" ranked first at 86%. At Gerstner's, it ranked 134th at 0.004%. Same audio segment, same decoder, completely different probability landscape.
