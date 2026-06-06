@@ -302,9 +302,15 @@
       <h1>Argument Pipeline</h1>
 
       <div class="lead">
-        <p>  Labeled transcripts are converted into persona-specific training data by batching same-speaker continuations and taking n-prior turns as conversational context (the prompt) and the target speaker’s response (the completion)
+<p>
+Labeled transcripts are converted into persona-specific training data by batching same-speaker continuations and using prior conversational turns as context (the prompt) and the target speaker's response as the completion. This works well for style transfer and mimicry, but I wanted a reasoning layer underneath it.</p>
+
+
+
+<p>
+So, I mined the transcript corpus using local Qwen3-30B MoE. Across a couple dozen of extractions passes, the system identified recurring beliefs, topic ownership, argument patterns, domain expertise, behavioral tendencies, and long-running positions. These artifacts were then transformed into runtime embeddings for the four Besties.
 </p>
-        <p>Transcripts help abunchton with style transfer (mimicry) - but I wanted a reasoning and argument layer undneath it.</p> 
+
       </div>
     </section>
 
