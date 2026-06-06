@@ -373,12 +373,149 @@
         padding: 18px 18px 22px;
       }
     }
+  
+
+    .section-kicker {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    .accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 36px;
+    }
+
+    .accordion {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .accordion:hover {
+      border-color: rgba(10, 132, 255, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .accordion summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 20px 22px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .accordion-title {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 5px;
+      color: var(--text);
+    }
+
+    .accordion-subtitle {
+      display: block;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .accordion-icon {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px;
+      color: var(--green);
+      line-height: 1;
+      transition: transform 0.15s;
+    }
+
+    .accordion[open] .accordion-icon {
+      transform: rotate(45deg);
+    }
+
+    .accordion-body {
+      padding: 0 22px 22px;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--green-dim), transparent 120px);
+    }
+
+    .accordion-body p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      max-width: 720px;
+      margin-top: 18px;
+    }
+
+    .learn-more {
+      display: inline-block;
+      margin-top: 18px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .learn-more:hover {
+      border-bottom-color: var(--green);
+    }
+
+    .sidequest-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        display: block;
+      }
+
+      nav {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .accordion summary {
+        padding: 18px;
+      }
+
+      .accordion-body {
+        padding: 0 18px 20px;
+      }
+    }
+
   </style>
 </head>
 
 <body>
 
-  <nav id="shared-nav">
+<nav id="shared-nav">
     <noscript>
       <div class="nav-logo">ALL-LLLM POD</div>
       <a class="nav-item" href="index.html">Overview</a>
@@ -391,245 +528,104 @@
     </noscript>
   </nav>
 
+
   <main>
+    <p class="page-eyebrow">ALL-LLLM POD</p>
 
-    
-
-    
+    <h1>Important Side Quests</h1>
 
     <p class="lead">
-      ALL-LLM Pod looks like a character-chat app, but most of the engineering work happened underneath the surface. This page catalogs the significant side systems that made the main apps possible: ingestion tools, transcript repair workflows, remote operations consoles, speaker attribution systems, and runtime utilities built to keep the corpus alive as the project grew.
+      Many of the most interesting engineering problems in <strong>ALL-LLM POD</strong> were not directly related to the chatbot itself. These side projects emerged while solving practical problems around transcription, speaker attribution, retrieval, dataset quality, and operational scale.
+      <br><br>
+      Together, they form much of the infrastructure that makes the main application possible.
     </p>
 
-    <section class="accordion-stack" aria-label="Important side quests">
+    <div class="accordion-list">
 
-      <details class="sidequest" open>
+      <details class="accordion">
         <summary>
-          <div>
-            <div class="sidequest-kicker">Operations Console</div>
-            <div class="sidequest-title">Clownfish V2</div>
-            <div class="sidequest-deck">A remote control plane for ingestion, transcription, diarization, transcript review, and corpus maintenance.</div>
-          </div>
-          <div class="accordion-icon" aria-hidden="true">+</div>
+          <span>
+            <span class="accordion-title">Clownfish V2</span>
+            <span class="accordion-subtitle">Remote operations console for corpus maintenance.</span>
+            <span class="sidequest-meta">Ingestion · orchestration · corpus ops</span>
+          </span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
-        <div class="sidequest-body">
-          <p>
-            As the corpus expanded from individual episodes to hundreds of hours of audio — and eventually to entirely new speakers outside the original All-In cast — maintaining the dataset became increasingly operationally expensive.
-          </p>
-          <p>
-            Early transcript generation workflows were locked to the Windows workstation, either locally or through Tailscale. Adding new content sources often meant creating one-off scripts to download, process, and integrate material into the pipeline. This worked initially, but became difficult to scale as the project grew.
-          </p>
-          <p>
-            To solve this, I built Clownfish V2: a remote operations layer sitting on top of the core AI pipeline.
-          </p>
-          <ul>
-            <li>Download and enqueue content from Libsyn, YouTube, local files, or arbitrary URLs.</li>
-            <li>Execute WhisperX transcription pipelines against queued content.</li>
-            <li>Run NeMo diarization and generate speaker-attributed transcripts using stable speaker IDs.</li>
-            <li>Fuse ASR and diarization outputs into reviewable transcript artifacts.</li>
-            <li>Launch Brody human-in-the-loop review workflows to inspect transcripts, repair attribution errors, and resolve edge cases.</li>
-            <li>Export finalized transcripts for downstream training, retrieval, and persona-generation workflows.</li>
-            <li>Monitor pipeline execution, queue state, logs, and corpus health from a single interface.</li>
-          </ul>
-          <p>
-            Running on the Windows orchestration server and accessible from iPhone, Mac, or any browser, Clownfish V2 became the operational control plane for the corpus.
-          </p>
-          <div class="tag-row">
-            <span class="tag">Streamlit</span>
-            <span class="tag">WhisperX</span>
-            <span class="tag">NeMo</span>
-            <span class="tag">Remote Ops</span>
-          </div>
+        <div class="accordion-body">
+          <p>As the transcript corpus expanded beyond hundreds of hours of audio, maintaining the pipeline became increasingly operationally expensive. Clownfish V2 unified ingestion, transcription, diarization, review, and export workflows into a single remotely accessible control plane.</p>
+          <a class="learn-more" href="clownfish_v2.html">Learn More &rarr;</a>
         </div>
       </details>
 
-      <details class="sidequest">
+
+      <details class="accordion">
         <summary>
-          <div>
-            <div class="sidequest-kicker">Transcript QA</div>
-            <div class="sidequest-title">Brody</div>
-            <div class="sidequest-deck">A lexical HITL review surface for inspecting fused transcripts, finding broken speaker turns, and applying quality fixes.</div>
-          </div>
-          <div class="accordion-icon" aria-hidden="true">+</div>
+          <span>
+            <span class="accordion-title">Transcript Forensics & Repair</span>
+            <span class="accordion-subtitle">Brody: human-in-the-loop transcript quality control.</span>
+            <span class="sidequest-meta">Transcript QA · lexical repair · HITL</span>
+          </span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
-        <div class="sidequest-body">
-          <p>
-            Brody exists because transcript quality problems are rarely solved by one better model. The failures are usually local: a dropped interjection, a split speaker turn, an invented boundary, a short utterance assigned to the wrong person, or a segment that looks fine until it is read in context.
-          </p>
-          <p>
-            The tool turns transcript repair into an inspection workflow instead of a pile of scripts. It gives the corpus a review layer where suspicious turns can be found, checked, corrected, and exported back into the training and retrieval datasets.
-          </p>
-          <div class="mono-list">input audio
-  -> ASR transcript
-  -> diarized speaker IDs
-  -> fused transcript
-  -> Brody lexical review
-  -> corrected training / retrieval artifact</div>
-          <div class="tag-row">
-            <span class="tag">HITL</span>
-            <span class="tag">Transcript Repair</span>
-            <span class="tag">QA</span>
-          </div>
+        <div class="accordion-body">
+          <p>Automated pipelines produce remarkably good transcripts—until they don't. Brody provides forensic tooling for identifying attribution errors, transcript corruption, segmentation mistakes, and other edge cases that can silently degrade downstream datasets.</p>
+          <a class="learn-more" href="https://masedawg1.github.io/all_llm_pod/heuristics.html">Learn More &rarr;</a>
         </div>
       </details>
 
-      <details class="sidequest">
+
+      <details class="accordion">
         <summary>
-          <div>
-            <div class="sidequest-kicker">Audio Forensics</div>
-            <div class="sidequest-title">Ghost Audio Investigation</div>
-            <div class="sidequest-deck">A transcript reliability investigation into speech that appeared in one source, vanished in another, or existed in audio but failed ASR.</div>
-          </div>
-          <div class="accordion-icon" aria-hidden="true">+</div>
+          <span>
+            <span class="accordion-title">Ghost Audio</span>
+            <span class="accordion-subtitle">When the audio exists, but the transcript doesn't.</span>
+            <span class="sidequest-meta">ASR failure modes · missing speech · transcript reliability</span>
+          </span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
-        <div class="sidequest-body">
-          <p>
-            The ghost audio work began as a simple discrepancy: the same episode could produce different transcript content depending on the source, processing path, and ASR behavior. Some words existed in YouTube transcripts but not in Libsyn-derived transcripts. Other short utterances had measurable audio energy but disappeared from both outputs.
-          </p>
-          <p>
-            That turned transcript generation into a forensic problem. The lesson was not just that ASR can be wrong. It was that transcript systems can fail silently, and those silent omissions can change the meaning of a conversation while leaving the surrounding transcript looking clean.
-          </p>
-          <div class="tag-row">
-            <span class="tag">ASR Omission</span>
-            <span class="tag">VAD</span>
-            <span class="tag">Source Diffing</span>
-          </div>
+        <div class="accordion-body">
+          <p>During transcript validation, I discovered multiple cases where audible speech appeared in source media but was missing from generated transcripts. This investigation became a deeper exploration of ASR failure modes, transcript reliability, and the challenges of building trustworthy datasets.</p>
+          <a class="learn-more" href="https://masedawg1.github.io/all_llm_pod/chasing_ghosts.html">Learn More &rarr;</a>
         </div>
       </details>
 
-      <details class="sidequest">
+
+      <details class="accordion">
         <summary>
-          <div>
-            <div class="sidequest-kicker">Speaker Attribution</div>
-            <div class="sidequest-title">Classifier Scaling</div>
-            <div class="sidequest-deck">The progression from host-only classification to guest-aware speaker attribution with human review.</div>
-          </div>
-          <div class="accordion-icon" aria-hidden="true">+</div>
+          <span>
+            <span class="accordion-title">Classifier Scaling</span>
+            <span class="accordion-subtitle">From four hosts to an open-ended speaker universe.</span>
+            <span class="sidequest-meta">Speaker attribution · dataset growth · model evaluation</span>
+          </span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
-        <div class="sidequest-body">
-          <p>
-            The first classifier solved the narrow problem: identify the four recurring hosts. That worked until the dataset started containing more guests, more short interjections, more cross-talk, and more cases where the closest host was not the correct speaker.
-          </p>
-          <p>
-            Scaling speaker attribution required a different framing. The system needed to preserve unknowns, support guest speakers, propagate identity across stable diarization IDs, and keep a human review loop close to the data.
-          </p>
-          <div class="mono-list">V1: host-only classifier
-V2: guest-aware labeling + Clownfish review
-V3: fused transcript workflow + Brody inspection</div>
-          <div class="tag-row">
-            <span class="tag">Speaker IDs</span>
-            <span class="tag">Classifier</span>
-            <span class="tag">Dataset Ops</span>
-          </div>
+        <div class="accordion-body">
+          <p>The original speaker-classification system was designed around a fixed set of hosts. As the project expanded to include guests and entirely new speakers, the dataset, tooling, and operational workflows required substantial redesign to support classification at scale.</p>
+          <a class="learn-more" href="https://masedawg1.github.io/all_llm_pod/vc.html">Learn More &rarr;</a>
         </div>
       </details>
 
-      <details class="sidequest">
+
+      <details class="accordion">
         <summary>
-          <div>
-            <div class="sidequest-kicker">Runtime Support</div>
-            <div class="sidequest-title">Freshness &amp; Memory Retrieval</div>
-            <div class="sidequest-deck">Support systems that let personas answer from both long-term corpus memory and current-event context.</div>
-          </div>
-          <div class="accordion-icon" aria-hidden="true">+</div>
+          <span>
+            <span class="accordion-title">Memory & Retrieval</span>
+            <span class="accordion-subtitle">Mining years of conversation for recurring arguments.</span>
+            <span class="sidequest-meta">Argument mining · retrieval · persona memory</span>
+          </span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
-        <div class="sidequest-body">
-          <p>
-            The personas needed more than style imitation. They needed access to prior positions, recurring arguments, dated claims, and fresh context when a question depended on current events.
-          </p>
-          <p>
-            This led to memory retrieval, topic routing, online freshness checks, and prompt assembly logic that could decide when to rely on corpus memory, when to search for newer context, and how to inject the result into the persona runtime without overwhelming the answer.
-          </p>
-          <div class="tag-row">
-            <span class="tag">RAG</span>
-            <span class="tag">Freshness</span>
-            <span class="tag">Prompt Assembly</span>
-          </div>
+        <div class="accordion-body">
+          <p>A podcast transcript is more than a collection of quotes. This work focused on extracting positions, reasoning patterns, and recurring arguments across hundreds of episodes, enabling personas to reference learned viewpoints rather than simply imitate speech.</p>
+          <a class="learn-more" href="https://masedawg1.github.io/all_llm_pod/arguments.html">Learn More &rarr;</a>
         </div>
       </details>
 
-      <details class="sidequest">
-        <summary>
-          <div>
-            <div class="sidequest-kicker">Voice Runtime</div>
-            <div class="sidequest-title">TTS &amp; Streaming Playback</div>
-            <div class="sidequest-deck">The voice layer that turned generated persona text into playable audio while managing startup and latency tradeoffs.</div>
-          </div>
-          <div class="accordion-icon" aria-hidden="true">+</div>
-        </summary>
-        <div class="sidequest-body">
-          <p>
-            Voice generation was a separate runtime problem from text generation. The app needed stable reference voices, predictable startup behavior, streaming playback, and enough latency control that the system felt conversational instead of batch-generated.
-          </p>
-          <p>
-            The resulting voice path became another side system: reference preparation, model warmup, websocket delivery, audio playback, and instrumentation around time-to-first-audio and completion time.
-          </p>
-          <div class="tag-row">
-            <span class="tag">F5-TTS</span>
-            <span class="tag">Streaming</span>
-            <span class="tag">Latency</span>
-          </div>
-        </div>
-      </details>
-
-    </section>
+    </div>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
-
   </main>
 
-  <div
-    class="lightbox"
-    id="architectureLightbox"
-    role="dialog"
-    aria-modal="true"
-    onclick="closeLightbox()">
-
-    <button
-      type="button"
-      class="lightbox-close"
-      onclick="closeLightbox()">
-      Close &times;
-    </button>
-
-    <img id="lightboxImage" src="" alt="">
-  </div>
-
-  <script>
-    var _lastFocused = null;
-
-    function openLightbox(src, alt) {
-      var lightbox = document.getElementById('architectureLightbox');
-      var image = document.getElementById('lightboxImage');
-
-      image.src = src;
-      image.alt = alt || '';
-
-      lightbox.classList.add('is-open');
-      document.body.style.overflow = 'hidden';
-
-      _lastFocused = document.activeElement;
-      lightbox.querySelector('.lightbox-close').focus();
-    }
-
-    function closeLightbox() {
-      var lightbox = document.getElementById('architectureLightbox');
-
-      lightbox.classList.remove('is-open');
-      document.body.style.overflow = '';
-
-      if (_lastFocused && typeof _lastFocused.focus === 'function') {
-        _lastFocused.focus();
-        _lastFocused = null;
-      }
-    }
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        closeLightbox();
-      }
-    });
-  </script>
 
   <script src="nav-loader.js" data-page="important_sidequests"></script>
 
