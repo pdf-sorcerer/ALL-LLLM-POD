@@ -302,42 +302,13 @@
       <h1>Argument Pipeline</h1>
 
       <div class="lead">
-        <p>The labeled transcripts already contained thousands of prompt-completion pairs. That part was never the problem.</p>
-        <p>Given enough transcript data, a LoRA will absolutely learn cadence, vocabulary, sentence rhythm, conversational tics, and topic familiarity. You can get something that sounds remarkably close to the hosts.</p>
-        <p>But after a while I realized the model was mostly learning the shape of the hosts, not the structure underneath them.</p>
-        <p><strong>Transcripts preserve style. They do not necessarily preserve reasoning.</strong></p>
-        <p>They do not preserve what each speaker actually believes, which claims they repeatedly defend, how disagreements evolve, where positions remain unresolved, or how viewpoints drift over time. A transcript captures words. It does not automatically capture the machinery producing those words.</p>
-        <p>That realization eventually led to the argument pipeline.</p>
+        <p>  Labeled transcripts are converted into persona-specific training data by batching same-speaker continuations and taking n-prior turns as conversational context (the prompt) and the target speaker’s response (the completion)
+</p>
+        <p>Transcripts help abunchton with style transfer (mimicry) - but I wanted a reasoning and argument layer undneath it.</p> 
       </div>
     </section>
 
-    <div class="section-heading" id="problem">
-      <h2>The Problem</h2>
-      <span class="section-count">style transfer is not persona reconstruction</span>
-    </div>
 
-    <div class="block open">
-      <div class="block-header">
-        <div class="block-header-left">
-          <span class="block-id">WHY</span>
-          <span class="block-title">transcripts flatten the machinery underneath speech</span>
-        </div>
-        <span class="chevron">▼</span>
-      </div>
-      <div class="block-body">
-        <div class="block-why">
-          The hosts were not just speaking differently. They were reasoning differently. They had recurring arguments, recurring disagreements, recurring alliances, and recurring ways of responding to pressure. A normal transcript keeps the words, but loses a lot of that structure.
-        </div>
-        <div class="pill-row">
-          <span class="pill">beliefs</span>
-          <span class="pill">claims</span>
-          <span class="pill">counterclaims</span>
-          <span class="pill">pressure</span>
-          <span class="pill">alliances</span>
-          <span class="pill">drift over time</span>
-        </div>
-      </div>
-    </div>
 
     <div class="section-heading" id="events">
       <h2>Discourse Events</h2>
