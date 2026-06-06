@@ -545,14 +545,50 @@
       <details class="accordion">
         <summary>
           <span>
-            <span class="accordion-title">Clownfish V2</span>
+            <span class="accordion-title">Clownfish</span>
             <span class="accordion-subtitle">Remote operations console for corpus maintenance.</span>
             <span class="sidequest-meta">Ingestion · orchestration · corpus ops</span>
           </span>
           <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
         <div class="accordion-body">
-          <p>As the transcript corpus expanded beyond hundreds of hours of audio, maintaining the pipeline became increasingly operationally expensive. Clownfish V2 unified ingestion, transcription, diarization, review, and export workflows into a single remotely accessible control plane.</p>
+<p>
+Named after Nvidia NeMo's phenomenal speaker embeddings, Clownfish was created as a human-in-the-loop labeling tool that combines transcripts, audio snippets, and NeMo diarization output to map real-world identities to diarized speaker IDs.
+</p>
+
+<p>
+These mappings transform anonymous speaker labels into known participants across the corpus. The same workflow also enables large-scale extraction of speaker-specific audio, creating clean datasets for downstream applications such as voice cloning, speaker classification, and persona generation.
+</p>
+
+<a href="https://www.youtube.com/watch?v=UPnnOCWqiAw" target="_blank"
+style="display:inline-block; position:relative; max-width:400px; margin:4px 0 18px 0;"> <img src="https://img.youtube.com/vi/UPnnOCWqiAw/mqdefault.jpg"
+    alt="Early Clownfish v1 demo"
+    style="width:100%; border:1px solid #e4e4e4; border-radius:4px; display:block;"> <span style="
+ position:absolute;
+ top:50%; left:50%;
+ transform:translate(-50%,-50%);
+ width:48px; height:48px;
+ background:rgba(0,0,0,0.65);
+ border-radius:50%;
+ display:flex; align-items:center; justify-content:center;
+ pointer-events:none;
+"> <span style="
+   display:inline-block;
+   width:0; height:0;
+   border-style:solid;
+   border-width:9px 0 9px 18px;
+   border-color:transparent transparent transparent #ffffff;
+   margin-left:3px;
+ "></span> </span> </a>
+
+<p>
+As of June 2026, Clownfish's latest evolution is its transformation into a remote operations layer for the corpus, capable of discovering and queueing new content, orchestrating transcription and diarization pipelines, and supporting downstream human-in-the-loop review workflows from any device, including PC, Mac, iPhone, and browser.
+</p>
+
+
+          
+          
+          
           <a class="learn-more" href="clownfish_v2.html">Learn More &rarr;</a>
         </div>
       </details>
