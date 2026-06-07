@@ -278,35 +278,25 @@ main{padding:32px 24px;}
 <h1>Speaker Classification Policy Evolution</h1>
 
 <p class="lead">
-The original goal was simple: identify who was speaking and generate clean speaker-labeled transcripts at scale.
+At the beginning of this project I had a mindset of 'move fast and mvp'. Being able to automate the labeling of speakers across episodes was critical to creating training data, and Chat Jippity told me to make speech classifiers. Looking back, I wish I approached the subject with 
+  a little more intentionality on its onset. By its end, I learned not to trust voice classifiers - and found what survived reinforced my personal bias of HITL ocused tooling.
 </p>
 
-<h2 id="v1">V1 — Host-Only Classification</h2>
+<h2 id="v1">V1— Host-Only Classification</h2>
 
 <p class="lead">
-The first version used binary classifiers trained on host audio. It worked reasonably well, but guests were routinely forced into the closest host class because the model had never learned what a guest sounded like.
+V1 was four binary classifiers, one trained per host. It worked reasonably well - audio was reviewed in Streamlit, which was my introduction to that system which was important. The outcome of v1 was a multi-speaker classifier trained on host0only audio. I learned later that I needed a negative class (guests( who I intentionally avoided) I made a movie about lessons learned, took a couple days off, and read some papers on the subjecct to cool off.  avoided
 </p>
 
-<p class="lead">
-I made a short film documenting the failure.
-</p>
-
-<a href="https://www.youtube.com/watch?v=RpVeED6ExNQ" target="_blank" style="display:block;margin:22px 0 48px;max-width:520px;">
-  <img src="https://img.youtube.com/vi/RpVeED6ExNQ/maxresdefault.jpg"
-       alt="V1 classifier failure short film"
-       style="width:100%;border:1px solid var(--border);border-radius:4px;display:block;transition:transform .15s ease;"
-       onmouseover="this.style.transform='scale(1.02)'"
-       onmouseout="this.style.transform='scale(1)'">
-</a>
 
 <h2 id="v2">V2 — Clownfish</h2>
 
 <p class="lead">
-The second version introduced Clownfish, a human-in-the-loop review tool that mapped speaker identities onto embedding clusters using transcript, audio, and video review.
+The second version introduced Clownfish, a human-in-the-loop review tool that mapped speaker identities onto embedding clusters using transcript, audio, and video review. I named it to celebrate getting Nvidia NeMo working on my PC; efforts months earlier has failed, so I was quite excited to get it workeing. 
 </p>
 
 <p class="lead">
-More importantly, it transformed dataset creation from a manual process into something scalable. Instead of hunting through hundreds of podcast episodes for clean audio, I could identify a speaker once and propagate that identity across an entire episode.
+Clownfish and NeMo transformed dataset creation from a manual process into a semi-automataed process that was redicilously scalable. Instead of hunting through hundreds of podcast episodes for clean audio, I could identify a speaker once and backfill that identity across an entire episode - and extract all audio for each speaker. 
 </p>
 
 <div class="image-grid three-up" style="grid-template-columns:1.3fr 1fr 1fr;">
@@ -335,14 +325,11 @@ More importantly, it transformed dataset creation from a manual process into som
 
 </div>
 
-<p class="lead">
-Around the same time, I replaced Pyannote embeddings with Nvidia NeMo / TitaNet. I ultimately preferred NeMo's embeddings for clustering and retrieval, and Clownfish became the primary mechanism for extracting and labeling audio at scale.
-</p>
 
 <h2 id="v3">V3 — Looks Great On Paper</h2>
 
 <p class="lead">
-V3 was the culmination of several months of iteration: Nvidia NeMo embeddings, Clownfish-generated datasets, and an XGBoost classifier trained on 143,467 labeled speaker segments.
+V3 was the culmination of several months of iteration: Nvidia NeMo embeddings, Clownfish-generated datasets, and an XGBoost classifier trained on 143,467 labeled speaker segments. 
 </p>
 
 <div class="block open">
@@ -374,7 +361,7 @@ Even so, some of the papers I was reading suggested results this good shouldn't 
 <h1 id="case-study" style="margin-top:80px;">Case Study: Episode 136</h1>
 
 <p class="lead">
-V3 was deliberately trained on longer speech segments. The idea was simple: let the classifier operate only within its strongest regime, then propagate confident predictions back onto shorter segments through shared NeMo speaker IDs.
+V3 was deliberately trained on longer speech segments, segments >5s. The idea was simple: let the classifier operate only within its strongest regime, then propagate confident predictions back onto shorter segments through shared NeMo speaker IDs.
 </p>
 
 <p class="lead">
