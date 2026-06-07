@@ -515,6 +515,36 @@
 
     .video-box video { width: 100%; display: block; }
 
+
+    .callout {
+      max-width: 760px;
+      margin: 24px 0 36px;
+      padding: 18px 20px;
+      border-left: 3px solid var(--green);
+      background: var(--green-dim);
+      border-radius: 4px;
+    }
+
+    .callout p {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      margin-bottom: 14px;
+    }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-stat {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--green);
+      margin: 10px 0 12px;
+    }
+
     /* Footer */
     .footer {
       margin-top: 80px;
@@ -573,28 +603,33 @@
   <h1>Ghost Audio</h1>
 
 <p class="lead">
-In early 2026, I migrated the pipeline to Libsyn, despite already having processed more than 560 episodes from YouTube. YouTube was a messy source of truth: 
-  full episodes coexisted with shorter form video that needed to be de-duplicated later. Also, episode numbering and naming conventions drifted over the years. Switching to Lisyn made all that a non-issue.</p>
-
+  In early 2026, I migrated the pipeline to Libsyn, despite already having processed more than 560 episodes from YouTube. YouTube was a messy source of truth: full episodes coexisted with shorter-form video and content needed to be deduplicated. Episode numbering and naming conventions also drifted. Regardless, switching to Libsyn made all that a non-issue.
+</p>
 
 <aside class="callout">
-<p>At the time of writing, Libsyn has 383 All-In episodes // 384 on Spotify. There are 2,230 uploads across the two official All-In YouTube channels.</p>
+  <p class="callout-stat">
+    At time of writing (June 2026), there are: 383 Libsyn episodes · 384 Spotify episodes · 2,230 official YouTube uploads
+  </p>
 
+</aside>
 
 <p class="body">
-Using Libsyn intended to be a 'going forward' change, but curiosity always prevails.  I ran Episode 136, previously covered elsewehre in the porfolio - I noticed a short line from Friedberg — "Oh, my God" at found at 20 seconds in the original transcript — was missing from the newer transcript.   Guest Brad Gerstner says the exact same phrase a few seconds later. He's barely audible; I only noticed the utterance while reviewing the video. Brad's speech isn't in either transcript. 
+  Libsyn was intended to be a going-forward change, but there's always a "what if?" factor with me. I reran Episode 136, also covered elsewhere in this portfolio, and noticed that a short line from Friedberg — "Oh, my God," heard at roughly 20 seconds — was present in a long-forgotten transcript generated in Fall 2025. The line was missing from the newer Libsyn transcript and, by extension, missing from the persona training corpus generated in early 2026.
 </p>
 
 <p class="body">
-I coined this phenoma <strong>Ghost Audio</strong> because Friedberg's speech was clearly audible and recoverable from the YouTube audio -- form a transcript made months earlier when I was still rather new to this process. The transcript that made its way into training data, and the new Libsyn transcript were both missing this content entirely. 
+  I coined this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech is clearly audible and an original transcript showed record of it. I also learned that guest Brad Gerstner utters the exact same phrase moments later. No transcript captured it. I only discovered Brad's missing speech while reviewing the video itself for Friedberg.
 </p>
 
 <p class="body">
-  To be clear, the missing phrase "Oh, my god" itself isn't a p0 type error by itself. That's not a strong signal for Friedberg; and his corpus is probably beter served without it. But, the problem is that omissions like this can distort the surrounding conversation. Remove enough speech and speaker turns collapse, context disappears, and downstream training examples begin teaching the wrong relationships between prompts and completions.
+Recovering a single "Oh, my God" is not a productive use of time. But I invested two weeks into this, beacuse the larger problem is what the missing phrase represents. This was single example was discovered by happy accident and having a good memory. How many others instances of this are there? How would I find them? Ghost Audio represents a class of error that my human-in-the-loop tooling was never designed to detect: omitted speech. Most transcript mistakes leave evidence behind. Omissions leave nothing.
 </p>
 
 <p class="body">
-  Here's a relatable (if exaggerated) using Star Wars: The Empire Strikes Back (1983)
+  Moreover, remove enough speech and speaker turns collapse and downstream training examples begin teaching the wrong relationships between prompts and completions. Not knowing how pervasive this phenomenon was in my corpus, which I was quite proud of, was pretty upsetting. Quest accepted.
+</p>
+<p class="body">
+ Before moving on, here is a relatable example using <i>Star Wars: The Empire Strikes Back</i>:
 </p>
 
 <div class="section-heading">
@@ -630,18 +665,22 @@ I coined this phenoma <strong>Ghost Audio</strong> because Friedberg's speech wa
 </div>
 <div class="callout">
   <p>
-<p>
-If you were creating chatbot personas based on Star Wars characters, the model would learn that Luke is someone who reacts strongly and immediately contradicts himself. It would never learn one of the most important facts in the franchise: that Vader is Luke's father.
-</p>
+    If you were creating chatbot personas based on Star Wars characters, the model would learn that Luke is someone who reacts strongly and immediately contradicts himself. It would never learn one of the most important facts in the franchise: that Vader is Luke's father.
+  </p>
 
-<p>
-Now, true fans will call out: 'Mason, the scene also contains, <i>"Join me, and together we can rule the galaxy as father and son"</i>. True. Even so, the example illustrates the core problem: transcript omissions don't just remove words. They remove context, causality, and relationships between ideas.
-</p>
+  <p>
+    True fans will point out that the scene also contains, <i>"Join me, and together we can rule the galaxy as father and son."</i> True. Even so, the example illustrates the core problem: transcript omissions do not just remove words. They remove context, causality, and relationships between ideas.
+  </p>
+
+  <p>
+    The response survives, but the reason for the response disappears.
+  </p>
 </div>
   
 
   <p class="body">
- The audio was there. Spectrogram, RMS energy, and pitch detection all confirmed real speech - though pitch was recoverable for only for Friedberg
+    The audio was there. Spectrogram, RMS energy, and pitch detection all confirmed real speech, though pitch was recoverable only for Friedberg.
+  </p>
 
   <p class="body">
     Token chain analysis showed why the two cases are different. At Friedberg's decision point — immediately after the decoder emits the <code>&lt;|19.04|&gt;</code> timestamp — "Oh" ranked first at 86%. At Gerstner's, it ranked 134th at 0.004%. Same audio segment, same decoder, completely different probability landscape.
@@ -817,45 +856,6 @@ Now, true fans will call out: 'Mason, the scene also contains, <i>"Join me, and 
     Repeated phrase plus wav2vec alignment failure over a VAD-positive region is the fingerprint for this class of ghost — unrecoverable audio the decoder fills rather than transcribes. Nothing tested recovered Gerstner. The fingerprint is detectable at corpus scale, which means every instance can be flagged even if the content can't be recovered. That turns an unknown unknown into a known gap.
   </p>
 
-  <div class="section-heading">
-    <h2>Ghost Audio vs. Misclassification</h2>
-  </div>
-
-  <p class="body">
-    <p>This scene from The Empire Strikes Back illustrates the impact Ghost Audio can have on transcript-derived training data.</p>
-
-    <p>Here, Luke learns a critical fact about Vader and reacts strongly. With Ghost Audio, Vader's revelation was never transcribed, but Luke's response to it was.</p>
-
-    <p>
-  Result: the scene loses its meaning. The model never learns Vader's revelation and instead learns that Luke becomes emotional and contradictory for no apparent reason.
-  </p>
-  <div class="comparison-grid">
-
-    <div class="comparison-card">
-      <h3>Movie Transcript</h3>
-      <div class="transcript-box">
-        <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
-        <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
-        <p><strong>Vader:</strong> "No. I am your father."</p>
-        <p><strong>Luke:</strong> "No, no. That's not true. That's impossible!"</p>
-      </div>
-      <div class="video-box">
-        <video controls preload="metadata">
-          <source src="classification_error.mp4" type="video/mp4">
-        </video>
-      </div>
-    </div>
-
-    <div class="comparison-card">
-      <h3>Ghost Audio Transcript</h3>
-      <div class="transcript-box">
-        <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
-        <p><strong>Luke:</strong> "He told me enough. He told me you killed him! No, no. That's not true. That's impossible!"</p>
-      </div>
-      </div>
-    </div>
-
-  </div>
 
   <div class="footer">
     <span>Mason Thompson · Berkeley, California</span>
