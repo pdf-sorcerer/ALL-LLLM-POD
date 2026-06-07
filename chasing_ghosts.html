@@ -304,7 +304,41 @@
       font-style: italic;
       text-decoration: line-through;
     }
+    .accordion-block {
+  max-width: 760px;
+  margin: 28px 0 36px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface);
+}
 
+.accordion-block summary {
+  cursor: pointer;
+  padding: 12px 16px;
+  list-style: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+}
+
+.accordion-block summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-block summary::before {
+  content: "▸";
+  margin-right: 8px;
+  color: var(--green);
+}
+
+.accordion-block[open] summary::before {
+  content: "▾";
+}
     /* Architecture / image block */
     .img-block { margin: 28px 0 36px; max-width: 760px; }
 
@@ -672,12 +706,12 @@ Moments later, guest Brad Gerstner says the exact same phrase. His line is missi
 </div>
 
 <p class="body">
-I began calling this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech is clearly audible, 
-  yet every attempt to reproduce it in my AI pipeline seemed to end the same way: extensive investigation, no explanation—not unlike paranormal investigation tv shows of the 1990s.
-<p class="body">
-Up to this point, all AI errors I experienced in transcription left fingerprints: ellipses, unterminated segments, lowercase continuations, alignment failures, or other artifacts I discuss in the heuristics section. 
-  Omissions like Ghost Audio are different classs: they leave no fingerprints, but distort speaker turns, context, and relationships between ideas. Remove enough speech, dialogue collapses and the model is taught the wrong relationships between prompts and completions.</p>
+I began calling this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech is clearly audible, yet every attempt to reproduce it in my AI pipeline seemed to end the same way: extensive investigation, no explanation—not unlike paranormal television shows of the 1990s.
+</p>
 
+<p class="body">
+Up to this point, all AI errors I experienced in transcription left fingerprints: ellipses, unterminated segments, lowercase continuations, alignment failures, or other artifacts discussed in the heuristics section. Omissions like Ghost Audio are a different class of failure: they leave no fingerprints, but distort speaker turns, context, and relationships between ideas. Remove enough speech and dialogue collapses. Downstream training examples begin teaching the wrong relationships between prompts and completions.
+</p>
 
 <details class="accordion-block">
   <summary>
@@ -719,18 +753,22 @@ Up to this point, all AI errors I experienced in transcription left fingerprints
 
       <p><strong>Joker:</strong> "You know, for a while there, I thought you really were Dent. The way you threw yourself after her."</p>
 
-    </div>
   </div>
+</div> <!-- comparison-grid -->
+
 <div class="callout">
-    <p>
-       YouTube ASR failed to transcribe a single-word response from Batman: <strong>"Them?"</strong>. That response communicates
-       an unwelcome shift in Batman's understanding: Joker has two hostages captive, not one.
-    </p>
+  <p>
+    YouTube ASR failed to transcribe a single-word response from Batman:
+    <strong>"Them?"</strong>. That response communicates a sudden shift in Batman's understanding: Joker has two hostages, not one.
+  </p>
 
+  <p>
+    The transcript still reads cleanly. Nothing appears broken. Yet the moment of realization—and the causal link between Joker's statement and Batman's reaction—disappears.
+  </p>
+</div>
 
-    </p>
-</div>
-</div>
+</details>
+
   
 
   <p class="body">
