@@ -690,36 +690,74 @@ Up to this point, all AI errors I experienced in transcription left fingerprints
       </p></p>
 
 
-  <div class="accordion-inner">
+ ```html
+<div class="comparison-grid">
 
-    <div class="video-block">
-      <video controls>
-        <source src="empire_ghost_audio.mp4" type="video/mp4">
-      </video>
-      <div class="video-caption">
-        SOURCE VIDEO · EMPIRE STRIKES BACK EXAMPLE
-      </div>
+  <div class="comparison-card">
+    <h3>Movie Transcript</h3>
+    <div class="transcript-box">
+
+      <p><strong>Joker:</strong> "And tonight you're going to break your one rule."</p>
+
+      <p><strong>Batman:</strong> "I'm considering it."</p>
+
+      <p><strong>Joker:</strong> "There's only minutes left, so you'll have to play my game if you want to save one of them."</p>
+
+      <p><strong>Batman:</strong> "Them?"</p>
+
+      <p><strong>Joker:</strong> "You know, for a while there, I thought you really were Dent. The way you threw yourself after her."</p>
+
+      <p><strong>Joker:</strong> "Look at you go."</p>
+
+      <p><strong>Joker:</strong> "Does Harvey know about you and his little bunny?"</p>
+
+      <p><strong>Batman:</strong> "Where are they?!"</p>
+
+      <p><strong>Joker:</strong> "Killing is making a choice."</p>
+
+      <p><strong>Batman:</strong> "Where are they?!"</p>
+
+      <p><strong>Joker:</strong> "Choose between one life or the other. Your friend the district attorney, or his blushing bride-to-be."</p>
+
+      <p><strong>Joker:</strong> "You have nothing, nothing to threaten me with. Nothing to do with all your strength."</p>
+
     </div>
+  </div>
 
-    <div class="comparison-grid">
+  <div class="comparison-card">
+    <h3>Ghost Audio Transcript</h3>
+    <div class="transcript-box">
 
-      <div class="comparison-card">
-        <h3>Movie Transcript</h3>
-        <div class="transcript-box">
-          <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
-          <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
-          <p><strong>Vader:</strong> "No. I am your father."</p>
-          <p><strong>Luke:</strong> "No, no. That's not true. That's impossible!"</p>
-        </div>
-      </div>
+      <p><strong>Joker:</strong> "And tonight you're going to break your one rule."</p>
 
-      <div class="comparison-card">
-        <h3>Ghost Audio Transcript</h3>
-        <div class="transcript-box">
-          <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
-          <p><strong>Luke:</strong> "He told me enough. He told me you killed him! No, no. That's not true. That's impossible!"</p>
-        </div>
-      </div>
+      <p><strong>Batman:</strong> "I'm considering it."</p>
+
+      <p><strong>Joker:</strong> "No, there's only minutes left. You're going to have to play my little game if you want to save one of them."</p>
+
+      <p class="ghost-audio"><em>[GHOST AUDIO] Batman: "Them?"</em></p>
+
+      <p><strong>Joker:</strong> "You know, for a while there, I thought you really worked. And the way you threw yourself after her."</p>
+
+      <p><strong>Joker:</strong> "Look at you go."</p>
+
+      <p><strong>Joker:</strong> "Does Harvey know about you and his little bullies?"</p>
+
+      <p><strong>Batman:</strong> "Where are they?"</p>
+
+      <p><strong>Joker:</strong> "Killing is making a choice."</p>
+
+      <p><strong>Batman:</strong> "Where are they?"</p>
+
+      <p><strong>Joker:</strong> "Choose between one wife or the other, your friend, the district attorney, or his bushing bride-to-be."</p>
+
+      <p><strong>Joker:</strong> "You have nothing nothing to threaten me with. Nothing to do with all your strength."</p>
+
+    </div>
+  </div>
+
+</div>
+```
+
 
     </div>
 
@@ -733,72 +771,6 @@ Up to this point, all AI errors I experienced in transcription left fingerprints
 </details>
 
 
-
-<div class="accordion">
-  <button class="accordion-header">
-    <span>The Dark Knight — Transcript Omission Example</span>
-    <span class="accordion-icon">+</span>
-  </button>
-
-  <div class="accordion-content">
-
-    <p>
-      In this example, I've arbitrarily quieted Joker's response. The resulting transcript remains grammatically correct and superficially plausible, yet it describes an exchange that never occurred.
-    </p>
-
-    <div class="video-block">
-      <video controls>
-        <source src="where_are_they.mp4" type="video/mp4">
-      </video>
-      <div class="video-caption">
-        SOURCE VIDEO · THE DARK KNIGHT EXAMPLE
-      </div>
-    </div>
-
-    <div class="comparison-grid">
-
-      <div class="comparison-column">
-        <h3>Movie Transcript</h3>
-
-        <div class="transcript-block">
-          <p><strong>BATMAN:</strong> "Where are they?!"</p>
-
-          <p><strong>JOKER:</strong> "Killing is making a choice."</p>
-
-          <p><strong>BATMAN:</strong> "Where are they?!"</p>
-        </div>
-      </div>
-
-      <div class="comparison-column">
-        <h3>Ghost Audio Transcript</h3>
-
-        <div class="transcript-block">
-          <p><strong>BATMAN:</strong> "Where are they?!"</p>
-
-          <p><strong>BATMAN:</strong> "Where are they?!"</p>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="callout">
-      <p>
-        <strong>
-          The omission does not merely remove Joker's words. It removes the reason Batman spoke again.
-        </strong>
-      </p>
-
-      <p>
-        Joker's response is brief, but it changes the meaning of everything around it. Once omitted, Batman's second question appears to be a simple repetition rather than a response to new information. The transcript remains coherent at a glance, yet the causal relationship between the surviving lines has been silently destroyed.
-      </p>
-
-      <p>
-        The surviving transcript falsely implies that Batman repeated himself without provocation. In reality, the omitted line sat between the two utterances and connected them. This is the core danger of transcript omissions: they do not simply remove words. They can collapse adjacent dialogue together, creating conversational relationships that never occurred in the original audio.
-      </p>
-    </div>
-
-  </div>
-</div>
   
 
   <p class="body">
