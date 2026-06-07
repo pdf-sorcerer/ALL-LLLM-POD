@@ -596,42 +596,37 @@
   Here's a relatable (if exaggerated) example of what that can look like:
 </p>
 
-<h2>Why Transcript Omissions Matter</h2>
+<div class="section-heading">
+  <h2>Why Transcript Omissions Matter</h2>
+</div>
 
-<p>
-Most transcript errors are visible. A wrong word, bad timestamp, or incorrect speaker label gives you something to investigate. Omissions are different: speech disappears entirely, leaving no indication that anything is missing.
+<p class="body">
+  Most transcript errors are visible. A wrong word, bad timestamp, or incorrect speaker label gives you something to investigate. Omissions are different: speech disappears entirely, leaving no indication that anything is missing.
 </p>
 
-<div class="comparison-card">
-  <h3>Movie Transcript</h3>
-  <div class="transcript-box">
-    <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
-    <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
-    <p><strong>Vader:</strong> "No. I am your father."</p>
-    <p><strong>Luke:</strong> "No, no. That's not true. That's impossible!"</p>
-    <p><strong>Luke:</strong> "Search your feelings! You know it to be true!"</p>
+<div class="comparison-grid">
 
-    
+  <div class="comparison-card">
+    <h3>Movie Transcript</h3>
+    <div class="transcript-box">
+      <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
+      <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
+      <p><strong>Vader:</strong> "No. I am your father."</p>
+      <p><strong>Luke:</strong> "No, no. That's not true. That's impossible!"</p>
+      <p><strong>Luke:</strong> "Search your feelings! You know it to be true!"</p>
+    </div>
   </div>
-  <div class="video-box">
-    <video controls preload="metadata">
-      <source src="classification_error.mp4" type="video/mp4">
-    </video>
-  </div>
-</div>
 
-<div class="comparison-card">
-  <h3>Ghost Audio Transcript</h3>
-  <div class="transcript-box">
-    <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
-    <p><strong>Luke:</strong> "He told me enough. He told me you killed him! No, no. That's not true. That's impossible!"</p>
-    <p><strong>Luke:</strong> "Search your feelings! You know it to be true!"</p>
+  <div class="comparison-card">
+    <h3>Ghost Audio Transcript</h3>
+    <div class="transcript-box">
+      <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
+      <p><strong>Luke:</strong> "He told me enough. He told me you killed him! No, no. That's not true. That's impossible!"</p>
+      <p><strong>Luke:</strong> "Search your feelings! You know it to be true!"</p>
+    </div>
   </div>
-  </div>
-</div>
 
 </div>
-
 <div class="callout">
   <p>
 <p>
@@ -642,6 +637,7 @@ If you were creating chatbot personas based on Star Wars characters, the model w
 Now, true fans will call out: 'Mason, the scene also contains, <i>"Join me, and together we can rule the galaxy as father and son"</i>. True. Even so, the example illustrates the core problem: transcript omissions don't just remove words. They remove context, causality, and relationships between ideas.
 </p>
 </div>
+  
 
   <p class="body">
  The audio was there. Spectrogram, RMS energy, and pitch detection all confirmed real speech - though pitch was recoverable for only for Friedberg
