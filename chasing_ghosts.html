@@ -675,48 +675,65 @@ I began calling this phenomenon <strong>Ghost Audio</strong> because Friedberg's
 Up to this point, all AI errors I experienced in transcription left fingerprints: ellipses, unterminated segments, lowercase continuations, alignment failures, or other artifacts I discuss in the heuristics section. 
   Omissions like Ghost Audio are different classs: they leave no fingerprints, but distort speaker turns, context, and relationships between ideas. Remove enough speech, dialogue collapses and the model is taught the wrong relationships between prompts and completions.</p>
 
+
+<p class="body"> 
+If it's still a little fuzzy, I get it - click the accordian below for this phenoma expressing itself in star wars</p>
 </div>
-<p class="body">
-</p>
+
 
 <div class="section-heading">
   <h2>Why Transcript Omissions Matter: Featuring The Empire Strikes Back</h2>
 </div>
 
-<p class="body"> 
-I'm using Star Wars to showcase how this error manifests in the movie transcript. 
-</p>
+<p>In this example, I've arbitrarily quieted Vader's voice -- which results in ommited text from the transcript. These omissions are not directly detectable at scale, and they remove context, causality, and relationships between ideas.
+      </p></p>
 
-<div class="comparison-grid">
+<details class="accordion-block">
+  <summary>
+    <span>Why Transcript Omissions Matter: Featuring <em>The Empire Strikes Back</em></span>
+  </summary>
 
-  <div class="comparison-card">
-    <h3>Movie Transcript</h3>
-    <div class="transcript-box">
-      <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
-      <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
-      <p><strong>Vader:</strong> "No. I am your father."</p>
-      <p><strong>Luke:</strong> "No, no. That's not true. That's impossible!"</p>
-      <p><strong>Vader:</strong> "Search your feelings! You know it to be true!"</p>
+  <div class="accordion-inner">
+
+    <div class="video-block">
+      <video controls>
+        <source src="empire_ghost_audio.mp4" type="video/mp4">
+      </video>
+      <div class="video-caption">
+        SOURCE VIDEO · TRANSCRIPT OMISSION EXAMPLE
+      </div>
     </div>
-  </div>
 
-  <div class="comparison-card">
-    <h3>Ghost Audio Transcript</h3>
-    <div class="transcript-box">
-      <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
-      <p><strong>Luke:</strong> "He told me enough. He told me you killed him! No, no. That's not true. That's impossible!"</p>
-      <p><strong>Vader:</strong> "Search your feelings! You know it to be true!"</p>
+    <div class="comparison-grid">
+
+      <div class="comparison-card">
+        <h3>Movie Transcript</h3>
+        <div class="transcript-box">
+          <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
+          <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
+          <p><strong>Vader:</strong> "No. I am your father."</p>
+          <p><strong>Luke:</strong> "No, no. That's not true. That's impossible!"</p>
+        </div>
+      </div>
+
+      <div class="comparison-card">
+        <h3>Ghost Audio Transcript</h3>
+        <div class="transcript-box">
+          <p><strong>Vader:</strong> "Obi-Wan never told you what happened to your father."</p>
+          <p><strong>Luke:</strong> "He told me enough. He told me you killed him! No, no. That's not true. That's impossible!"</p>
+        </div>
+      </div>
+
     </div>
+
+    <div class="callout">
+      <p>
+        Fans should point out that the scene also contains <strong>Vader: "Join me, and together we can rule the galaxy as father and son."</strong> True. I omitted it for brevity; ironic given the subject here. Even so, the example illustrates the core problem: transcript omissions do not just remove words. They remove context, causality, and relationships between ideas.
+      </p>
+    </div>
+
   </div>
-
-</div>
-<div class="callout">
-<p>
-
-  Fans should point out that the scene also contains <strong>Vader: "Join me, and together we can rule the galaxy as father and son."</strong>. True. I omitted it for brevity; ironic given the subject here. Even so, the example illustrates the core problem: transcript omissions do not just remove words. They remove context, causality, and relationships between ideas.
-
-</p>
-</div>
+</details>
   
 
   <p class="body">
