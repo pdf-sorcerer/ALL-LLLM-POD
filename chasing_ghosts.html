@@ -614,25 +614,17 @@
 </aside>
 
 <p class="body">
-  Libsyn was intended to be a going-forward change, but there's always a "what if?" factor with me. I reran Episode 136, also covered elsewhere in this portfolio, and noticed that a short line from Friedberg — "Oh, my God," heard at roughly 20 seconds — was present in a long-forgotten transcript generated in Fall 2025. The line was missing from the newer Libsyn transcript and, by extension, missing from the persona training corpus generated in early 2026.
-</p>
+Libsyn was intended to be a going-forward change, but I decided to re-run a handful of episodes—including Episode 136. While reviewing the episode, I noticed a short interjection from Friedberg around t≈20s: "Oh, my God." The phrase was present in a transcript generated in Fall 2025, but missing from the newer Libsyn transcript and therefore absent from the persona training corpus.</p>
 
 <p class="body">
-  I coined this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech is clearly audible and an original transcript showed record of it. I also learned that guest Brad Gerstner utters the exact same phrase moments later. No transcript captured it. I only discovered Brad's missing speech while reviewing the video itself for Friedberg.
-</p>
+Moments later, guest Brad Gerstner says the exact same phrase. His line is missing from every transcript. I only know he said it because I happened to be watching the video while investigating Friedberg's omission.</p>
 
 <p class="body">
-Recovering a single "Oh, my God" is not a productive use of time. But I invested two weeks into this, beacuse the larger problem is what the missing phrase represents. This was single example was discovered by happy accident and having a good memory. How many others instances of this are there? How would I find them? Ghost Audio represents a class of error that my human-in-the-loop tooling was never designed to detect: omitted speech. Most transcript mistakes leave evidence behind. Omissions leave nothing.
-</p>
+I coined this phenomenon <strong>Ghost Audio</strong> because the speech is clearly audible, yet leaves almost no evidence of it in the transcript</p>
 
 <p class="body">
-  Moreover, remove enough speech and speaker turns collapse and downstream training examples begin teaching the wrong relationships between prompts and completions. Not knowing how pervasive this phenomenon was in my corpus, which I was quite proud of. 
-</p>
+Most transcription errors leave fingerprints behind. Omissions leave nothing and change relationships between ideas. Remove enough speech and adjacent utterances collapse together. Downstream training examples begin teaching the wrong relationships between prompts and completions.</p>
 
-  <div class="callout">
-  <p>
-    <strong>Most AI transcription errors leave fingerprints that can be detected with my tooling. Omissions, like ghost audio, leave nothing.</strong>
-  </p>
 
 </div>
 <p class="body">
