@@ -573,27 +573,32 @@
   <h1>Ghost Audio</h1>
 
 <p class="lead">
-  In February 2026, I switched from downloading episode audio from YouTube to downloading full episode masters directly from Libsyn. The change was mostly about convenience: one source, one workflow, fewer moving parts.
+In early 2026, I migrated the pipeline to Libsyn, despite already having processed more than 560 episodes from YouTube. YouTube was a messy source of truth: 
+  full episodes coexisted with shorter form content, worse - episode numbering and naming conventions drifted over the years.
+
+
+
+<p>At the time of writing, an inventory found roughly 383 canonical podcast episodes on Libsyn's RSS feed (vs 384 on Spotify), compared to more than 2,230 uploads across the two official All-In YouTube channels. Treating Libsyn as the canonical source simplified acquisition, reduced duplication, and made the corpus substantially easier to maintain.</p>
+
+
+<p class="body">
+Even though transcripts had been created, I decided to run a small batch through my system anyway. Episode 136, previously covered elsewehre in the porfolio - I noticed a short line from Friedberg — "Oh, my God" at found at 20 seconds in the original transcript — was missing from the newer transcript.
 </p>
 
 <p class="body">
-  I ran a small batch of episodes through my ASR pipeline and compared the new v2 transcript of Episode 136 side-by-side with its original v1 counterpart. A short line from Friedberg — "Oh, my God" at roughly 20 seconds — was missing from the newer transcript.
+  Guest Brad Gerstner says the exact same phrase a few seconds later. He's barely audible; I only noticed the utterance while reviewing the video. Brad's speech isn't in either transcript. 
 </p>
 
 <p class="body">
-  Guest Brad Gerstner says the exact same phrase a few seconds later. He's barely audible; I only noticed the utterance while reviewing the video.
+  I coined this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech was clearly audible and recoverable from the YouTube audio, yet the missing text from the new Libsyn transcript whcih was objectively a higher quality file. The omission left no evidence the segment ever existed. 
 </p>
 
 <p class="body">
-  I coined this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech was clearly audible, yet the missing text from the new Libsyn transcript left no evidence it had ever existed. But I had proof it waas there, from the original YouTube audio v1 transcript. 
+  The missing phrase "Oh, my god" itself isn't the problem - it's low singal content or friedberg; and his corporus is probably better served without it. The problem is that omissions like this can distort the surrounding conversation. Remove enough speech and speaker turns collapse, context disappears, and downstream training examples begin teaching the wrong relationships between prompts and completions.
 </p>
 
 <p class="body">
-  The missing line itself isn't the problem. The problem is that omissions distort the surrounding conversation. Remove enough speech and speaker turns collapse, context disappears, and downstream training examples begin teaching the wrong relationships between prompts and completions.
-</p>
-
-<p class="body">
-  Here's a relatable (if exaggerated) example of what that can look like:
+  Here's a relatable (if exaggerated) using Star Wars: The Empire Strikes Back (1983)
 </p>
 
 <div class="section-heading">
