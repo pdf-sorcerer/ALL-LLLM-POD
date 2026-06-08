@@ -481,11 +481,12 @@ allowed access to all that. Here, we see what the encoder saw in the first 30s c
   </div>
 
   <p class="body">
-    Friedberg raised a simple question: <strong>what was the decoder actually seeing?</strong>
+    The cross-attention graph shows how poorly atteneded the speech regions are. Next up: what probabilities was the BEAM search considering? BEAM, as I learned at the time, was a search strategy algorithm. BEAM=1 is commonly referred to as 'greedy' - meaning,
+    it takes the highest highest proability token and committs fully to that path. The second is BEAM=5, which considers the joint-probability of all tokens in that path: the full path</strong>
   </p>
 
-  <p class="body">
-    The production transcript omitted his "Oh, my God.", yet small changes to the decoding strategy could bring it back. Rather than treating Whisper as a black box, I built a separate PyTorch decoder pipeline — PWW — to inspect the token probabilities directly.
+
+    small changes to the decoding strategy could bring it back. Rather than treating Whisper as a black box, I built a separate PyTorch decoder pipeline — PWW — to inspect the token probabilities directly.
   </p>
 
   <p class="body">
@@ -526,7 +527,8 @@ allowed access to all that. Here, we see what the encoder saw in the first 30s c
   </div>
 
   <p class="body">
-    The transformer was not choosing between truth and falsehood. It was choosing between two beam paths. The acoustically correct path — "Oh, my god." — lost by 5.75 percentage points. At a 1.16x margin, the result flips depending on which beam search implementation is running. PyTorch recovers the ghost. CTranslate2, which whisperx uses in production, does not.
+    The transformer was not choosing between truth and falsehood. It was choosing between two beam paths. The acoustically correct path — "Oh, my god." — lost by 5.75 percentage points. At a 1.16x margin, the result flips depending on which beam search implementation is running. 
+    PyTorch recovers the ghost. CTranslate2, which whisperx uses in production, does not.
   </p>
 
   <p class="body">
@@ -534,11 +536,16 @@ allowed access to all that. Here, we see what the encoder saw in the first 30s c
   </p>
 
   <p class="body">
-    The ghost wasn't replaced by noise. It was replaced by the same voice, saying something later.
+    The ghost wasn't replaced by noise. It was replaced by what Friedberg said immediately afterward.
   </p>
 
+    <p class="body">
+    By happy accident, the pww pipeline (Pyyanote VAD, Reference Whisper, Pytorch decoder, wav2vec) manifested text-localized hallucinations <i>"Oh, my god"</i> and <i>"I'm bullying when you're bullying"</i> in the same regions where Friedberg and Gerstner spoke. This was unexpected, because both production and pww pipelines are fed 'active speech' regions from VAD, and Whisper is most suciptible to hallucinations in regions of silence - which everything 
+    up to this point has informed us is not silent. So, the working hypothesis is: Audio through enconder is saying speech exists here, but the decoder can't transcribe - so it hallucinates its text output. This suggests repeitive hallucinations in close proximity could be potential ghost signals.  
+    
+
   <p class="body">
-    That observation changed the investigation. If losing beam paths could sometimes represent reality, then failed decoding attempts were not just noise. They were evidence.
+    That observation changed the investigation. If losing beam paths could sometimes represent reality, then failed decoding attempts (ex: the hallucinations) could be signal of ghosts elsewhere in the transcript. 
   </p>
 
   <div class="section-heading">
