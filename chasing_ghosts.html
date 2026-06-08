@@ -450,20 +450,20 @@
   </div>
 
   <p class="body">
-    The audio was there. Before opening the decoder, the investigation went through every acoustic tool available — with Claude and ChatGPT's help.
+   Watching the episode video - you can hear the audio is there. So, with Claude and Chat Jippity's help I began peeling away layers. 
   </p>
 
   <p class="body">
-    VAD onset and offset thresholds were adjusted to test whether tighter speech detection would surface the ghost. RMS energy confirmed voiced activity in both ghost regions. pYIN pitch detection found traces of Friedberg's voice at ~21s after subtracting Chamath's voice from the signal. The pitch exists. It is not noise.
+    VAD onset and offset thresholds were adjusted to test whether tighter speech detection would surface the ghost. pYIN pitch detection found traces of Friedberg's voice at ~21s after subtracting Chamath's voice from the signal. The pitch exists. It is not noise.
   </p>
 
   <div class="img-block">
-    <img src="spectral_sub.png" alt="Libsyn spectral subtraction — pYIN F0 on raw vs residual, t=19-30s" />
+    <img src="residual.png" alt="Libsyn spectral subtraction — pYIN F0 on raw vs residual, t=19-30s" />
     <p class="img-caption">Libsyn spectral subtraction — pYIN F0 on raw (left) vs residual (right) — t=19–30s. Friedberg's pitch emerges in the ghost region after subtraction. Gerstner's region shows RMS activity but weaker pitch confidence.</p>
   </div>
 
   <p class="body">
-    I then created an adjacent transcription pipeline using reference whisper and the PyTorch decoder — because the production pipeline uses CTranslate2, which does not expose logits. Cross-attention weights, filtered to audio-aligned heads, showed non-zero attention in both ghost regions — substantially more for Friedberg. The encoder saw the audio. The decoder was attending to it.
+    I then created an adjacent transcription pipeline using reference whisper and the PyTorch decoder — because the production WhisperX pipeline uses CTranslate2, which does not expose logits. Cross-attention weights, filtered to audio-aligned heads, showed non-zero attention in both ghost regions — substantially more for Friedberg. The encoder saw the audio. The decoder was attending to it.
   </p>
 
   <div class="img-block">
