@@ -531,12 +531,12 @@ At time of writing (June 2026): 383 Libsyn episodes · 2,230 official <i>All-In 
   </div>
 
   <p class="body">
-The correct beam "Oh, my god." — lost by 5.75 percentage points. What makes this strange is that the winning beam, <i>"He's not even here"</i> is real, but it's the line Friedberg speaks next. The decoder skipped past Friedberg's actual utterance and locked onto his next line, scoring it higher than the thing he said first.
+The ground-truth path "Oh, my god." — lost by 5.75 percentage points. What makes this strange is that the winning path, <i>"He's not even here"</i> is real, but it's the line Friedberg speaks next. The decoder skipped past Friedberg's actual utterance and locked onto his next line, scoring it higher than the thing he said first. If you instead ran the same test with BEAM=1, the ground-truth path wins.
 
   </p>
 
   <p class="body">
-    However, the PWW pipeline with BEAM=1 manifested hallucinations in the same regions where Friedberg and Gerstner spoke: <i>"Oh, my god"</i> and <i>"I'm bullying when you're bullying"</i> appearing over VAD-confirmed active speech. Whisper is most susceptible to hallucinations in regions of silence. Everything up to this point had confirmed these regions are not silent.
+    Moving on, the PWW pipeline with BEAM=1 manifested hallucinations in the same regions where Friedberg and Gerstner spoke: <i>"Oh, my god"</i> and <i>"I'm bullying when you're bullying"</i> appearing over VAD-confirmed active speech. Whisper is most susceptible to hallucinations in regions of silence. Everything up to this point had confirmed these regions are not silent.
   </p>
 
   <p class="body">
