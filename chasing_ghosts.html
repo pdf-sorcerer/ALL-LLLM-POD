@@ -155,7 +155,7 @@
     }
     .transcript-box p { margin-bottom: 8px; }
     .transcript-box p:last-child { margin-bottom: 0; }
-    .ghost-line { color: var(--red); opacity: 0.5; }
+    .ghost-line { color: var(--red); text-decoration: line-through; opacity: 0.5; }
 
     .accordion-block {
       max-width: 760px;
@@ -344,7 +344,7 @@
   <h1>Ghost Audio</h1>
 
   <p class="lead">
-    Chasing ghosts was a journey into the heart of generative AI — learning how these systems work in order to understand why audible speech went untranscribed, and to build tooling to detect future instances of this failure mode.
+    This page, Chasing Ghosts, is an investigation into why audible speech went untranscribed and to build tooling to detect future instances of this failure mode.
   </p>
 
   <p class="lead">
@@ -385,9 +385,9 @@
       <h3>Ground Truth</h3>
       <div class="transcript-box">
         <p><strong>Chamath:</strong> "...shortest that's the fattest, and the fattest that's the dumbest."</p>
-        <p class="ghost-line"><strong>Friedberg:</strong> "Oh, my god."</p>
+        <p><strong>Friedberg:</strong> "Oh, my god."</p>
         <p><strong>Friedberg:</strong> "He's not even here. You can't do that. It's awful."</p>
-        <p class="ghost-line"><strong>Gerstner:</strong> "Oh, my god."</p>
+        <p><strong>Gerstner:</strong> "Oh, my god."</p>
         <p><strong>Friedberg:</strong> "That's just bullying. That's awful."</p>
       </div>
     </div>
@@ -395,7 +395,9 @@
       <h3>Ghost Audio Transcript</h3>
       <div class="transcript-box">
         <p><strong>Chamath:</strong> "...shortest that's the fattest, and the fattest that's the dumbest."</p>
+        <p class="ghost-line"><strong>Friedberg:</strong> "Oh, my god."</p>
         <p><strong>Friedberg:</strong> "He's not even here. You can't do that. It's awful."</p>
+        <p class="ghost-line"><strong>Gerstner:</strong> "Oh, my god."</p>
         <p><strong>Friedberg:</strong> "That's just bullying. That's awful."</p>
       </div>
     </div>
@@ -418,7 +420,7 @@
       <video controls>
         <source src="them.mp4" type="video/mp4">
       </video>
-      <div class="video-caption">SOURCE VIDEO · THE DARK KNIGHT (2008) · YouTube ASR Transcript</div>
+      <div class="video-caption">SOURCE VIDEO · THE DARK KNIGHT (2008)</div>
     </div>
 
     <div class="comparison-grid">
@@ -426,7 +428,7 @@
         <h3>Movie Screenplay</h3>
         <div class="transcript-box">
           <p><strong>Joker:</strong> "There's only minutes left, so you'll have to play my little game if you want to save one of them."</p>
-           <p class="ghost-line">Batman:</strong> "Them?"</p>
+          <p><strong>Batman:</strong> "Them?"</p>
           <p><strong>Joker:</strong> "You know, for a while there, I thought you really were Dent. The way you threw yourself after her."</p>
         </div>
       </div>
@@ -450,21 +452,20 @@
   </div>
 
   <p class="body">
-   Watching the episode video - you can hear the audio is there. So, with Claude and Chat Jippity's help I began peeling away layers. 
+    The audio was there. Before opening the decoder, the investigation went through every acoustic tool available — with Claude and ChatGPT's help.
   </p>
 
   <p class="body">
-    VAD onset and offset thresholds were adjusted to test whether tighter speech detection would surface the ghost. pYIN pitch detection found traces of Friedberg's voice at ~21s after subtracting Chamath's voice from the signal. The pitch exists. It is not noise.
+    VAD onset and offset thresholds were adjusted to test whether tighter speech detection would surface the ghost. RMS energy confirmed voiced activity in both ghost regions. pYIN pitch detection found traces of Friedberg's voice at ~21s after subtracting Chamath's voice from the signal. The pitch exists. It is not noise.
   </p>
 
   <div class="img-block">
-    <img src="residual.png" alt="Libsyn spectral subtraction — pYIN F0 on raw vs residual, t=19-30s" />
+    <img src="spectral_sub.png" alt="Libsyn spectral subtraction — pYIN F0 on raw vs residual, t=19-30s" />
     <p class="img-caption">Libsyn spectral subtraction — pYIN F0 on raw (left) vs residual (right) — t=19–30s. Friedberg's pitch emerges in the ghost region after subtraction. Gerstner's region shows RMS activity but weaker pitch confidence.</p>
   </div>
 
   <p class="body">
-My production WhisperX pipeline uses a CTranslate2 decoder, which does not expose attention weights, BEAM search paths, nor per-step token probabilities. So, I created an adjacent transcription pipeline using reference whisper that does. This pipeline, pww, exposed
-allowed access to all that. Here, we see what the encoder saw in the first 30s chunk of audio (and how little attention was spent on both Friedberg and Gerstner's ghost regions).
+    I then created an adjacent transcription pipeline using reference whisper and the PyTorch decoder — because the production pipeline uses CTranslate2, which does not expose logits. Cross-attention weights, filtered to audio-aligned heads, showed non-zero attention in both ghost regions — substantially more for Friedberg. The encoder saw the audio. The decoder was attending to it.
   </p>
 
   <div class="img-block">
@@ -481,12 +482,15 @@ allowed access to all that. Here, we see what the encoder saw in the first 30s c
   </div>
 
   <p class="body">
-    The cross-attention graph shows how poorly atteneded the speech regions are. Next up: what probabilities was the BEAM search considering? BEAM, as I learned at the time, was a search strategy algorithm. BEAM=1 is commonly referred to as 'greedy' - meaning,
-    it takes the highest highest proability token and committs fully to that path. The second is BEAM=5, which considers the joint-probability of all tokens in that path: the full path</strong>
+    The cross-attention graph shows how poorly attended the ghost speech regions are relative to the surrounding audio. The next question: what probabilities was beam search actually considering?
   </p>
 
+  <p class="body">
+    Beam search, as I learned during this investigation, is a search strategy algorithm. beam=1 — commonly called greedy — takes the highest-probability token at each step and commits fully to that path. beam=5 considers five hypotheses simultaneously and selects the path with the highest joint probability across the full sequence.
+  </p>
 
-    small changes to the decoding strategy could bring it back. Rather than treating Whisper as a black box, I built a separate PyTorch decoder pipeline — PWW — to inspect the token probabilities directly.
+  <p class="body">
+    Small changes to the decoding strategy could bring the ghost back. Rather than treating Whisper as a black box, I built a separate PyTorch decoder pipeline — PWW — to inspect the token probabilities directly.
   </p>
 
   <p class="body">
@@ -527,8 +531,7 @@ allowed access to all that. Here, we see what the encoder saw in the first 30s c
   </div>
 
   <p class="body">
-    The transformer was not choosing between truth and falsehood. It was choosing between two beam paths. The acoustically correct path — "Oh, my god." — lost by 5.75 percentage points. At a 1.16x margin, the result flips depending on which beam search implementation is running. 
-    PyTorch recovers the ghost. CTranslate2, which whisperx uses in production, does not.
+    The transformer was not choosing between truth and falsehood. It was choosing between two beam paths. The acoustically correct path — "Oh, my god." — lost by 5.75 percentage points. At a 1.16x margin, the result flips depending on which beam search implementation is running. PyTorch recovers the ghost. CTranslate2, which whisperx uses in production, does not.
   </p>
 
   <p class="body">
@@ -539,13 +542,16 @@ allowed access to all that. Here, we see what the encoder saw in the first 30s c
     The ghost wasn't replaced by noise. It was replaced by what Friedberg said immediately afterward.
   </p>
 
-    <p class="body">
-    By happy accident, the pww pipeline (Pyyanote VAD, Reference Whisper, Pytorch decoder, wav2vec) manifested text-localized hallucinations <i>"Oh, my god"</i> and <i>"I'm bullying when you're bullying"</i> in the same regions where Friedberg and Gerstner spoke. This was unexpected, because both production and pww pipelines are fed 'active speech' regions from VAD, and Whisper is most suciptible to hallucinations in regions of silence - which everything 
-    up to this point has informed us is not silent. So, the working hypothesis is: Audio through enconder is saying speech exists here, but the decoder can't transcribe - so it hallucinates its text output. This suggests repeitive hallucinations in close proximity could be potential ghost signals.  
-    
+  <p class="body">
+    By happy accident, the PWW pipeline manifested text-localized hallucinations in the same regions where Friedberg and Gerstner spoke: "Oh, my god." and "I'm bullying when you're bullying" appearing over VAD-confirmed active speech. This was unexpected. Whisper is most susceptible to hallucinations in regions of silence — but everything up to this point had confirmed these regions are not silent.
+  </p>
 
   <p class="body">
-    That observation changed the investigation. If losing beam paths could sometimes represent reality, then failed decoding attempts (ex: the hallucinations) could be signal of ghosts elsewhere in the transcript. 
+    The working hypothesis: audio through the encoder is signaling that speech exists, but the decoder cannot transcribe it confidently — so it fills the gap with hallucinated output. Repetitive hallucinations in close proximity, over VAD-positive regions, became the candidate signal.
+  </p>
+
+  <p class="body">
+    That observation changed the investigation. If losing beam paths could sometimes represent reality, then failed decoding attempts — the hallucinations — could be signal for ghosts elsewhere in the corpus.
   </p>
 
   <div class="section-heading">
