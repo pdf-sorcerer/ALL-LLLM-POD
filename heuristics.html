@@ -74,40 +74,36 @@
 
   <nav id="shared-nav"></nav>
 
-  <main>
-    <div id="intro">
-      <p class="page-eyebrow">Heuristic Diarization Repair</p>
-      <h1>Transcript Forensics and Repair</h1>
-      <p class="lead">
-        WhisperX establishes canonical segment and word-level timestamps; NeMo operates within those boundaries to assign speaker identity. In practice, this creates two dominant failure modes: either a segment boundary is wrong, or the assigned speaker on a correctly-bounded segment is wrong.<br><br>
-        Both leave fingerprints in the transcript. Some are structural — patterns in how segments begin or end. Others are subtler relics: statements that appear grammatically complete but carry cues that the system was operating at the edge of its confidence.<br><br>
-        <strong>Why it matters:</strong> the downstream model trains on this data. A misattributed segment means the wrong persona learns the wrong words. LoRA adapters trained on corrupted labels begin interpolating between speakers, and the resulting voice stops sounding like anyone in particular.<br><br>
-        At 460 hours across 538 episodes, even a 2% error rate poisons thousands of training examples.
-      </p>
 
-    <div class="section-heading">
-      <h2>Boundary Integrity Flags</h2>
-      <span class="section-count">6 heuristics — click any to expand</span>
-    </div>
+<main>
+  <div id="intro">
+    <p class="page-eyebrow">Heuristic Diarization Repair</p>
+    <h1>Transcript Forensics and Repair</h1>
 
-      <div class="block open">
-        <div class="block-header">
-          <div class="block-header-left">
-            <span class="block-id">HITL</span>
-            <span class="block-title">heuristic repair pipeline</span>
-          </div>
-          <span class="chevron">▼</span>
-        </div>
-        <div class="block-body">
-          <div class="block-why">
-            The solution was human-in-the-loop heuristic repair: flagging suspect transcript segments using lexical and structural patterns, then routing only those segments for review instead of re-processing the entire corpus.<br><br>
-            Review surfaces the transcript, synchronized audio, and timestamp boundaries directly — turning transcript repair into a fast auditing workflow rather than a full retranscription pass.<br><br>
-            <a href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank">↗ Episode 115 HITL review</a>
-          </div>
-        </div>
+    <p class="lead">
+      Transcripts were generated in an AI production pipeline using WhisperX, with NeMo adapted to operate within WhisperX's segment-level timestamps.
+      In other words, WhisperX determined <em>what</em> speech existed and <em>when</em> it occurred, while NeMo's diarization process&mdash;identifying <em>who</em> spoke&mdash;was made secondary to those boundaries.
+    </p>
+
+    <p class="lead">
+      In practice, most AI errors fell into two categories: incorrect segment boundaries or speaker misclassification.
+      Both left recognizable fingerprints in the transcript that could be surfaced through human-in-the-loop review and repaired before entering the training corpus.
+      This review was iterated on over months, and evolved into a fast auditing workflow rather than a full episode retranscription pass.
+    </p>
+
+    <div class="block-body">
+      <div class="block-why">
+        The resulting workflow prioritized investigator time over GPU time: heuristic rules surfaced suspicious regions,
+        generated short audio clips, and routed them for rapid review instead of requiring complete episode audits.
+        <br><br>
+        <a href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank">
+          ↗ Episode 115 HITL review
+        </a>
       </div>
     </div>
 
+  </div>
+</main>
 
 
     <div class="block" id="h1a">
