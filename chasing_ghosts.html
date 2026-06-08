@@ -4,19 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ghost Audio | ALL-LLM Pod</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-
-  
   <style>
     :root {
       --green: #0A84FF;
       --green-dim: rgba(10, 132, 255, 0.12);
       --red: #c0392b;
       --red-dim: rgba(192, 57, 43, 0.08);
+      --purple: #7b61ff;
+      --purple-dim: rgba(123, 97, 255, 0.08);
+      --gold: #d4a017;
+      --gold-dim: rgba(212, 160, 23, 0.12);
       --bg: #f9f9f9;
       --surface: #ffffff;
       --border: #e4e4e4;
@@ -61,16 +61,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .nav-section-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 20px 24px 8px;
-    }
-
     .nav-item {
       display: block;
       font-family: 'IBM Plex Mono', monospace;
@@ -85,27 +75,8 @@
       text-overflow: ellipsis;
     }
 
-    .nav-item:hover {
-      color: var(--text);
-      background: var(--bg);
-      border-left-color: var(--border);
-    }
-
-    .nav-item.active {
-      color: var(--green);
-      border-left-color: var(--green);
-      background: var(--green-dim);
-    }
-
-    .nav-footer {
-      margin-top: auto;
-      padding: 20px 24px 0;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      line-height: 1.6;
-    }
+    .nav-item:hover { color: var(--text); background: var(--bg); border-left-color: var(--border); }
+    .nav-item.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
 
     main {
       flex: 1;
@@ -123,30 +94,12 @@
       margin-bottom: 12px;
     }
 
-    h1 {
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: 18px;
-    }
+    h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 18px; }
 
-    .lead {
-      font-size: 14px;
-      line-height: 1.8;
-      color: #3a3a3a;
-      margin-bottom: 26px;
-      max-width: 760px;
-    }
+    .lead { font-size: 14px; line-height: 1.8; color: #3a3a3a; margin-bottom: 26px; max-width: 760px; }
+    .lead em { font-style: italic; color: var(--muted); }
 
-    p.body {
-      font-size: 14px;
-      line-height: 1.85;
-      color: #3a3a3a;
-      margin-bottom: 22px;
-      max-width: 760px;
-    }
-
+    p.body { font-size: 14px; line-height: 1.85; color: #3a3a3a; margin-bottom: 22px; max-width: 760px; }
     p.body code {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
@@ -157,21 +110,9 @@
       color: var(--text);
     }
 
-    .section-heading {
-      margin-top: 56px;
-      margin-bottom: 18px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
+    .section-heading { margin-top: 56px; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 
-    h2 {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    /* Video block (legacy single video) */
     .video-block {
       margin: 28px 0 36px;
       border: 1px solid var(--border);
@@ -180,12 +121,7 @@
       background: #111;
       max-width: 760px;
     }
-
-    .video-block video {
-      display: block;
-      width: 100%;
-    }
-
+    .video-block video { display: block; width: 100%; }
     .video-caption {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
@@ -197,447 +133,8 @@
       border-top: 1px solid var(--border);
     }
 
-    /* Two-part video + transcript layout */
-    .vt-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin: 28px 0 36px;
-      max-width: 760px;
-      align-items: stretch;
-    }
-
-    .vt-video {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      background: #111;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .vt-video video {
-      display: block;
-      width: 100%;
-    }
-
-    .vt-video .video-caption {
-      margin-top: auto;
-    }
-
-    .vt-transcript {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      background: var(--surface);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .vt-tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-      background: #fafafa;
-    }
-
-    .vt-tab {
-      flex: 1;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      padding: 11px 14px;
-      cursor: pointer;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-    }
-
-    .vt-tab:hover {
-      color: var(--text);
-      background: var(--bg);
-    }
-
-    .vt-tab.active {
-      color: var(--green);
-      border-bottom-color: var(--green);
-      background: var(--green-dim);
-    }
-
-    .vt-panel {
-      display: none;
-      padding: 18px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      line-height: 1.8;
-      color: var(--text);
-      overflow-y: auto;
-      flex: 1;
-    }
-
-    .vt-panel.active { display: block; }
-
-    .vt-panel p { margin-bottom: 10px; }
-    .vt-panel p:last-child { margin-bottom: 0; }
-
-    .vt-panel .speaker { color: var(--green); font-weight: 600; }
-    .vt-panel .ts { color: var(--faint); font-size: 10px; }
-    .transcript-box .ghost-line {
-      color: var(--red);
-      opacity: 0.65;
-      font-style: italic;
-      font-weight: 600;
-    }
-    .vt-panel .placeholder { color: var(--faint); font-style: italic; }
-
-    /* "Oh, my God" emphasis — present (YouTube) vs missing (Libsyn) */
-    .ghost-present {
-      color: var(--red);
-      font-weight: 600;
-    }
-    .ghost-missing {
-      color: var(--red);
-      opacity: 0.45;
-      font-style: italic;
-      text-decoration: line-through;
-    }
-    .accordion-block {
-  max-width: 760px;
-  margin: 28px 0 36px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  overflow: hidden;
-  background: var(--surface);
-}
-
-.accordion-block summary {
-  cursor: pointer;
-  padding: 12px 16px;
-  list-style: none;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: #fafafa;
-  border-bottom: 1px solid var(--border);
-}
-
-.accordion-block summary::-webkit-details-marker {
-  display: none;
-}
-
-.accordion-block summary::before {
-  content: "▸";
-  margin-right: 8px;
-  color: var(--green);
-}
-
-.accordion-block[open] summary::before {
-  content: "▾";
-}
-    /* Architecture / image block */
-    .img-block { margin: 28px 0 36px; max-width: 760px; }
-
-    .img-block img {
-      display: block;
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-    }
-
-    .img-caption {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      margin-top: 8px;
-      text-transform: uppercase;
-    }
-
-    /* Token chain tables */
-    .token-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin: 28px 0 36px;
-      max-width: 760px;
-    }
-
-    .token-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      background: var(--surface);
-    }
-
-    .token-card-header {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      background: #fafafa;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .token-card-header .result-badge {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      padding: 2px 8px;
-      border-radius: 2px;
-    }
-
-    .badge-recovered {
-      background: var(--green-dim);
-      color: var(--green);
-      border: 1px solid rgba(10, 132, 255, 0.3);
-    }
-
-    .badge-dropped {
-      background: var(--red-dim);
-      color: var(--red);
-      border: 1px solid rgba(192, 57, 43, 0.2);
-    }
-
-    .token-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-    }
-
-    .token-table th {
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 8px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: #fcfcfc;
-    }
-
-    .token-table td {
-      padding: 7px 14px;
-      border-bottom: 1px solid #f0f0f0;
-      color: var(--text);
-      vertical-align: top;
-      line-height: 1.5;
-    }
-
-    .token-table tr:last-child td { border-bottom: none; }
-    .token-table .step-col { color: var(--faint); width: 28px; }
-    .token-table .pick-col { color: var(--muted); }
-    .token-table .ghost-col { font-weight: 500; }
-    .ghost-strong { color: var(--green); }
-    .ghost-weak { color: var(--red); }
-    .token-table tr.highlight-row td { background: var(--green-dim); }
-    .token-table tr.highlight-row-bad td { background: var(--red-dim); }
-
-
-    /* BERD-1 beam fork */
-    .beam-fork {
-      max-width: 760px;
-      margin: 28px 0 36px;
-      padding: 22px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--surface);
-      font-family: 'IBM Plex Mono', monospace;
-    }
-
-    .beam-root {
-      text-align: center;
-      font-size: 12px;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-
-    .beam-root code {
-      background: #f0f0f0;
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 3px 7px;
-    }
-
-    .beam-probe {
-      text-align: center;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      color: var(--green);
-      text-transform: uppercase;
-      margin: 14px 0 20px;
-      position: relative;
-    }
-
-    .beam-probe::before {
-      content: "";
-      display: block;
-      width: 1px;
-      height: 18px;
-      background: var(--border);
-      margin: 0 auto 10px;
-    }
-
-    .beam-branches {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      position: relative;
-    }
-
-    .beam-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: #fcfcfc;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .beam-card::before {
-      content: "";
-      display: block;
-      height: 3px;
-      background: var(--green);
-    }
-
-    .winning-beam::before { background: #d4a017; }
-    .losing-beam::before { background: #7b61ff; }
-
-    .beam-label {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 12px 14px 2px;
-      color: var(--text);
-    }
-
-    .beam-subtitle {
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0 14px 12px;
-      color: var(--faint);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .beam-quote {
-      font-size: 12px;
-      font-weight: 600;
-      line-height: 1.6;
-      padding: 14px;
-      border-bottom: 1px solid var(--border);
-      background: #fff;
-    }
-
-    .beam-token {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 8px 14px;
-      font-size: 11px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-
-    .beam-token span { color: var(--text); }
-    .beam-token strong { color: var(--muted); font-weight: 600; }
-
-    .beam-joint {
-      padding: 12px 14px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--green);
-      background: var(--green-dim);
-      border-top: 1px solid var(--border);
-    }
-
-    .winning-beam .beam-joint {
-      color: #8a6500;
-      background: rgba(212, 160, 23, 0.12);
-    }
-
-    /* Compound failure matrix */
-    .failure-matrix {
-      margin: 28px 0 36px;
-      max-width: 760px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .failure-matrix-header {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      background: #fafafa;
-      color: var(--muted);
-    }
-
-    .matrix-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-    }
-
-    .matrix-table th {
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 8px 14px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-      background: #fcfcfc;
-    }
-
-    .matrix-table td {
-      padding: 8px 14px;
-      border-bottom: 1px solid #f0f0f0;
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    .matrix-table tr:last-child td { border-bottom: none; }
-    .matrix-table .condition { color: var(--muted); font-size: 10px; }
-    .check { color: var(--green); font-weight: 600; }
-    .cross { color: var(--red); font-weight: 600; }
-
-    /* Comparison cards */
-    .comparison-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-top: 24px;
-      max-width: 760px;
-    }
-
-    .comparison-card {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
+    .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; max-width: 760px; }
+    .comparison-card { border: 1px solid var(--border); background: var(--surface); border-radius: 4px; overflow: hidden; }
     .comparison-card h3 {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
@@ -649,35 +146,51 @@
       background: #fafafa;
       color: var(--muted);
     }
-
     .transcript-box {
       padding: 18px;
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
       line-height: 1.8;
-      border-bottom: 1px solid var(--border);
       background: #fcfcfc;
     }
-
     .transcript-box p { margin-bottom: 8px; }
     .transcript-box p:last-child { margin-bottom: 0; }
+    .ghost-line { color: var(--red); text-decoration: line-through; opacity: 0.5; }
 
-    .ghost-line {
-      color: var(--red);
-      text-decoration: line-through;
-      opacity: 0.5;
+    .accordion-block {
+      max-width: 760px;
+      margin: 28px 0 36px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--surface);
     }
-
-    .video-box {
-      background: #111;
-      min-height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .accordion-block summary {
+      cursor: pointer;
+      padding: 12px 16px;
+      list-style: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
     }
+    .accordion-block summary::-webkit-details-marker { display: none; }
+    .accordion-block summary::before { content: "▸"; margin-right: 8px; color: var(--green); }
+    .accordion-block[open] summary::before { content: "▾"; }
 
-    .video-box video { width: 100%; display: block; }
-
+    .img-block { margin: 28px 0 36px; max-width: 760px; }
+    .img-block img { display: block; width: 100%; border: 1px solid var(--border); border-radius: 4px; }
+    .img-caption {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
 
     .callout {
       max-width: 760px;
@@ -687,18 +200,8 @@
       background: var(--green-dim);
       border-radius: 4px;
     }
-
-    .callout p {
-      font-size: 14px;
-      line-height: 1.75;
-      color: #3a3a3a;
-      margin-bottom: 14px;
-    }
-
-    .callout p:last-child {
-      margin-bottom: 0;
-    }
-
+    .callout p { font-size: 14px; line-height: 1.75; color: #3a3a3a; margin-bottom: 14px; }
+    .callout p:last-child { margin-bottom: 0; }
     .callout-stat {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 12px;
@@ -708,7 +211,86 @@
       margin: 10px 0 12px;
     }
 
-    /* Footer */
+    /* Beam fork */
+    .beam-fork {
+      max-width: 760px;
+      margin: 28px 0 36px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .beam-root { text-align: center; font-size: 12px; margin-bottom: 8px; color: var(--text); }
+    .beam-root code { background: #f0f0f0; border: 1px solid var(--border); border-radius: 3px; padding: 3px 7px; }
+    .beam-probe {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--green);
+      text-transform: uppercase;
+      margin: 14px 0 20px;
+    }
+    .beam-probe::before { content: ""; display: block; width: 1px; height: 18px; background: var(--border); margin: 0 auto 10px; }
+    .beam-branches { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .beam-card { border: 1px solid var(--border); border-radius: 4px; background: #fcfcfc; overflow: hidden; }
+    .beam-card::before { content: ""; display: block; height: 3px; }
+    .ghost-path::before { background: var(--purple); }
+    .winner-path::before { background: var(--gold); }
+    .beam-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 12px 14px 2px; color: var(--text); }
+    .beam-subtitle { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0 14px 12px; color: var(--faint); border-bottom: 1px solid var(--border); }
+    .beam-quote { font-size: 12px; font-weight: 600; line-height: 1.6; padding: 14px; border-bottom: 1px solid var(--border); background: #fff; }
+    .beam-token { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 8px 14px; font-size: 11px; border-bottom: 1px solid #f0f0f0; }
+    .beam-token span { color: var(--text); }
+    .beam-token strong { color: var(--muted); font-weight: 600; }
+    .beam-joint { padding: 12px 14px; font-size: 11px; font-weight: 600; border-top: 1px solid var(--border); }
+    .ghost-path .beam-joint { color: var(--purple); background: var(--purple-dim); }
+    .winner-path .beam-joint { color: #8a6500; background: var(--gold-dim); }
+    .beam-margin { text-align: center; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+    .beam-margin strong { color: var(--text); }
+
+    /* BERD-1 signal cards */
+    .signal-list { max-width: 760px; margin: 28px 0 36px; display: flex; flex-direction: column; gap: 16px; }
+    .signal-card { border: 1px solid var(--border); border-radius: 4px; background: var(--surface); overflow: hidden; }
+    .signal-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #fafafa;
+    }
+    .signal-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(10,132,255,0.2);
+      border-radius: 2px;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+    .signal-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .signal-body { padding: 16px; font-size: 13px; line-height: 1.8; color: #3a3a3a; }
+    .signal-body code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      background: #f0f0f0;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 5px;
+    }
+
     .footer {
       margin-top: 80px;
       padding-top: 24px;
@@ -723,21 +305,16 @@
       flex-wrap: wrap;
       gap: 16px;
     }
-
     .footer a { color: var(--muted); text-decoration: none; }
     .footer a:hover { color: var(--green); }
 
-    /* Fallback nav shown only when JS-injected nav is empty */
     .nav-fallback { padding: 0; }
     .nav-fallback .nav-logo { margin-bottom: 0; }
 
     @media (max-width: 900px) {
-      .vt-grid { grid-template-columns: 1fr; }
-      .token-grid { grid-template-columns: 1fr; }
       .comparison-grid { grid-template-columns: 1fr; }
       .beam-branches { grid-template-columns: 1fr; }
     }
-
     @media (max-width: 768px) {
       nav { display: none; }
       main { padding: 32px 24px 80px; }
@@ -766,138 +343,138 @@
   <p class="page-eyebrow">Transcript Reconstruction</p>
   <h1>Ghost Audio</h1>
 
-<p class="lead">
-  In early 2026, I migrated the pipeline to Libsyn, despite already having processed more than 560 episodes from YouTube. YouTube was a messy source of truth: full episodes coexisted with shorter-form video and content needed to be deduplicated. Episode numbering and naming conventions also drifted. Regardless, switching to Libsyn made all that a non-issue.
-</p>
-
-<aside class="callout">
-  <p class="callout-stat">
-    At time of writing (June 2026), there are: 383 Libsyn episodes · 384 Spotify episodes · 2,230 official YouTube uploads
+  <p class="lead">
+    Chasing ghosts was a journey into the heart of generative AI — learning how these systems work in order to understand why audible speech went untranscribed, and to build tooling to detect future instances of this failure mode.
   </p>
 
-</aside>
-
-<p class="body">
-Libsyn was intended to be a going-forward change, but I decided to re-run a handful of episodes—including Episode 136. While reviewing the episode, I noticed a short interjection from Friedberg around t≈20s: "Oh, my God." The phrase was present in a transcript generated in Fall 2025, but missing from the newer Libsyn transcript and therefore absent from the persona training corpus.</p>
-
-<p class="body">
-Moments later, guest Brad Gerstner says the exact same phrase. His line is missing from every transcript. I only know he said it because I happened to be watching the video while investigating Friedberg's omission.</p>
-
- <div class="video-block">
-  <video controls>
-    <source src="both_ghosts.mp4" type="video/mp4">
-  </video>
-  <div class="video-caption">
-    SOURCE VIDEO · BOTH GHOST AUDIO EVENTS
-  </div>
-</div>
-
-<div class="comparison-grid">
-
-  <div class="comparison-card">
-    <h3>Ground Truth</h3>
-
-    <div class="transcript-box">
-
-      <p><strong>Chamath:</strong> "...shortest that's the fattest, and the fattest that's the dumbest."</p>
-
-      <p><strong>Friedberg:</strong> "Oh, my god."</p>
-
-      <p><strong>Friedberg:</strong> "He's not even here. You can't do that. It's awful."</p>
-
-      <p><strong>Gerstner:</strong> "Oh, my god."</p>
-
-      <p><strong>Friedberg:</strong> "That's just bullying. That's awful."</p>
-
-    </div>
-  </div>
-
-  <div class="comparison-card">
-    <h3>Ghost Audio Transcript</h3>
-
-    <div class="transcript-box">
-
-      <p><strong>Chamath:</strong> "...shortest that's the fattest, and the fattest that's the dumbest."</p>
-
-      <p class="ghost-line"><strong>Friedberg:</strong> "Oh, my god."</p>
-
-      <p><strong>Friedberg:</strong> "He's not even here. You can't do that. It's awful."</p>
-
-      <p class="ghost-line"><strong>Gerstner:</strong> "Oh, my god."</p>
-
-      <p><strong>Friedberg:</strong> "That's just bullying. That's awful."</p>
-
-    </div>
-  </div>
-
-</div>
-<br>
-<p class="body">
-I began calling this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech is clearly audible, yet every attempt to reproduce it in my AI pipeline seemed to end the same way: extensive investigation, no explanation.
-</p>
-
-<p class="body">
-Up to this point, all AI errors I experienced left fingerprints discussed in Heuristics. Omissions like Ghost Audio examples distort speaker turns, context, and relationships between ideas and leave no detectable fingerprints. Remove enough speech and dialogue collapses. Downstream training examples begin teaching the wrong relationships between prompts and completions.
-</p>
-
-<details class="accordion-block">
-  <summary>
-    <span>Why Omissions Matter: Featuring <em>The Dark Knight (2008)</em></span>
-  </summary>
-
- <div class="video-block">
-  <video controls>
-    <source src="them.mp4" type="video/mp4">
-  </video>
-  <div class="video-caption">
-    SOURCE VIDEO · THE DARK KNIGHT (2008)
-  </div>
-</div>
-
-
-<div class="comparison-grid">
-
-  <div class="comparison-card">
-    <h3>Movie Screenplay</h3>
-    <div class="transcript-box">
-
-      <p><strong>Joker:</strong> "There's only minutes left, so you'll have to play my little game if you want to save one of them."</p>
-
-      <p><strong>Joker:</strong> Batman: "Them?"</em></p>
-
-      <p><strong>Joker:</strong> "You know, for a while there, I thought you really were Dent. The way you threw yourself after her."</p>
-
-    </div>
-  </div>
-
-  <div class="comparison-card">
-    <h3>Ghost Audio Transcript</h3>
-    <div class="transcript-box">
-
-      <p><strong>Joker:</strong> "There's only minutes left, so you'll have to play my little game if you want to save one of them."</p>
-
-      <p><strong>Joker:</strong> "You know, for a while there, I thought you really were Dent. The way you threw yourself after her."</p>
-
-  </div>
-</div> <!-- comparison-grid -->
-
-<div class="callout">
-  <p>
-    YouTube ASR failed to transcribe a single-word response from Batman:
-    <strong>"Them?"</strong>. That response communicates a sudden shift in Batman's understanding: Joker has two hostages, not one.
+  <p class="lead">
+    <em>This is a running log more than a final report. Different recordings of the same episode — YouTube vs Libsyn — have different acoustic properties that produce different transcripts. I created an adjacent AI transcription pipeline that gave access to OpenAI's whisper decoder, which revealed by happy accident a potential detection signal for ghost audio across the corpus. This came with a tradeoff: roughly 10x the compute of a standard production pass. Several threads remain open.</em>
   </p>
 
-  <p>
-    The transcript still reads cleanly. Nothing appears broken. Yet the moment of realization—and the causal link between Joker's statement and Batman's reaction—disappears.
-  </p>
-</div>
-
-</details>
-
-  
+  <div class="section-heading">
+    <h2>Discovery</h2>
+  </div>
 
   <p class="body">
-    The audio was there. Spectrogram, RMS energy, and pitch detection all confirmed real speech. The transcript was the part that failed.
+    In early 2026, I moved to Libsyn as the canonical source of truth for All-In Podcast episodes. Libsyn simplified the pipeline: full episodes without the short-form content commingled with All-In material across their two official YouTube channels.
+  </p>
+
+  <aside class="callout">
+    <p class="callout-stat">
+      At time of writing (June 2026): 383 Libsyn episodes · 2,230 official YouTube uploads
+    </p>
+  </aside>
+
+  <p class="body">
+    Libsyn was intended to be a going-forward change, but I ran a handful of episodes through the pipeline — which had been iterated on dozens of times by this point. For Episode 136, I noticed a short utterance from Friedberg around t&#8776;20s: "Oh, my God." It was missing from the new Libsyn transcript and absent from my corpus. But it existed in a late 2025 transcript generated from the YouTube file. It dawned on me that my transcripts were not complete, and that this could be prevalent at scale.
+  </p>
+
+  <p class="body">
+    Moments later, guest Brad Gerstner says the exact same phrase. His line is missing from every transcript. I only know he said it because I happened to be watching the video while investigating Friedberg's omission.
+  </p>
+
+  <div class="video-block">
+    <video controls>
+      <source src="both_ghosts.mp4" type="video/mp4">
+    </video>
+    <div class="video-caption">SOURCE VIDEO · BOTH GHOST AUDIO EVENTS</div>
+  </div>
+
+  <div class="comparison-grid">
+    <div class="comparison-card">
+      <h3>Ground Truth</h3>
+      <div class="transcript-box">
+        <p><strong>Chamath:</strong> "...shortest that's the fattest, and the fattest that's the dumbest."</p>
+        <p><strong>Friedberg:</strong> "Oh, my god."</p>
+        <p><strong>Friedberg:</strong> "He's not even here. You can't do that. It's awful."</p>
+        <p><strong>Gerstner:</strong> "Oh, my god."</p>
+        <p><strong>Friedberg:</strong> "That's just bullying. That's awful."</p>
+      </div>
+    </div>
+    <div class="comparison-card">
+      <h3>Ghost Audio Transcript</h3>
+      <div class="transcript-box">
+        <p><strong>Chamath:</strong> "...shortest that's the fattest, and the fattest that's the dumbest."</p>
+        <p class="ghost-line"><strong>Friedberg:</strong> "Oh, my god."</p>
+        <p><strong>Friedberg:</strong> "He's not even here. You can't do that. It's awful."</p>
+        <p class="ghost-line"><strong>Gerstner:</strong> "Oh, my god."</p>
+        <p><strong>Friedberg:</strong> "That's just bullying. That's awful."</p>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <p class="body">
+    I began calling this phenomenon <strong>Ghost Audio</strong> because Friedberg's speech is clearly audible, yet every attempt to reproduce it in my pipeline seemed to end the same way: extensive investigation, no explanation.
+  </p>
+
+  <p class="body">
+    Up to this point, all AI errors I experienced left fingerprints discussed in Heuristics. Omissions like Ghost Audio distort speaker turns, context, and relationships between ideas and leave no detectable fingerprints. Remove enough speech and dialogue collapses. Downstream training examples begin teaching the wrong relationships between prompts and completions.
+  </p>
+
+  <details class="accordion-block">
+    <summary><span>Why Omissions Matter: Featuring <em>The Dark Knight (2008)</em></span></summary>
+
+    <div class="video-block">
+      <video controls>
+        <source src="them.mp4" type="video/mp4">
+      </video>
+      <div class="video-caption">SOURCE VIDEO · THE DARK KNIGHT (2008)</div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comparison-card">
+        <h3>Movie Screenplay</h3>
+        <div class="transcript-box">
+          <p><strong>Joker:</strong> "There's only minutes left, so you'll have to play my little game if you want to save one of them."</p>
+          <p><strong>Batman:</strong> "Them?"</p>
+          <p><strong>Joker:</strong> "You know, for a while there, I thought you really were Dent. The way you threw yourself after her."</p>
+        </div>
+      </div>
+      <div class="comparison-card">
+        <h3>Ghost Audio Transcript</h3>
+        <div class="transcript-box">
+          <p><strong>Joker:</strong> "There's only minutes left, so you'll have to play my little game if you want to save one of them."</p>
+          <p><strong>Joker:</strong> "You know, for a while there, I thought you really were Dent. The way you threw yourself after her."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>YouTube ASR failed to transcribe a single-word response from Batman: <strong>"Them?"</strong>. That response communicates a sudden shift in Batman's understanding: Joker has two hostages, not one.</p>
+      <p>The transcript still reads cleanly. Nothing appears broken. Yet the moment of realization — and the causal link between Joker's statement and Batman's reaction — disappears.</p>
+    </div>
+  </details>
+
+  <div class="section-heading">
+    <h2>Acoustic Confirmation</h2>
+  </div>
+
+  <p class="body">
+    The audio was there. Before opening the decoder, the investigation went through every acoustic tool available — with Claude and ChatGPT's help.
+  </p>
+
+  <p class="body">
+    VAD onset and offset thresholds were adjusted to test whether tighter speech detection would surface the ghost. RMS energy confirmed voiced activity in both ghost regions. pYIN pitch detection found traces of Friedberg's voice at ~21s after subtracting Chamath's voice from the signal. The pitch exists. It is not noise.
+  </p>
+
+  <div class="img-block">
+    <img src="spectral_sub.png" alt="Libsyn spectral subtraction — pYIN F0 on raw vs residual, t=19-30s" />
+    <p class="img-caption">Libsyn spectral subtraction — pYIN F0 on raw (left) vs residual (right) — t=19–30s. Friedberg's pitch emerges in the ghost region after subtraction. Gerstner's region shows RMS activity but weaker pitch confidence.</p>
+  </div>
+
+  <p class="body">
+    I then created an adjacent transcription pipeline using reference whisper and the PyTorch decoder — because the production pipeline uses CTranslate2, which does not expose logits. Cross-attention weights, filtered to audio-aligned heads, showed non-zero attention in both ghost regions — substantially more for Friedberg. The encoder saw the audio. The decoder was attending to it.
+  </p>
+
+  <div class="img-block">
+    <img src="attention_both_ghosts.png" alt="Whisper cross-attention filtered to audio-aligned heads" />
+    <p class="img-caption">Whisper cross-attention filtered to audio-aligned heads. Attention spike at Friedberg's ghost region (~21s). Lower but present activity at Gerstner's (~28s). The decoder was looking at both timestamps. It chose not to emit tokens for either.</p>
+  </div>
+
+  <p class="body">
+    That narrowed the problem to one place: the beam search decision.
   </p>
 
   <div class="section-heading">
@@ -909,51 +486,56 @@ Up to this point, all AI errors I experienced left fingerprints discussed in Heu
   </p>
 
   <p class="body">
-    The production transcript omitted his "Oh, my God.", yet small changes to the decoding strategy could bring it back. Rather than treating Whisper as a black box, I built a separate PyTorch decoder pipeline to inspect the token probabilities directly.
+    The production transcript omitted his "Oh, my God.", yet small changes to the decoding strategy could bring it back. Rather than treating Whisper as a black box, I built a separate PyTorch decoder pipeline — PWW — to inspect the token probabilities directly.
   </p>
 
   <p class="body">
-    The results showed the missing utterance was not impossible. At Friedberg's decision point, immediately after <code>&lt;|19.04|&gt;</code>, the decoder had two viable futures. One path matched the audio. The other scored higher.
+    The results showed the missing utterance was not impossible. At Friedberg's decision point, after the timestamp anchor <code>&lt;|18.98|&gt;</code>, the decoder had two viable futures. One path matched the audio. The other scored higher.
   </p>
 
-  <div class="beam-fork" aria-label="BERD-1 beam fork diagram">
-    <div class="beam-root"><code>&lt;|19.04|&gt;</code></div>
-    <div class="beam-probe">BERD-1 PROBE</div>
-
+  <div class="beam-fork" aria-label="Beam fork diagram">
+    <div class="beam-root"><code>&lt;|18.98|&gt;</code></div>
+    <div class="beam-probe">PWW PROBE</div>
     <div class="beam-branches">
-      <div class="beam-card losing-beam">
-        <div class="beam-label">LOSING BEAM</div>
+      <div class="beam-card ghost-path">
+        <div class="beam-label">Ghost Path</div>
         <div class="beam-subtitle">Ground Truth</div>
-        <div class="beam-quote">"Oh, my God."</div>
-
+        <div class="beam-quote">"Oh, my god."</div>
         <div class="beam-token"><span>Oh</span><strong>89.24%</strong></div>
         <div class="beam-token"><span>,</span><strong>49.93%</strong></div>
         <div class="beam-token"><span>my</span><strong>97.67%</strong></div>
         <div class="beam-token"><span>god</span><strong>90.67%</strong></div>
         <div class="beam-token"><span>.</span><strong>90.67%</strong></div>
-
         <div class="beam-joint">Joint: 35.78%</div>
       </div>
-
-      <div class="beam-card winning-beam">
-        <div class="beam-label">WINNING BEAM</div>
+      <div class="beam-card winner-path">
+        <div class="beam-label">Winner Path</div>
         <div class="beam-subtitle">Production Output</div>
         <div class="beam-quote">"He's not even here."</div>
-
         <div class="beam-token"><span>He</span><strong>45.29%</strong></div>
         <div class="beam-token"><span>'s</span><strong>99.94%</strong></div>
         <div class="beam-token"><span>not</span><strong>99.96%</strong></div>
         <div class="beam-token"><span>even</span><strong>99.98%</strong></div>
         <div class="beam-token"><span>here</span><strong>99.78%</strong></div>
         <div class="beam-token"><span>.</span><strong>92.01%</strong></div>
-
         <div class="beam-joint">Joint: 41.53%</div>
       </div>
+    </div>
+    <div class="beam-margin">
+      Margin: <strong>5.75 percentage points</strong> &nbsp;·&nbsp; Ratio: <strong>1.16x</strong>
     </div>
   </div>
 
   <p class="body">
-    The transformer was not choosing between truth and falsehood. It was choosing between two beam paths. The acoustically correct path lost by 5.75 percentage points.
+    The transformer was not choosing between truth and falsehood. It was choosing between two beam paths. The acoustically correct path — "Oh, my god." — lost by 5.75 percentage points. At a 1.16x margin, the result flips depending on which beam search implementation is running. PyTorch recovers the ghost. CTranslate2, which whisperx uses in production, does not.
+  </p>
+
+  <p class="body">
+    What makes this stranger: the winning beam wasn't wrong content. "He's not even here." is real — it's what was said next, by the same speaker, several seconds later. The decoder didn't hallucinate. It skipped. It reached past Friedberg's utterance and locked onto Friedberg's own next line, scoring it higher than the thing he said first.
+  </p>
+
+  <p class="body">
+    The ghost wasn't replaced by noise. It was replaced by the same voice, saying something later.
   </p>
 
   <p class="body">
@@ -965,22 +547,80 @@ Up to this point, all AI errors I experienced left fingerprints discussed in Heu
   </div>
 
   <p class="body">
-    BERD-1 grew out of that fork. Instead of asking one production pipeline for the truth, I compared multiple decoder strategies against the same audio and looked for disagreement.
+    BERD-1 grew out of that fork. Instead of asking one production pipeline for the truth, I ran the same audio through multiple decoder configurations and used disagreement between them as a detection signal.
   </p>
 
   <p class="body">
-    Some of the alternate runs produced lower-quality transcripts. Some produced repetitions. Some hallucinated. Under normal transcript generation, those outputs would be discarded. In BERD-1, they became probes.
+    Some alternate runs produced repetitions. Some recycled nearby phrases into slots where the decoder had no confident decode. Under normal transcript generation those outputs would be discarded. In BERD-1 they became the signal.
   </p>
 
   <p class="body">
-    Stable regions produced stable transcripts. Unstable regions did not. When the production transcript, greedy PyTorch decode, beam-search probes, and alignment checks disagreed over the same short VAD-positive segment, the disagreement became a review candidate.
+    The core observation: stable audio produces stable transcripts across decoder configurations. When CTranslate2 beam=5, PWW beam=1, and forced-alignment scores all agree on a segment, that segment is settled. When they don't, the disagreement marks a candidate for review. Three signals drive the system:
   </p>
 
-  <div class="callout">
-    <p>
-      The goal was never to trust the hallucinations. The goal was to use them to find places where the decoder had another story to tell.
-    </p>
+  <div class="signal-list">
+    <div class="signal-card">
+      <div class="signal-card-header">
+        <span class="signal-num">01</span>
+        <span class="signal-title">Gap Topology</span>
+      </div>
+      <div class="signal-body">
+        beam=1 and beam=5 are run on the same audio. Where beam=1 emits a segment and beam=5 has nothing at that timestamp — no overlap, no adjacent segment — beam=5 advanced past that slot without emitting tokens for it. The gap is the flag. In Friedberg's case: beam=1 has <code>20.85–21.50s</code> "Oh, my god." beam=5 has nothing. Its next segment starts at <code>25.32s</code>. A 4.5-second hole where speech existed.
+      </div>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-card-header">
+        <span class="signal-num">02</span>
+        <span class="signal-title">Repeat Hallucination</span>
+      </div>
+      <div class="signal-body">
+        In slots where the decoder has no confident decode, beam=1 sometimes recycles a nearby phrase rather than emitting silence. "I'm bullying when you're bullying" does not appear anywhere else in the episode. It was emitted three times, across consecutive VAD-confirmed speech regions. Real audio repetition appears in both beam=1 and beam=5. Hallucinated repetition appears in beam=1 only. That difference is the flag.
+      </div>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-card-header">
+        <span class="signal-num">03</span>
+        <span class="signal-title">wav2vec Alignment Failure</span>
+      </div>
+      <div class="signal-body">
+        wav2vec receives the transcript and finds the best timestamp for each word. It has no mechanism for returning "this word wasn't spoken here" — it forces an alignment regardless. When CTranslate2 emits hallucinated words over a ghost region, wav2vec exhausts its search trying to anchor them acoustically. The failure messages — backtrack failed, original start time longer than audio duration, anomalously low confidence scores — are the acoustic record of what the decoder did. Words that don't align don't belong there.
+      </div>
+    </div>
   </div>
+
+  <p class="body">
+    The three signals converge on the same timestamps. VAD confirmed speech. beam=5 emitted nothing, or emitted words that wav2vec couldn't anchor, or beam=1 filled the slot with a phrase it had already said. Any one is a candidate. All three together is a ghost.
+  </p>
+
+  <p class="body">
+    BERD-1 doesn't recover the missing content. It flags the timestamps and puts them in a review queue.
+  </p>
+
+  <div class="section-heading">
+    <h2>Limitations</h2>
+  </div>
+
+  <p class="body">
+    BERD-1 is a first-pass detection system, not a finished product. The gap topology signal produces false positives — lexical variants where both beams transcribed the same utterance but represented it differently. beam=1 emitting "seven and eight" and beam=5 emitting "7% and 8%" look like a gap. They aren't. The speech was there, the decoder found it, the surface form just differs. At scale, across 383 episodes, that noise accumulates.
+  </p>
+
+  <p class="body">
+    The repeat hallucination signal is cleaner but narrower — it only catches cases where beam=1 had no confident decode and recycled context. Gerstner's ghost, which was simply too quiet for any decoder configuration to surface, produces no repeat signal and no gap. It is invisible to BERD-1 entirely.
+  </p>
+
+  <p class="body">
+    The wav2vec alignment signal is the most reliable of the three but also the most dependent on downstream tooling behaving consistently — alignment failures can have causes unrelated to ghost audio.
+  </p>
+
+  <p class="body">
+    What BERD-1 produces is a review queue, not a corrected transcript. A human still has to look at every flagged timestamp and decide whether something was missed. At roughly 10x the compute of a standard production pass, it is a forensic tool rather than a pipeline component.
+  </p>
+
+  <p class="body">
+    The signals are real. The system works. But it needs continued iteration before it can run reliably at corpus scale without generating more noise than signal.
+  </p>
 
   <div class="footer">
     <span>Mason Thompson · Berkeley, California</span>
