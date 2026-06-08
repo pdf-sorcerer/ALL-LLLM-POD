@@ -444,6 +444,132 @@
     .token-table tr.highlight-row td { background: var(--green-dim); }
     .token-table tr.highlight-row-bad td { background: var(--red-dim); }
 
+
+    /* BERD-1 beam fork */
+    .beam-fork {
+      max-width: 760px;
+      margin: 28px 0 36px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .beam-root {
+      text-align: center;
+      font-size: 12px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .beam-root code {
+      background: #f0f0f0;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 3px 7px;
+    }
+
+    .beam-probe {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--green);
+      text-transform: uppercase;
+      margin: 14px 0 20px;
+      position: relative;
+    }
+
+    .beam-probe::before {
+      content: "";
+      display: block;
+      width: 1px;
+      height: 18px;
+      background: var(--border);
+      margin: 0 auto 10px;
+    }
+
+    .beam-branches {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      position: relative;
+    }
+
+    .beam-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: #fcfcfc;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .beam-card::before {
+      content: "";
+      display: block;
+      height: 3px;
+      background: var(--green);
+    }
+
+    .winning-beam::before { background: #d4a017; }
+    .losing-beam::before { background: #7b61ff; }
+
+    .beam-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 12px 14px 2px;
+      color: var(--text);
+    }
+
+    .beam-subtitle {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0 14px 12px;
+      color: var(--faint);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .beam-quote {
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.6;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .beam-token {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 14px;
+      font-size: 11px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .beam-token span { color: var(--text); }
+    .beam-token strong { color: var(--muted); font-weight: 600; }
+
+    .beam-joint {
+      padding: 12px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-dim);
+      border-top: 1px solid var(--border);
+    }
+
+    .winning-beam .beam-joint {
+      color: #8a6500;
+      background: rgba(212, 160, 23, 0.12);
+    }
+
     /* Compound failure matrix */
     .failure-matrix {
       margin: 28px 0 36px;
@@ -609,6 +735,7 @@
       .vt-grid { grid-template-columns: 1fr; }
       .token-grid { grid-template-columns: 1fr; }
       .comparison-grid { grid-template-columns: 1fr; }
+      .beam-branches { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
@@ -770,183 +897,90 @@ Up to this point, all AI errors I experienced left fingerprints discussed in Heu
   
 
   <p class="body">
-    The audio was there. Spectrogram, RMS energy, and pitch detection all confirmed real speech, though pitch was recoverable only for Friedberg.
-  </p>
-
-  <p class="body">
-    Token chain analysis showed why the two cases are different. At Friedberg's decision point — immediately after the decoder emits the <code>&lt;|19.04|&gt;</code> timestamp — "Oh" ranked first at 86%. At Gerstner's, it ranked 134th at 0.004%. Same audio segment, same decoder, completely different probability landscape.
-  </p>
-
-  <div class="token-grid">
-
-    <div class="token-card">
-      <div class="token-card-header">
-        Friedberg · ~21s
-        <span class="result-badge badge-recovered">Recovered</span>
-      </div>
-      <table class="token-table">
-        <thead>
-          <tr>
-            <th>Step</th>
-            <th>Decoder pick</th>
-            <th>"Oh" rank / prob</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="step-col">0</td>
-            <td class="pick-col"><code>&lt;|19.04|&gt;</code> 46.8% · ts_mass 98.4%</td>
-            <td class="ghost-col">—</td>
-          </tr>
-          <tr class="highlight-row">
-            <td class="step-col">1</td>
-            <td class="pick-col"><code>Oh</code> 85.9%</td>
-            <td class="ghost-col ghost-strong">rank 0 · 85.9%</td>
-          </tr>
-          <tr>
-            <td class="step-col">2</td>
-            <td class="pick-col"><code>,</code> 49.5%</td>
-            <td class="ghost-col">rank 1 · 49.1%</td>
-          </tr>
-          <tr>
-            <td class="step-col">3</td>
-            <td class="pick-col"><code>my</code> 97.5%</td>
-            <td class="ghost-col">rank 1 · 1.0%</td>
-          </tr>
-          <tr>
-            <td class="step-col">4</td>
-            <td class="pick-col"><code>god</code> 77.7%</td>
-            <td class="ghost-col">rank 1 · 1.0%</td>
-          </tr>
-          <tr>
-            <td class="step-col">5</td>
-            <td class="pick-col"><code>.</code> 96.6%</td>
-            <td class="ghost-col">—</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="token-card">
-      <div class="token-card-header">
-        Gerstner · ~28s
-        <span class="result-badge badge-dropped">Dropped</span>
-      </div>
-      <table class="token-table">
-        <thead>
-          <tr>
-            <th>Step</th>
-            <th>Decoder pick</th>
-            <th>"Oh" rank / prob</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="step-col">0</td>
-            <td class="pick-col"><code>&lt;|29.72|&gt;</code> 60.3% · ts_mass 97.0%</td>
-            <td class="ghost-col">—</td>
-          </tr>
-          <tr class="highlight-row-bad">
-            <td class="step-col">1</td>
-            <td class="pick-col"><code>I</code> 34.7%</td>
-            <td class="ghost-col ghost-weak">rank 134 · 0.004%</td>
-          </tr>
-          <tr>
-            <td class="step-col">2</td>
-            <td class="pick-col"><code>'m</code> 89.2%</td>
-            <td class="ghost-col ghost-weak">rank 54 · 0.014%</td>
-          </tr>
-          <tr>
-            <td class="step-col">3</td>
-            <td class="pick-col"><code>bullying</code> 91.7%</td>
-            <td class="ghost-col ghost-weak">rank 423 · 0.001%</td>
-          </tr>
-          <tr>
-            <td class="step-col">4</td>
-            <td class="pick-col"><code>when</code> 79.9%</td>
-            <td class="ghost-col">rank 2 · 6.97%</td>
-          </tr>
-          <tr>
-            <td class="step-col">5</td>
-            <td class="pick-col"><code>you</code> 96.6%</td>
-            <td class="ghost-col">—</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-
-  <div class="img-block">
-    <img src="attention_both_ghosts.png"
-         alt="Whisper cross-attention over both ghost regions">
-    <p class="img-caption">Decoder cross-attention · Friedberg shows weak but non-zero activation · Gerstner barely surfaces</p>
-  </div>
-
-  <div class="section-heading">
-    <h2>The Compound Failure</h2>
-  </div>
-
-  <p class="body">
-    Isolating the fix took longer than expected because there's no single cause. Friedberg drops only when four conditions are true simultaneously. Break any one and he surfaces.
-  </p>
-
-  <div class="failure-matrix">
-    <div class="failure-matrix-header">Necessary conditions for failure · ALL must be true</div>
-    <table class="matrix-table">
-      <thead>
-        <tr>
-          <th>Condition</th>
-          <th>Value</th>
-          <th>Break it?</th>
-          <th>Result</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Model</td>
-          <td class="condition">large-v3</td>
-          <td>Use large-v2</td>
-          <td><span class="check">✓</span> Recovered</td>
-        </tr>
-        <tr>
-          <td>Pipeline</td>
-          <td class="condition">WhisperX</td>
-          <td>Raw transformers</td>
-          <td><span class="check">✓</span> Recovered</td>
-        </tr>
-        <tr>
-          <td>Timestamps</td>
-          <td class="condition">without_timestamps=True</td>
-          <td>Set False</td>
-          <td><span class="check">✓</span> Recovered</td>
-        </tr>
-        <tr>
-          <td>Beam size</td>
-          <td class="condition">beam_size ≥ 5 (default)</td>
-          <td>Use beam=1</td>
-          <td><span class="check">✓</span> Recovered</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p class="body">
-    One working fix is the setting <code>without_timestamps=False</code>, aka: 'timestamps are ON'. WhisperX with timestamps enabled recovers Friedberg at every beam size tested. Why exactly this combination fails — what beam search scores differently without timestamp tokens — isn't fully understood. Timestamp tokens are trained jointly with text in Whisper, not bolted on. Removing them changes how the decoder scores competing paths in non-obvious ways. CTranslate2 doesn't expose decoder internals for inspection.
+    The audio was there. Spectrogram, RMS energy, and pitch detection all confirmed real speech. The transcript was the part that failed.
   </p>
 
   <div class="section-heading">
-    <h2>Gerstner-Class Failure</h2>
+    <h2>Decoder Fork</h2>
   </div>
 
   <p class="body">
-    Gerstner is a different problem. His "Oh" ranked 134th at 0.004% — the decoder never seriously considered it. What it did instead was collapse: looping "I'm bullying when you're bullying" three times over audio VAD confirmed as real speech. The hallucination wasn't over silence. It was over audio the decoder couldn't recover.
+    Friedberg raised a simple question: <strong>what was the decoder actually seeing?</strong>
   </p>
 
   <p class="body">
-    Repeated phrase plus wav2vec alignment failure over a VAD-positive region is the fingerprint for this class of ghost — unrecoverable audio the decoder fills rather than transcribes. Nothing tested recovered Gerstner. The fingerprint is detectable at corpus scale, which means every instance can be flagged even if the content can't be recovered. That turns an unknown unknown into a known gap.
+    The production transcript omitted his "Oh, my God.", yet small changes to the decoding strategy could bring it back. Rather than treating Whisper as a black box, I built a separate PyTorch decoder pipeline to inspect the token probabilities directly.
   </p>
 
+  <p class="body">
+    The results showed the missing utterance was not impossible. At Friedberg's decision point, immediately after <code>&lt;|19.04|&gt;</code>, the decoder had two viable futures. One path matched the audio. The other scored higher.
+  </p>
+
+  <div class="beam-fork" aria-label="BERD-1 beam fork diagram">
+    <div class="beam-root"><code>&lt;|19.04|&gt;</code></div>
+    <div class="beam-probe">BERD-1 PROBE</div>
+
+    <div class="beam-branches">
+      <div class="beam-card losing-beam">
+        <div class="beam-label">LOSING BEAM</div>
+        <div class="beam-subtitle">Ground Truth</div>
+        <div class="beam-quote">"Oh, my God."</div>
+
+        <div class="beam-token"><span>Oh</span><strong>89.24%</strong></div>
+        <div class="beam-token"><span>,</span><strong>49.93%</strong></div>
+        <div class="beam-token"><span>my</span><strong>97.67%</strong></div>
+        <div class="beam-token"><span>god</span><strong>90.67%</strong></div>
+        <div class="beam-token"><span>.</span><strong>90.67%</strong></div>
+
+        <div class="beam-joint">Joint: 35.78%</div>
+      </div>
+
+      <div class="beam-card winning-beam">
+        <div class="beam-label">WINNING BEAM</div>
+        <div class="beam-subtitle">Production Output</div>
+        <div class="beam-quote">"He's not even here."</div>
+
+        <div class="beam-token"><span>He</span><strong>45.29%</strong></div>
+        <div class="beam-token"><span>'s</span><strong>99.94%</strong></div>
+        <div class="beam-token"><span>not</span><strong>99.96%</strong></div>
+        <div class="beam-token"><span>even</span><strong>99.98%</strong></div>
+        <div class="beam-token"><span>here</span><strong>99.78%</strong></div>
+        <div class="beam-token"><span>.</span><strong>92.01%</strong></div>
+
+        <div class="beam-joint">Joint: 41.53%</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="body">
+    The transformer was not choosing between truth and falsehood. It was choosing between two beam paths. The acoustically correct path lost by 5.75 percentage points.
+  </p>
+
+  <p class="body">
+    That observation changed the investigation. If losing beam paths could sometimes represent reality, then failed decoding attempts were not just noise. They were evidence.
+  </p>
+
+  <div class="section-heading">
+    <h2>BERD-1</h2>
+  </div>
+
+  <p class="body">
+    BERD-1 grew out of that fork. Instead of asking one production pipeline for the truth, I compared multiple decoder strategies against the same audio and looked for disagreement.
+  </p>
+
+  <p class="body">
+    Some of the alternate runs produced lower-quality transcripts. Some produced repetitions. Some hallucinated. Under normal transcript generation, those outputs would be discarded. In BERD-1, they became probes.
+  </p>
+
+  <p class="body">
+    Stable regions produced stable transcripts. Unstable regions did not. When the production transcript, greedy PyTorch decode, beam-search probes, and alignment checks disagreed over the same short VAD-positive segment, the disagreement became a review candidate.
+  </p>
+
+  <div class="callout">
+    <p>
+      The goal was never to trust the hallucinations. The goal was to use them to find places where the decoder had another story to tell.
+    </p>
+  </div>
 
   <div class="footer">
     <span>Mason Thompson · Berkeley, California</span>
