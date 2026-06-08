@@ -535,23 +535,15 @@ At time of writing (June 2026): 383 Libsyn episodes · 2,230 official <i>All-In 
   </p>
 
   <p class="body">
-    What makes this stranger: the winning beam wasn't wrong content. "He's not even here." is real — it's what was said next, by the same speaker, several seconds later. The decoder didn't hallucinate. It skipped. It reached past Friedberg's utterance and locked onto Friedberg's own next line, scoring it higher than the thing he said first.
+    What makes this stranger: the winning beam wasn't wrong content. <i>"He's not even here"</i> is real, but it's a line Friedberg speaks next. The decoder skipped past Friedberg's utterance and locked onto Friedberg's next line, scoring it higher than the thing he said first.
   </p>
 
   <p class="body">
-    The ghost wasn't replaced by noise. It was replaced by what Friedberg said immediately afterward.
+    By happy accident, the PWW pipeline with BEAM=1 manifested hallucinations in the same regions where Friedberg and Gerstner spoke: <i>"Oh, my god"</i> and <i>"I'm bullying when you're bullying"</i> appearing over VAD-confirmed active speech. Whisper is most susceptible to hallucinations in regions of silence — but everything up to this point had confirmed these regions are not silent.
   </p>
 
   <p class="body">
-    By happy accident, the PWW pipeline manifested text-localized hallucinations in the same regions where Friedberg and Gerstner spoke: "Oh, my god." and "I'm bullying when you're bullying" appearing over VAD-confirmed active speech. This was unexpected. Whisper is most susceptible to hallucinations in regions of silence — but everything up to this point had confirmed these regions are not silent.
-  </p>
-
-  <p class="body">
-    The working hypothesis: audio through the encoder is signaling that speech exists, but the decoder cannot transcribe it confidently — so it fills the gap with hallucinated output. Repetitive hallucinations in close proximity, over VAD-positive regions, became the candidate signal.
-  </p>
-
-  <p class="body">
-    That observation changed the investigation. If losing beam paths could sometimes represent reality, then failed decoding attempts — the hallucinations — could be signal for ghosts elsewhere in the corpus.
+    The working hypothesis: audio through the encoder is signaling that speech exists, but the decoder cannot transcribe it confidently, so it fills the gap with hallucinated output. Repetitive hallucinations in close proximity, over VAD-positive regions, became a candidate ghost signal.
   </p>
 
   <div class="section-heading">
@@ -559,16 +551,15 @@ At time of writing (June 2026): 383 Libsyn episodes · 2,230 official <i>All-In 
   </div>
 
   <p class="body">
-    BERD-1 grew out of that fork. Instead of asking one production pipeline for the truth, I ran the same audio through multiple decoder configurations and used disagreement between them as a detection signal.
+BERD-1 tooling was created, that compared two transcript inputs: production whisperX (beam5, Ctranslate2) to a BEAM=1 pipeline (either production WhisperX, or the PWW pipeline which is 10x more compute expensive). The app loads the transcripts and looks for gap differences and repetitive hallucinations (only found so far in PWW BEAM=1).
   </p>
-
-  <p class="body">
-    Some alternate runs produced repetitions. Some recycled nearby phrases into slots where the decoder had no confident decode. Under normal transcript generation those outputs would be discarded. In BERD-1 they became the signal.
-  </p>
-
-  <p class="body">
-    The core observation: stable audio produces stable transcripts across decoder configurations. When CTranslate2 beam=5, PWW beam=1, and forced-alignment scores all agree on a segment, that segment is settled. When they don't, the disagreement marks a candidate for review. Three signals drive the system:
-  </p>
+  
+  <div class="video-block">
+    <video controls>
+      <source src="berd.mp4" type="video/mp4">
+    </video>
+    <div class="video-caption">SOURCE VIDEO · BOTH GHOST AUDIO EVENTS</div>
+  </div>
 
   <div class="signal-list">
     <div class="signal-card">
