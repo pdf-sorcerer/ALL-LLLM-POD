@@ -217,6 +217,79 @@
       gap: 16px;
     }
 
+    .demo-video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .video-section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .video-name {
+      position: absolute;
+      bottom: 6px;
+      left: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .youtube-teaser {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 32px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 4px;
+    }
+
+    .youtube-copy h2 {
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+
+    .youtube-copy p:not(.video-section-label) {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .youtube-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--code-bg);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .youtube-frame iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
     .video-cell {
       background: var(--code-bg);
       border: 1px solid #2a2a2a;
@@ -375,6 +448,12 @@
       .site-banner img {
         height: 110px;
       }
+
+      .youtube-teaser,
+      .demo-video-grid,
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -423,15 +502,14 @@
       Positions are extracted, dated, and tracked across years — so the personas don't just sound like the hosts, they reason their positions from learned experience.
     </p>
     <div class="tabs-wrapper">
-      <div class="tab-bar">
-        <button class="tab-btn active" onclick="switchTab('pipeline')">Pipeline</button>
-        <button class="tab-btn" onclick="switchTab('videos')">Demo Videos</button>
+      <div class="tab-bar" role="tablist" aria-label="Overview media tabs">
+        <button id="btn-pipeline" class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-pipeline" onclick="switchTab('pipeline')">Pipeline</button>
+        <button id="btn-videos" class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-videos" onclick="switchTab('videos')">Demo Videos</button>
       </div>
 
       <!-- TAB 1: AI Pipelines -->
-      <div class="tab-panel" id="tab-pipeline">
-        <pre class="pipeline-table">
-+-----------------------------+----------------------+----------------------------+
+      <div class="tab-panel" id="tab-pipeline" role="tabpanel" aria-labelledby="btn-pipeline">
+        <pre class="pipeline-table">+-----------------------------+----------------------+----------------------------+
 | PIPELINE STAGE              | TOOL / LIBRARY       | FUNCTION                   |
 +-----------------------------+----------------------+----------------------------+
 |            AUDIO PIPELINE                                                       |
@@ -481,83 +559,99 @@
 +-----------------------------+----------------------+----------------------------+</pre>
       </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:8px;">
+      <!-- TAB 2: Demo Videos -->
+      <div class="tab-panel" id="tab-videos" role="tabpanel" aria-labelledby="btn-videos" style="display:none;">
+        <div class="youtube-teaser">
+          <div class="youtube-copy">
+            <p class="video-section-label">Exemplar Teaser</p>
+            <h2>ALL-LLLM POD teaser</h2>
+            <p>
+              A public-facing teaser for the system: the joke is unserious, but the pipeline underneath it is real.
+            </p>
+          </div>
+          <div class="youtube-frame">
+            <iframe
+              src="https://www.youtube.com/embed/KyH0rGQVerg"
+              title="ALL-LLLM POD teaser"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
 
-  <!-- V1 -->
-  <div>
-    <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#8c8c8c;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e4e4e4;">
-      V1 &mdash; Mistral-7B
-    </p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <button class="video-cell" onclick="openVideoLightbox('sacksv1.mp4', 'Sacks v1')">
-        <div class="video-thumb" style="position:relative;">
-          <div style="position:absolute;bottom:6px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.06em;text-transform:uppercase;">Sacks</div>
-          <div class="play-icon">&#9654;</div>
+        <div class="demo-video-grid">
+          <!-- V1 -->
+          <div>
+            <p class="video-section-label">V1 &mdash; Mistral-7B</p>
+            <div class="video-grid">
+              <button class="video-cell" type="button" onclick="openVideoLightbox('sacksv1.mp4', 'Sacks v1')">
+                <div class="video-thumb">
+                  <div class="video-name">Sacks</div>
+                  <div class="play-icon">&#9654;</div>
+                </div>
+                <div class="video-label">Sacks v1</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox('chamathv1.mp4', 'Chamath v1')">
+                <div class="video-thumb">
+                  <div class="video-name">Chamath</div>
+                  <div class="play-icon">&#9654;</div>
+                </div>
+                <div class="video-label">Chamath v1</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox('jcalv1.mp4', 'JCal v1')">
+                <div class="video-thumb">
+                  <div class="video-name">JCal</div>
+                  <div class="play-icon">&#9654;</div>
+                </div>
+                <div class="video-label">JCal v1</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox('friedbergv1.mp4', 'Friedberg v1')">
+                <div class="video-thumb">
+                  <div class="video-name">Friedberg</div>
+                  <div class="play-icon">&#9654;</div>
+                </div>
+                <div class="video-label">Friedberg v1</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- V2 -->
+          <div>
+            <p class="video-section-label">V2 &mdash; Qwen3-30B MoE Abliterated</p>
+            <div class="video-grid">
+              <button class="video-cell" type="button" onclick="openVideoLightbox('sacksv2.mp4', 'Sacks v2')">
+                <div class="video-thumb">
+                  <div class="video-name">Sacks</div>
+                  <div class="play-icon">&#9654;</div>
+                </div>
+                <div class="video-label">Sacks v2</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox('chamathv2.mp4', 'Chamath v2')">
+                <div class="video-thumb">
+                  <div class="video-name">Chamath</div>
+                  <div class="play-icon">&#9654;</div>
+                </div>
+                <div class="video-label">Chamath v2</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox('jcalv2.mp4', 'JCal v2')">
+                <div class="video-thumb">
+                  <div class="video-name">JCal</div>
+                  <div class="play-icon">&#9654;</div>
+                </div>
+                <div class="video-label">JCal v2</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox('friedbergv2.mp4', 'Friedberg v2')">
+                <div class="video-thumb">
+                  <div class="video-name">Friedberg</div>
+                  <div class="play-icon">&#9654;</div>
+                </div>
+                <div class="video-label">Friedberg v2</div>
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="video-label">Sacks v1</div>
-      </button>
-      <button class="video-cell" onclick="openVideoLightbox('chamathv1.mp4', 'Chamath v1')">
-        <div class="video-thumb" style="position:relative;">
-          <div style="position:absolute;bottom:6px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.06em;text-transform:uppercase;">Chamath</div>
-          <div class="play-icon">&#9654;</div>
-        </div>
-        <div class="video-label">Chamath v1</div>
-      </button>
-      <button class="video-cell" onclick="openVideoLightbox('jcalv1.mp4', 'JCal v1')">
-        <div class="video-thumb" style="position:relative;">
-          <div style="position:absolute;bottom:6px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.06em;text-transform:uppercase;">JCal</div>
-          <div class="play-icon">&#9654;</div>
-        </div>
-        <div class="video-label">JCal v1</div>
-      </button>
-      <button class="video-cell" onclick="openVideoLightbox('friedbergv1.mp4', 'Friedberg v1')">
-        <div class="video-thumb" style="position:relative;">
-          <div style="position:absolute;bottom:6px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.06em;text-transform:uppercase;">Friedberg</div>
-          <div class="play-icon">&#9654;</div>
-        </div>
-        <div class="video-label">Friedberg v1</div>
-      </button>
+      </div>
     </div>
-  </div>
-
-  <!-- V2 -->
-  <div>
-    <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#8c8c8c;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e4e4e4;">
-      V2 &mdash; Qwen3-30B MoE Abliterated
-    </p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <button class="video-cell" onclick="openVideoLightbox('sacksv2.mp4', 'Sacks v2')">
-        <div class="video-thumb" style="position:relative;">
-          <div style="position:absolute;bottom:6px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.06em;text-transform:uppercase;">Sacks</div>
-          <div class="play-icon">&#9654;</div>
-        </div>
-        <div class="video-label">Sacks v2</div>
-      </button>
-      <button class="video-cell" onclick="openVideoLightbox('chamathv2.mp4', 'Chamath v2')">
-        <div class="video-thumb" style="position:relative;">
-          <div style="position:absolute;bottom:6px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.06em;text-transform:uppercase;">Chamath</div>
-          <div class="play-icon">&#9654;</div>
-        </div>
-        <div class="video-label">Chamath v2</div>
-      </button>
-      <button class="video-cell" onclick="openVideoLightbox('jcalv2.mp4', 'JCal v2')">
-        <div class="video-thumb" style="position:relative;">
-          <div style="position:absolute;bottom:6px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.06em;text-transform:uppercase;">JCal</div>
-          <div class="play-icon">&#9654;</div>
-        </div>
-        <div class="video-label">JCal v2</div>
-      </button>
-      <button class="video-cell" onclick="openVideoLightbox('friedbergv2.mp4', 'Friedberg v2')">
-        <div class="video-thumb" style="position:relative;">
-          <div style="position:absolute;bottom:6px;left:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.06em;text-transform:uppercase;">Friedberg</div>
-          <div class="play-icon">&#9654;</div>
-        </div>
-        <div class="video-label">Friedberg v2</div>
-      </button>
-    </div>
-  </div>
-
-</div>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
 
@@ -624,11 +718,19 @@
 
   <script>
     function switchTab(name) {
-      document.getElementById('tab-pipeline').style.display = name === 'pipeline' ? 'block' : 'none';
-      document.getElementById('tab-videos').style.display = name === 'videos' ? 'block' : 'none';
-      document.querySelectorAll('.tab-btn').forEach(function(btn, i) {
-        btn.classList.toggle('active', (i === 0 && name === 'pipeline') || (i === 1 && name === 'videos'));
-      });
+      var pipeline = document.getElementById('tab-pipeline');
+      var videos = document.getElementById('tab-videos');
+      var btnPipeline = document.getElementById('btn-pipeline');
+      var btnVideos = document.getElementById('btn-videos');
+      var showPipeline = name === 'pipeline';
+
+      pipeline.style.display = showPipeline ? 'block' : 'none';
+      videos.style.display = showPipeline ? 'none' : 'block';
+
+      btnPipeline.classList.toggle('active', showPipeline);
+      btnVideos.classList.toggle('active', !showPipeline);
+      btnPipeline.setAttribute('aria-selected', showPipeline ? 'true' : 'false');
+      btnVideos.setAttribute('aria-selected', showPipeline ? 'false' : 'true');
     }
 
     function openVideoLightbox(src, label) {
