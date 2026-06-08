@@ -531,19 +531,16 @@ At time of writing (June 2026): 383 Libsyn episodes · 2,230 official <i>All-In 
   </div>
 
   <p class="body">
-    The transformer was not choosing between truth and falsehood. It was choosing between two beam paths. The acoustically correct path — "Oh, my god." — lost by 5.75 percentage points. At a 1.16x margin, the result flips depending on which beam search implementation is running. PyTorch recovers the ghost. CTranslate2, which whisperx uses in production, does not.
+The correct path "Oh, my god." — lost by 5.75 percentage points.  What makes this strange is that the winning beam, <i>"He's not even here"</i> is real, but it's a line Friedberg speaks next. The decoder skipped past Friedberg's utterance and locked onto Friedberg's next line, scoring it higher than the thing he said first.
+
   </p>
 
   <p class="body">
-    What makes this stranger: the winning beam wasn't wrong content. <i>"He's not even here"</i> is real, but it's a line Friedberg speaks next. The decoder skipped past Friedberg's utterance and locked onto Friedberg's next line, scoring it higher than the thing he said first.
+    However, the PWW pipeline with BEAM=1 manifested hallucinations in the same regions where Friedberg and Gerstner spoke: <i>"Oh, my god"</i> and <i>"I'm bullying when you're bullying"</i> appearing over VAD-confirmed active speech. Whisper is most susceptible to hallucinations in regions of silence. Everything up to this point had confirmed these regions are not silent.
   </p>
 
   <p class="body">
-    By happy accident, the PWW pipeline with BEAM=1 manifested hallucinations in the same regions where Friedberg and Gerstner spoke: <i>"Oh, my god"</i> and <i>"I'm bullying when you're bullying"</i> appearing over VAD-confirmed active speech. Whisper is most susceptible to hallucinations in regions of silence — but everything up to this point had confirmed these regions are not silent.
-  </p>
-
-  <p class="body">
-    The working hypothesis: audio through the encoder is signaling that speech exists, but the decoder cannot transcribe it confidently, so it fills the gap with hallucinated output. Repetitive hallucinations in close proximity, over VAD-positive regions, became a candidate ghost signal.
+    My working hypothesis was: audio through the encoder is signaling that speech exists, but the decoder cannot transcribe it confidently, so it fills the gap with hallucinated output. Repetitive hallucinations in close proximity, over VAD-positive regions, became a candidate ghost signal.
   </p>
 
   <div class="section-heading">
@@ -551,7 +548,7 @@ At time of writing (June 2026): 383 Libsyn episodes · 2,230 official <i>All-In 
   </div>
 
   <p class="body">
-BERD-1 tooling was created, that compared two transcript inputs: production whisperX (beam5, Ctranslate2) to a BEAM=1 pipeline (either production WhisperX, or the PWW pipeline which is 10x more compute expensive). The app loads the transcripts and looks for gap differences and repetitive hallucinations (only found so far in PWW BEAM=1).
+I created BERD-1 tooling to compare two transcript inputs: my production whisperX (beam5, Ctranslate2) to a BEAM=1 pipeline that exposes Friedberg's ghost (either production WhisperX, or the new PWW pipeline which is 10x more compute expensive but produces localized hallucinations that cover both Friedberg and Gerstner).
   </p>
   
   <div class="video-block">
@@ -595,7 +592,7 @@ BERD-1 tooling was created, that compared two transcript inputs: production whis
   </div>
 
   <p class="body">
-    BERD-1 is a first-pass detection system, not a finished product. The gap topology signal produces false positives — lexical variants where both beams transcribed the same utterance but represented it differently. beam=1 emitting "seven and eight" and beam=5 emitting "7% and 8%" look like a gap. They aren't. The speech was there, the decoder found it, the surface form just differs. At scale, across 383 episodes, that noise accumulates.
+    BERD-1 is a messy mvp. It produces more false-positives than I'd like, mostly lexical variants where both beams transcribed the same utterance but represented it differently. (Example: beam=1 emitting "seven and eight" and beam=5 emitting "7% and 8%" look like a gap. They aren't). Still, 
   </p>
 
   <p class="body">
