@@ -348,6 +348,52 @@
       display: block;
     }
 
+    .video-card {
+  display: inline-block;
+  margin-top: 14px;
+  max-width: 320px;
+  width: 100%;
+
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+
+  transition: all .15s ease;
+}
+
+.video-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+.video-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.video-card-caption {
+  padding: 10px 12px;
+}
+
+.video-card-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.video-card-subtitle {
+  margin-top: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--green);
+}
+
     .footer {
       margin-top: 80px;
       font-family: 'IBM Plex Mono', monospace;
@@ -410,6 +456,7 @@
       <div class="video-card-title">
         Episode 115 HITL Review
       </div>
+
       <div class="video-card-subtitle">
         Human-in-the-loop transcript auditing ↗
       </div>
