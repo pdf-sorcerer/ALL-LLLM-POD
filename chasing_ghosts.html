@@ -460,7 +460,7 @@
   </p>
 
   <div class="img-block">
-    <img src="spectral_sub.png" alt="Libsyn spectral subtraction — pYIN F0 on raw vs residual, t=19-30s" />
+    <img src="residual.png" alt="Libsyn spectral subtraction — pYIN F0 on raw vs residual, t=19-30s" />
     <p class="img-caption">Libsyn spectral subtraction — pYIN F0 on raw (left) vs residual (right) — t=19–30s. Friedberg's pitch emerges in the ghost region after subtraction. Gerstner's region shows RMS activity but weaker pitch confidence.</p>
   </div>
 
@@ -577,7 +577,7 @@
         <span class="signal-title">Gap Topology</span>
       </div>
       <div class="signal-body">
-        beam=1 and beam=5 are run on the same audio. Where beam=1 emits a segment and beam=5 has nothing at that timestamp — no overlap, no adjacent segment — beam=5 advanced past that slot without emitting tokens for it. The gap is the flag. In Friedberg's case: beam=1 has <code>20.85–21.50s</code> "Oh, my god." beam=5 has nothing. Its next segment starts at <code>25.32s</code>. A 4.5-second hole where speech existed.
+        Two runs of WhisperX (BEAM=1, 5) on the same audio file. Where BEAM=1 emits a segment and BEAM=5 has nothing at that timestamp: the gap is the flag. In Friedberg's case: BEAM=1 has <code>20.85–21.50s</code> "Oh, my god." beam=5 has nothing. Its next segment starts at <code>25.32s</code>. A 4.5-second hole where speech existed.
       </div>
     </div>
 
@@ -587,18 +587,7 @@
         <span class="signal-title">Repeat Hallucination</span>
       </div>
       <div class="signal-body">
-        In slots where the decoder has no confident decode, beam=1 sometimes recycles a nearby phrase rather than emitting silence. "I'm bullying when you're bullying" does not appear anywhere else in the episode. It was emitted three times, across consecutive VAD-confirmed speech regions. Real audio repetition appears in both beam=1 and beam=5. Hallucinated repetition appears in beam=1 only. That difference is the flag.
-      </div>
-    </div>
-
-    <div class="signal-card">
-      <div class="signal-card-header">
-        <span class="signal-num">03</span>
-        <span class="signal-title">wav2vec Alignment Failure</span>
-      </div>
-      <div class="signal-body">
-        wav2vec receives the transcript and finds the best timestamp for each word. It has no mechanism for returning "this word wasn't spoken here" — it forces an alignment regardless. When CTranslate2 emits hallucinated words over a ghost region, wav2vec exhausts its search trying to anchor them acoustically. The failure messages — backtrack failed, original start time longer than audio duration, anomalously low confidence scores — are the acoustic record of what the decoder did. Words that don't align don't belong there.
-      </div>
+        In the <strong>adjacent pww pipeline</strong>, when the decoder has no confident path BEAM=1 hallucinates a nearby phrase rather than emitting silence. <strong><i>"I'm bullying when you're bullying"</i></strong> does not appear anywhere else in the episode. It was emitted three times, across consecutive VAD-confirmed speech regions that contained both Friedberg and Gerstner's ghost audio. Hallucinated repetition appears only in the adjacent Reference Whisper + Pytorch pipeline, BEAM=1 only.
     </div>
   </div>
 
