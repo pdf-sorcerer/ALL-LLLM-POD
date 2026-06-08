@@ -463,7 +463,8 @@
   </div>
 
   <p class="body">
-    I then created an adjacent transcription pipeline using reference whisper and the PyTorch decoder — because the production WhisperX pipeline uses CTranslate2, which does not expose logits. Cross-attention weights, filtered to audio-aligned heads, showed non-zero attention in both ghost regions — substantially more for Friedberg. The encoder saw the audio. The decoder was attending to it.
+My production WhisperX pipeline uses a custom CTranslate2 decoder, which does not expose attention weights, BEAM search paths, nor per-step token probabilities. So, I created an adjacent transcription pipeline using reference whisper that does. This pipeline, pww, exposed
+filtered to audio-aligned heads, showed non-zero attention in both ghost regions — substantially more for Friedberg. The encoder saw the audio regions (and how little attention the decoder was spending on it).
   </p>
 
   <div class="img-block">
