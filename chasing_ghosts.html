@@ -343,9 +343,9 @@
   <p class="page-eyebrow">Transcript Reconstruction</p>
   <h1>Ghost Audio</h1>
 
-  <p class="lead">
-    This page, Chasing Ghosts, is an investigation into why audible speech went untranscribed and to build tooling to detect future instances of this failure mode.
-  </p>
+<p class="lead">
+  This page is an investigation into why audible speech went untranscribed, and the effort to build tooling to find and recover AI-driven omissions at scale across the episode corpus. If uncorrected, these omissions distort model training data — resulting in the model learning patterns and relationships that are not ground-truth.
+</p>
 
   <p class="lead">
     <em>This is a running log more than a final report. Different recordings of the same episode — YouTube vs Libsyn — have different acoustic properties that produce different transcripts. I created an adjacent AI transcription pipeline that gave access to OpenAI's whisper decoder, which revealed by happy accident a potential detection signal for ghost audio across the corpus. This came with a tradeoff: roughly 10x the compute of a standard production pass. Several threads remain open.</em>
@@ -357,13 +357,13 @@
 
   <p class="body">
     In early 2026, I moved to Libsyn as the canonical source of truth for <i>All-In Podcast</i> episodes. Libsyn simplified the pipeline: full episodes without the short-form content commingled with 
-    <i>All-In Podcast</i> material across their two official YouTube channels.  Note: At time of writing (June 2026): 383 Libsyn episodes · 2,230 official <i>All-In Podcast</i> YouTube uploads (of which, I have processed 564).
+    <i>All-In Podcast</i> material across their two official YouTube channels.  
 
   </p>
 
   <aside class="callout">
     <p class="callout-stat">
-
+At time of writing (June 2026): 383 Libsyn episodes · 2,230 official <i>All-In Podcast</i> YouTube uploads (of which, I have processed 564).
     </p>
   </aside>
 
