@@ -463,8 +463,8 @@
   </div>
 
   <p class="body">
-My production WhisperX pipeline uses a custom CTranslate2 decoder, which does not expose attention weights, BEAM search paths, nor per-step token probabilities. So, I created an adjacent transcription pipeline using reference whisper that does. This pipeline, pww, exposed
-filtered to audio-aligned heads, showed non-zero attention in both ghost regions — substantially more for Friedberg. The encoder saw the audio regions (and how little attention the decoder was spending on it).
+My production WhisperX pipeline uses a CTranslate2 decoder, which does not expose attention weights, BEAM search paths, nor per-step token probabilities. So, I created an adjacent transcription pipeline using reference whisper that does. This pipeline, pww, exposed
+allowed access to all that. Here, we see what the encoder saw in the first 30s chunk of audio (and how little attention was spent on both Friedberg and Gerstner's ghost regions).
   </p>
 
   <div class="img-block">
