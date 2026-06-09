@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>ALL-LLLM POD Navigation</title>
-
 <style>
 :root {
   --green: #0A84FF;
@@ -13,12 +12,10 @@
   --muted: #6b6b6b;
   --faint: #8c8c8c;
 }
-
 body {
   margin: 0;
   font-family: Inter, sans-serif;
 }
-
 nav {
   width: 220px;
   padding: 32px 0;
@@ -26,7 +23,6 @@ nav {
   min-height: 100vh;
   background: #fff;
 }
-
 .nav-logo {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
@@ -37,7 +33,6 @@ nav {
   padding: 0 24px 28px;
   border-bottom: 1px solid var(--border);
 }
-
 .nav-section-label {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
@@ -47,7 +42,6 @@ nav {
   color: var(--faint);
   padding: 18px 24px 8px;
 }
-
 .nav-item {
   display: block;
   font-family: 'IBM Plex Mono', monospace;
@@ -58,73 +52,55 @@ nav {
   border-left: 2px solid transparent;
   transition: all .15s ease;
 }
-
 .nav-item:hover {
   color: var(--text);
   background: #f9f9f9;
   border-left-color: var(--border);
 }
-
 .nav-item.active {
   color: var(--green);
   border-left-color: var(--green);
   background: var(--green-dim);
 }
 </style>
-
 </head>
-
 <body>
-
 <nav>
-
   <div class="nav-logo">ALL-LLLM POD</div>
-
   <div class="nav-section-label">Pages</div>
-
-  <a href="welcome.html"
-   class="nav-item"
-   data-page="welcome">
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/welcome.html"
+     class="nav-item"
+     data-page="welcome">
     1. Welcome
   </a>
-
-  <a href="architecture.html"
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/architecture.html"
      class="nav-item"
      data-page="architecture">
     2. Architecture
   </a>
-
-  <a href="metrics.html"
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/metrics.html"
      class="nav-item"
      data-page="performance">
     3. Model Performance
   </a>
-
-  <a href="about.html"
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/about.html"
      class="nav-item"
      data-page="about">
     4. About
   </a>
-
   <div class="nav-section-label">Side Quests</div>
-
-<a href="https://pdf-sorcerer.github.io/all_lllm_pod/clownfish.html" class="nav-item" data-page="clownfish">
-• Speaker labeling
-</a>
-
-<a href="https://pdf-sorcerer.github.io/all_lllm_pod/heuristics.html" class="nav-item" data-page="heuristics">
-  • Transcript Forensics
-</a>
-
-<a href="https://pdf-sorcerer.github.io/all_lllm_pod/chasing_ghosts.html" class="nav-item" data-page="chasing-ghosts">
-• Ghost Audio
-</a>
-
-<a href="https://pdf-sorcerer.github.io/all_lllm_pod/arguments.html" class="nav-item" data-page="argument_pipeline">
- • Argument Pipeline
-</a>
-
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/clownfish.html" class="nav-item" data-page="clownfish">
+    • Speaker labeling
+  </a>
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/heuristics.html" class="nav-item" data-page="heuristics">
+    • Transcript Forensics
+  </a>
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/chasing_ghosts.html" class="nav-item" data-page="chasing-ghosts">
+    • Ghost Audio
+  </a>
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/arguments.html" class="nav-item" data-page="argument_pipeline">
+    • Argument Pipeline
+  </a>
 </nav>
-
 </body>
 </html>
