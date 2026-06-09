@@ -90,18 +90,19 @@
       padding: 56px 64px 120px;
       max-width: 860px;
     }
-
-       .site-banner {
+    
+        .site-banner {
       margin: 0 0 18px 0;
       width: 100%;
       display: block;
       border: 0;
       background: var(--code-bg);
-      cursor: zoom-in;
       padding: 0;
+      overflow: hidden;
+      border-radius: 3px;
     }
     
-        .site-banner img {
+    .site-banner img {
       display: block;
       width: 100%;
       height: 210px;
@@ -110,15 +111,11 @@
     }
     
     .banner-caption {
-      display: none;
-    }
-
-    .banner-caption {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
       letter-spacing: 0.06em;
       color: var(--muted);
-      margin: -28px 0 36px 0;
+      margin: 8px 0 36px 0;
       text-transform: uppercase;
     }
 
@@ -580,13 +577,14 @@ nav {
 
   <main>
 
-    <button type="button" class="site-banner" aria-label="Enlarge ALL-LLLM POD cast art" onclick="openLightbox(&#39;all-llm-pod-wide.png&#39;, &#39;ALL-LLLM PODcast cast art&#39;)">
-
-      <img src="./ALL-LLLM POD _ Mason Thompson_files/all-llm-pod.png" alt="ALL-LLLM PODcast cast: satirical portraits of Chamath, JCal, Sacks, and Friedberg">
-    </button>
-
+    <div class="site-banner">
+      <img
+        src="all-llm-pod-wide.png"
+        alt="ALL-LLLM POD cast: satirical portraits of Chamath, JCal, Sacks, and Friedberg">
+    </div>
+    
     <p class="banner-caption">
-      Click to enlarge · Satirical ALL-In personas
+      Satirical ALL-In personas
     </p>
 
     <p class="page-eyebrow">Multi-Agent Local LLM System</p>
@@ -594,8 +592,8 @@ nav {
     <h1>ALL-LLLM POD</h1>
 
      <p class="lead">
-      Hey, everybody! 
-      <br>Welcome to the number one <strong>ALL-LLLM POD</strong>: a technically serious generative AI system built around an intentionally unserious premise: conversational chatbot parodies of the <i>All-In Podcast</i> hosts (aka: Besties).
+      Hey, everybody! <br>
+      <br><br>Welcome to the number one <strong>ALL-LLLM POD</strong>: a technically serious generative AI system built around an intentionally unserious premise: conversational chatbot parodies of the <i>All-In Podcast</i> hosts (aka: Besties).
       <br><br>
       The Besties are reconstructed from 560+ episodes using two parallel pipelines. The <strong>audio pipeline</strong> handles VAD, ASR, diarization, speaker classification, and human-in-the-loop transcript repair. The <strong>video pipeline</strong> extracts non-verbal patterns — posture, movement, gaze, and expression — through face and body recognition.
     <br><br>
