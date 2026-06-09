@@ -42,15 +42,41 @@
   const mobileStyle = document.createElement('style');
   mobileStyle.textContent = `
     @media (max-width: 768px) {
+
+      /* --- Drawer: override ANY page-level nav { display:none } --- */
+      #shared-nav,
+      nav#shared-nav {
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 260px !important;
+        z-index: 10001 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.25s ease !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        box-shadow: 2px 0 12px rgba(0,0,0,0.12) !important;
+        background: #ffffff !important;
+        /* reset any flex/sticky desktop behaviour */
+        flex-shrink: unset !important;
+        flex-direction: unset !important;
+      }
+      #shared-nav.open,
+      nav#shared-nav.open {
+        transform: translateX(0) !important;
+      }
+
       /* Hamburger button */
       #nav-hamburger {
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         position: fixed;
         top: 14px;
         left: 14px;
-        z-index: 10001;
+        z-index: 10002;
         width: 36px;
         height: 36px;
         background: #ffffff;
@@ -66,7 +92,6 @@
         background: #1a1a1a;
         border-radius: 2px;
         position: relative;
-        transition: background 0.2s;
       }
       #nav-hamburger span::before,
       #nav-hamburger span::after {
@@ -78,7 +103,6 @@
         border-radius: 2px;
         position: absolute;
         left: 0;
-        transition: transform 0.2s;
       }
       #nav-hamburger span::before { top: -5px; }
       #nav-hamburger span::after  { top: 5px; }
@@ -93,34 +117,12 @@
       }
       #nav-overlay.open { display: block; }
 
-      /* Drawer */
-      #shared-nav {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        height: 100vh !important;
-        width: 260px !important;
-        z-index: 10001 !important;
-        transform: translateX(-100%) !important;
-        transition: transform 0.25s ease !important;
-        overflow-y: auto !important;
-        box-shadow: 2px 0 12px rgba(0,0,0,0.12) !important;
-      }
-      #shared-nav.open {
-        transform: translateX(0) !important;
-      }
-
       /* Push main content down so it clears the hamburger */
       main {
         padding-top: 60px !important;
       }
 
-      /* Fix tab/content width collapse on mobile */
       body {
-        overflow-x: hidden;
-      }
-      .tab-panels, [role="tabpanel"], .panel-content {
-        min-width: 0;
         overflow-x: hidden;
       }
     }
