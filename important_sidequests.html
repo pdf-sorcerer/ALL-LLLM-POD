@@ -311,15 +311,15 @@
         <summary>
           <span>
             <span class="accordion-title">Clownfish</span>
-            <span class="accordion-subtitle">Remote operations console for corpus maintenance.</span>
-            <span class="sidequest-meta">Ingestion · orchestration · corpus ops</span>
+            <span class="accordion-subtitle">HITL console for data mapping and data extrusion</span>
+            <span class="sidequest-meta">Ingestion · corpus ops</span>
           </span>
           <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
 
         <div class="accordion-body">
           <p>
-            Named after NVIDIA NeMo's speaker embeddings, Clownfish was created as a human-in-the-loop labeling tool that combines transcripts,
+            Named to celebrate getting NVIDIA NeMo working on my PC, Clownfish was created as a human-in-the-loop labeling tool that combines transcripts,
             audio snippets, and NeMo diarization output to map real-world identities to diarized <code>speaker_id</code> values.
           </p>
 
@@ -343,7 +343,7 @@
           </a>
 
           <p>
-            As of June 2026, Clownfish had evolved into a remote operations layer for the corpus: discovering and queueing new content,
+            June 2026: Clownfish had evolved into a remote operations layer for the corpus: discovering and queueing new content,
             orchestrating transcription and diarization pipelines, and supporting downstream review workflows from PC, Mac, iPhone, and browser.
           </p>
 
@@ -363,13 +363,40 @@
 
         <div class="accordion-body">
           <p>
-            Automated pipelines produce remarkably good transcripts — until they do not. Brody provides forensic tooling for identifying attribution
-            errors, transcript corruption, segmentation mistakes, and other edge cases that can silently degrade downstream datasets.
+            Brody is an extension to the Clownfish app, providing forensic tooling for identifying attribution errors, transcript corruption, 
+            segmentation mistakes, and other edge cases that can silently degrade downstream datasets.
           </p>
 
           <a class="learn-more" href="heuristics.html">Learn More &rarr;</a>
         </div>
       </details>
+
+
+      <details class="accordion">
+        <summary>
+          <span>
+            <span class="accordion-title">Ghost Audio</span>
+            <span class="accordion-subtitle">When audible speech disappears before it reaches the transcript.</span>
+            <span class="sidequest-meta">Transcript QA · ASR · Beam Search</span>
+          </span>
+          <span class="accordion-icon" aria-hidden="true">+</span>
+        </summary>
+      
+        <div class="accordion-body">
+          <p>
+            Ghost Audio investigates a failure mode where speech is present in the source audio, but vanishes from the final transcript.
+            Using Brody and BERD-1, I traced these omissions through VAD, WhisperX, beam search, decoder probabilities,
+            diarization boundaries, and human-in-the-loop repair workflows.
+          </p>
+      
+          <p>
+            The lesson: transcript reliability is not just an ASR problem. It is an observability problem.
+          </p>
+      
+          <a class="learn-more" href="chasing_ghosts.html">Learn More &rarr;</a>
+        </div>
+
+
 
       <details class="accordion">
         <summary>
