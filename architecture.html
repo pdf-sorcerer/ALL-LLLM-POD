@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Runtime Architecture | ALL-LLM Pod</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="./Runtime Architecture _ ALL-LLM Pod_files/css2" rel="stylesheet">
 
   <style>
     :root {
-      --green: #76b900;
-      --green-dim: rgba(118, 185, 0, 0.12);
+      --green: #0A84FF;
+      --green-dim: rgba(10, 132, 255, 0.12);
       --bg: #f9f9f9;
       --surface: #ffffff;
       --border: #e4e4e4;
@@ -181,7 +180,7 @@
 
     .architecture-thumb:hover {
       border-color: var(--green);
-      box-shadow: 0 2px 12px rgba(118, 185, 0, 0.08);
+      box-shadow: 0 2px 12px rgba(10, 132, 255, 0.08);
     }
 
     .architecture-thumb img {
@@ -239,6 +238,18 @@
       cursor: pointer;
     }
 
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.92em;
+      background: var(--green-dim);
+      border: 1px solid rgba(10, 132, 255, 0.18);
+      border-radius: 3px;
+      padding: 2px 6px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+
     .footer {
       margin-top: 80px;
       padding-top: 24px;
@@ -270,24 +281,114 @@
       .footer { flex-direction: column; align-items: flex-start; }
     }
   </style>
-</head>
+<script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
 
-<body>
+<body style="">
 
 <nav id="shared-nav">
-  <div class="nav-logo">ALL-LLM Pod</div>
 
-  <div class="nav-section-label">Project</div>
-  <a class="nav-item" href="index.html">Overview</a>
-  <a class="nav-item active" href="architecture.html">Runtime Architecture</a>
-  <a class="nav-item" href="forensics.html">Transcript Fidelity</a>
-  <a class="nav-item" href="chasing_ghosts.html">Ghost Audio</a>
-  <a class="nav-item" href="v1.html">V1 Archive</a>
 
-  <div class="nav-footer">
-    Mason Thompson<br>
-    Berkeley, California
-  </div>
+
+<title>ALL-LLLM POD Navigation</title>
+
+<style>
+:root {
+  --green: #0A84FF;
+  --green-dim: rgba(10,132,255,.12);
+  --border: #e4e4e4;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --faint: #8c8c8c;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+}
+
+nav {
+  width: 220px;
+  padding: 32px 0;
+  border-right: 1px solid var(--border);
+  min-height: 100vh;
+  background: #fff;
+}
+
+.nav-logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+  padding: 0 24px 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding: 18px 24px 8px;
+}
+
+.nav-item {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 7px 24px;
+  border-left: 2px solid transparent;
+  transition: all .15s ease;
+}
+
+.nav-item:hover {
+  color: var(--text);
+  background: #f9f9f9;
+  border-left-color: var(--border);
+}
+
+.nav-item.active {
+  color: var(--green);
+  border-left-color: var(--green);
+  background: var(--green-dim);
+}
+</style>
+
+
+
+
+
+<nav>
+
+  <div class="nav-logo">ALL-LLLM POD</div>
+
+  <div class="nav-section-label">Pages</div>
+
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/index.html" class="nav-item active" data-page="index">
+    1. Overview
+  </a>
+
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/architecture.html" class="nav-item active" data-page="architecture">
+    2. Architecture
+  </a>
+
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/metrics.html" class="nav-item" data-page="performance">
+    3. Model Performance
+  </a>
+
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/chasing_ghosts.html" class="nav-item" data-page="chasing-ghosts">
+    4. Deep Dive: Ghost Audio
+  </a>
+
+</nav>
+
+
+
 </nav>
 
 <main>
@@ -301,12 +402,10 @@
 </p>
 
 <div class="architecture-block">
-    <button type="button" class="architecture-thumb" aria-label="Enlarge ALL-LLM Pod runtime architecture diagram"
-        onclick="openLightbox('architecture-discord.png', 'ALL-LLM Pod runtime architecture diagram enlarged')">
-        <img src="architecture-discord.png"
-            alt="ALL-LLM Pod runtime architecture showing iOS client, Windows orchestration server, Apple Silicon inference runtime, transcript systems, memory systems, and Discord integration">
+    <button type="button" class="architecture-thumb" aria-label="Enlarge ALL-LLM Pod runtime architecture diagram" onclick="openLightbox(&#39;architecture-discord.png&#39;, &#39;ALL-LLM Pod runtime architecture diagram enlarged&#39;)">
+        <img src="./Runtime Architecture _ ALL-LLM Pod_files/architecture-discord.png" alt="ALL-LLM Pod runtime architecture showing iOS client, Windows orchestration server, Apple Silicon inference runtime, transcript systems, memory systems, and Discord integration">
     </button>
-    <p class="architecture-caption">Click to enlarge &middot; Runtime topology and infrastructure boundaries</p>
+    <p class="architecture-caption">Click to enlarge · Runtime topology and infrastructure boundaries</p>
 </div>
 
 <div class="section-heading">
@@ -354,16 +453,16 @@ Discord adds multi-user access without changing anything underneath. Impressive 
 
 
 <div class="footer">
-  <span>Mason Thompson &middot; Berkeley, California</span>
-  <a href="forensics.html">Transcript Fidelity &rarr;</a>
-  <a href="chasing_ghosts.html">Ghost Audio &rarr;</a>
+  <span>Mason Thompson · Berkeley, California</span>
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/forensics.html">Transcript Fidelity →</a>
+  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/chasing_ghosts.html">Ghost Audio →</a>
 </div>
 
 </main>
 
 <div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
   <button type="button" class="lightbox-close" onclick="closeLightbox()">Close ×</button>
-  <img id="lightboxImage" src="" alt="">
+  <img id="lightboxImage" src="./Runtime Architecture _ ALL-LLM Pod_files/architecture-discord.png" alt="ALL-LLM Pod runtime architecture diagram enlarged">
 </div>
 
 <script>
@@ -388,7 +487,8 @@ Discord adds multi-user access without changing anything underneath. Impressive 
   });
 </script>
 
-<script src="nav-loader.js" data-page="architecture"></script>
+<script src="./Runtime Architecture _ ALL-LLM Pod_files/nav-loader.js" data-page="architecture"></script>
 
-</body>
-</html>
+
+
+</body></html>
