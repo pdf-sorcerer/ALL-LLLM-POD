@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0055)https://masedawg1.github.io/all_llm_pod/heuristics.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALL-LLM Pod | Heuristics</title>
   <style>
@@ -17,12 +17,11 @@
       --text: #1a1a1a;
       --muted: #6b6b6b;
       --faint: #aaaaaa;
-      --nav-width: 220px;
+      --nav-width: 240px;
       --red: #c0392b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    #shared-nav { display: flex; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -32,7 +31,19 @@
       min-height: 100vh;
     }
 
-    #shared-
+    #shared-nav {
+      width: var(--nav-width);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      padding-top: 24px;
+    }
 
     .nav-logo {
       font-family: 'IBM Plex Mono', monospace;
@@ -81,20 +92,11 @@
       background: var(--green-dim);
     }
 
-    .nav-footer {
-      margin-top: auto;
-      padding: 20px 24px 0;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      line-height: 1.6;
-    }
-
     main {
       flex: 1;
       padding: 56px 64px 120px;
-      max-width: 860px;
+      margin-left: var(--nav-width);
+      max-width: calc(860px + var(--nav-width));
     }
 
     .page-eyebrow {
@@ -108,7 +110,6 @@
     }
 
     h1 {
-      font-family: 'Inter', sans-serif;
       font-size: 28px;
       font-weight: 700;
       letter-spacing: -0.02em;
@@ -123,11 +124,6 @@
       color: #3a3a3a;
       margin-bottom: 28px;
       max-width: 680px;
-    }
-
-    .lead strong {
-      color: var(--text);
-      font-weight: 600;
     }
 
     .lead a {
@@ -311,16 +307,7 @@
 
     .spk:first-child { margin-top: 0; }
 
-    .before span:not(.panel-label):not(.spk):not(.flagged),
-    .after span:not(.panel-label):not(.spk):not(.flagged) {
-      color: #c9d1d9;
-    }
-
-    .flagged {
-      color: #ff6b6b;
-      font-weight: 600;
-    }
-
+    .flagged { color: #ff6b6b; font-weight: 600; }
     .after .flagged { color: #a8d672; }
 
     .video-thumb {
@@ -338,50 +325,46 @@
     }
 
     .video-card {
-  display: inline-block;
-  margin-top: 14px;
-  max-width: 320px;
-  width: 100%;
+      display: inline-block;
+      margin-top: 14px;
+      max-width: 320px;
+      width: 100%;
+      text-decoration: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      transition: all .15s ease;
+    }
 
-  text-decoration: none;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  overflow: hidden;
+    .video-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
 
-  transition: all .15s ease;
-}
+    .video-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
 
-.video-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0,0,0,.06);
-}
+    .video-card-caption { padding: 10px 12px; }
 
-.video-card img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
+    .video-card-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
 
-.video-card-caption {
-  padding: 10px 12px;
-}
-
-.video-card-title {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text);
-}
-
-.video-card-subtitle {
-  margin-top: 4px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: var(--green);
-}
+    .video-card-subtitle {
+      margin-top: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+    }
 
     code {
       font-family: 'IBM Plex Mono', monospace;
@@ -394,7 +377,6 @@
       white-space: nowrap;
     }
 
-
     .footer {
       margin-top: 80px;
       font-family: 'IBM Plex Mono', monospace;
@@ -405,120 +387,23 @@
     }
 
     @media (max-width: 768px) {
-      
-
-      main {
-        padding: 32px 24px 80px;
-      }
-
-      .diff {
-        grid-template-columns: 1fr;
-      }
+      #shared-nav { display: none; }
+      main { margin-left: 0; padding: 32px 24px 80px; }
+      .diff { grid-template-columns: 1fr; }
     }
   </style>
-<script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
-
+</head>
 <body>
 
-  <nav id="shared-nav">
-
-
-
-<title>ALL-LLLM POD Navigation</title>
-
-<style>
-:root {
-  --green: #0A84FF;
-  --green-dim: rgba(10,132,255,.12);
-  --border: #e4e4e4;
-  --text: #1a1a1a;
-  --muted: #6b6b6b;
-  --faint: #8c8c8c;
-}
-
-body {
-  margin: 0;
-  font-family: Inter, sans-serif;
-}
-
-
-
-.nav-logo {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--green);
-  padding: 0 24px 28px;
-  border-bottom: 1px solid var(--border);
-}
-
-.nav-section-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--faint);
-  padding: 18px 24px 8px;
-}
-
-.nav-item {
-  display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  text-decoration: none;
-  padding: 7px 24px;
-  border-left: 2px solid transparent;
-  transition: all .15s ease;
-}
-
-.nav-item:hover {
-  color: var(--text);
-  background: #f9f9f9;
-  border-left-color: var(--border);
-}
-
-.nav-item.active {
-  color: var(--green);
-  border-left-color: var(--green);
-  background: var(--green-dim);
-}
-</style>
-
-
-
-
-
-<nav>
-
-  <div class="nav-logo">ALL-LLLM POD</div>
-
-  <div class="nav-section-label">Pages</div>
-
-  <a href="https://masedawg1.github.io/all_llm_pod/index.html" class="nav-item active" data-page="index">
-    1. Overview
-  </a>
-
-  <a href="https://masedawg1.github.io/all_llm_pod/architecture.html" class="nav-item" data-page="architecture">
-    2. Architecture
-  </a>
-
-  <a href="https://masedawg1.github.io/all_llm_pod/metrics.html" class="nav-item" data-page="performance">
-    3. Model Performance
-  </a>
-
-  <a href="https://masedawg1.github.io/all_llm_pod/chasing_ghosts.html" class="nav-item" data-page="chasing-ghosts">
-    4. Deep Dive: Ghost Audio
-  </a>
-
-</nav>
-
-
-
-
+  <aside id="shared-nav">
+    <div class="nav-logo">ALL-LLM POD</div>
+    <div class="nav-section-label">Pages</div>
+    <a href="https://masedawg1.github.io/all_llm_pod/index.html" class="nav-item" data-page="index">1. Overview</a>
+    <a href="https://masedawg1.github.io/all_llm_pod/architecture.html" class="nav-item" data-page="architecture">2. Architecture</a>
+    <a href="https://masedawg1.github.io/all_llm_pod/metrics.html" class="nav-item" data-page="performance">3. Model Performance</a>
+    <a href="https://masedawg1.github.io/all_llm_pod/chasing_ghosts.html" class="nav-item" data-page="chasing-ghosts">4. Deep Dive: Ghost Audio</a>
+    <a href="https://masedawg1.github.io/all_llm_pod/heuristics.html" class="nav-item active" data-page="heuristics">5. Heuristics</a>
+  </aside>
 
   <main>
     <div id="intro">
@@ -533,32 +418,24 @@ body {
       <p class="lead">
         In practice, most AI errors fell into two categories: incorrect segment boundaries or speaker misclassification.
         Both left recognizable fingerprints in the transcript that could be surfaced through human-in-the-loop review and repaired before entering the training corpus.
-        This review was iterated on over months, and evolved into a fast auditing workflow rather than a full episode retranscription pass.
       </p>
 
-<div class="intro-note">
-  The resulting workflow prioritized investigator time over GPU time:
-  heuristic rules surfaced suspicious regions, generated short audio clips,
-  and routed them for rapid review instead of requiring complete episode audits.
+      <div class="intro-note">
+        The resulting workflow prioritized investigator time over GPU time:
+        heuristic rules surfaced suspicious regions, generated short audio clips,
+        and routed them for rapid review instead of requiring complete episode audits.
 
-  <br><br>
+        <br><br>
 
-  <a class="video-card" href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank">
-
-    <img src="./ALL-LLM Pod _ Heuristics_files/loom.png" alt="Episode 115 HITL Review">
-
-    <div class="video-card-caption">
-      <div class="video-card-title">
-        Episode 115 HITL Review
-      </div>
-
-      <div class="video-card-subtitle">
-        Human-in-the-loop transcript auditing ↗
+        <a class="video-card" href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank">
+          <img src="./ALL-LLM Pod _ Heuristics_files/loom.png" alt="Episode 115 HITL Review">
+          <div class="video-card-caption">
+            <div class="video-card-title">Episode 115 HITL Review</div>
+            <div class="video-card-subtitle">Human-in-the-loop transcript auditing ↗</div>
+          </div>
+        </a>
       </div>
     </div>
-
-  </a>
-</div>
 
     <div class="block" id="h1a">
       <div class="block-header">
@@ -568,27 +445,23 @@ body {
         </div>
         <span class="chevron">▼</span>
       </div>
-
       <div class="block-body">
         <div class="block-why">
           A segment presents as one speaker having a continuous thought — but in reality, two speakers exist within it.
           Fingerprint: mid-segment ellipsis. The most common structural cue, but rare false-positives exist.
           <a href="https://www.loom.com/share/65827f1c9f3f419cac6dd8b544657ca2" target="_blank">↗ example</a>
         </div>
-
         <div class="source">
           <span>X-Sb8sIi22g</span>
           <span>699.069s</span>
           <a href="https://youtu.be/X-Sb8sIi22g?t=693" target="_blank">click here for the video timestamp: ↗ episode</a>
         </div>
-
         <div class="diff">
           <div class="before">
             <span class="panel-label">before</span>
             <span class="spk">Sacks</span>
             Interest rates just have to go up to a point that<span class="flagged">… To</span> what's happening in Japan, right?
           </div>
-
           <div class="after">
             <span class="panel-label">after</span>
             <span class="spk">Sacks</span>
@@ -608,19 +481,16 @@ body {
         </div>
         <span class="chevron">▼</span>
       </div>
-
       <div class="block-body">
         <div class="block-why">
           Three segments, two speakers, A→B→A. The middle segment (B) is a misattribution — B never spoke.
           Fingerprint: middle segment ends with ellipsis, third segment opens lowercase.
         </div>
-
         <div class="source">
           <span>AI_Psychosis__America_s_Broken_Soci_WOWLT.json</span>
           <span>94.608s – 103.266s</span>
           <a href="https://youtu.be/Oy4evu1TdiI?t=92" target="_blank">click here for the video timestamp: ↗ episode</a>
         </div>
-
         <div class="diff">
           <div class="before">
             <span class="panel-label">before</span>
@@ -631,7 +501,6 @@ body {
             <span class="spk">Jcal</span>
             <span class="flagged">you know,</span> superhero groups that it's like a real throwback.
           </div>
-
           <div class="after">
             <span class="panel-label">after</span>
             <span class="spk">Jcal</span>
@@ -651,33 +520,28 @@ body {
         </div>
         <span class="chevron">▼</span>
       </div>
-
       <div class="block-body">
         <div class="block-why">
           The attributed speaker's own name appears in their own segment — a strong signal the segment belongs to someone else.
           Unlike boundary heuristics, no ellipsis or capitalization signal is required. The name alone is the fingerprint.
         </div>
-
         <div class="source">
           <span>episode data</span>
           <span>4035.425s</span>
           <a href="https://youtu.be/X-Sb8sIi22g?t=4034" target="_blank">click here for the video timestamp: ↗ episode</a>
         </div>
-
         <div class="diff">
           <div class="before">
             <span class="panel-label">before</span>
             <span class="spk">Friedberg</span>
             Less than the $1.4 billion in funding it has raised to <span class="flagged">Friedberg's</span> been bringing this point up over and over about the overfunding and cash in less than the valuation most yeah of these unicorns are worth less than their total press stack and this is a good example I've been through this week I went and saw a company I was an investor in that I saw this happen
           </div>
-
           <div class="diff-right">
             <div class="after">
               <span class="panel-label">after</span>
               <span class="spk">Jcal</span>
               Less than the $1.4 billion in funding it has raised to <span class="flagged">Friedberg's</span> been bringing this point up over and over about the overfunding and cash in less than the valuation most
             </div>
-
             <div class="after">
               <span class="panel-label">after</span>
               <span class="spk">Friedberg</span>
@@ -696,18 +560,15 @@ body {
         </div>
         <span class="chevron">▼</span>
       </div>
-
       <div class="block-body">
         <div class="block-why">
           ASR capitalizes new speaker turns — a lowercase opening strongly suggests this is a continuation misattributed to a different speaker.
         </div>
-
         <div class="source">
           <span>500K_Subscriber_Livestream____AllIn_WOWLT.json</span>
           <span>411.02s – 436.16s</span>
           <a href="https://youtu.be/AsDrfUQImhs?t=410" target="_blank">click here for the video timestamp: ↗ episode</a>
         </div>
-
         <div class="diff">
           <div class="before">
             <span class="panel-label">before</span>
@@ -716,7 +577,6 @@ body {
             <span class="spk">Chamath</span>
             <span class="flagged">so uh he was saying</span> he said we have a big hit on our hands he said uh he said we're like tv stars now that's incredible imagine if uh if we had if we didn't have to push sand uphill with some of these folks...
           </div>
-
           <div class="after">
             <span class="panel-label">after</span>
             <span class="spk">Sacks</span>
@@ -736,19 +596,15 @@ body {
         </div>
         <span class="chevron">▼</span>
       </div>
-
       <div class="block-body">
         <div class="block-why">
           Short affirmative utterances in rapid exchange fall below the reliable embedding window and get misassigned to the acoustically dominant local speaker.
-          The boundaries are correct, the words are right — the embeddings simply don't have enough audio to build a clean voiceprint.
         </div>
-
         <div class="source">
           <span>500K_Subscriber_Livestream____AllIn_WOWLT.json</span>
           <span>354.645s – 369.541s</span>
           <a href="https://youtu.be/AsDrfUQImhs?t=354" target="_blank">click here for the video timestamp: ↗ episode</a>
         </div>
-
         <div class="diff">
           <div class="before">
             <span class="panel-label">before</span>
@@ -761,7 +617,6 @@ body {
             <span class="spk">Jcal</span>
             Thank you.
           </div>
-
           <div class="after">
             <span class="panel-label">after</span>
             <span class="spk">Sacks</span>
@@ -781,21 +636,14 @@ body {
         </div>
         <span class="chevron">▼</span>
       </div>
-
       <div class="block-body">
         <div class="block-why">
-          A single NeMo <code style="font-family:&#39;IBM Plex Mono&#39;,monospace;font-size:11px;color:var(--green);">speaker_id</code> absorbs a long, multi-speaker passage — multiple speakers collapsed into one label.
-          The fingerprint is a segment spanning 20+ seconds attributed to a single speaker, containing speech that clearly belongs to several.
-          In the example below, a 20-second wall of text assigned to Jcal was split across three speakers on review.
-          <br><br>
-          Root cause is not yet known. These blobs are rare and have not been observed in recent months.
+          A single NeMo <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green);">speaker_id</code> absorbs a long, multi-speaker passage — multiple speakers collapsed into one label.
         </div>
-
         <div class="source">
           <span>E50_Crypto_investing_deep_dive__Facebook_s_whistleblower_fallout</span>
           <span>187.8s – 208.4s</span>
         </div>
-
         <a class="video-thumb" href="https://youtu.be/seg-lbqHcwo" target="_blank">
           <img src="./ALL-LLM Pod _ Heuristics_files/mqdefault.jpg" alt="Blob repair example">
         </a>
@@ -803,21 +651,7 @@ body {
     </div>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
-  </div></main>
-
-  <script>
-    window.NAV_ANCHORS = [
-      { href: '#intro', label: 'Intro' },
-      { href: '#h1a',  label: '1a. ellipsis boundary' },
-      { href: '#h1b',  label: '1b. speaker sandwich' },
-      { href: '#h2',   label: '2. self-reference' },
-      { href: '#h3',   label: '3. lowercase cont.' },
-      { href: '#h4',   label: '4. backchannel bleed' },
-      { href: '#h5',   label: '5. blob' }
-    ];
-  </script>
-
-  <script src="./ALL-LLM Pod _ Heuristics_files/nav-loader.js" data-page="heuristics"></script>
+  </main>
 
   <script>
     document.querySelectorAll('.block').forEach(block => {
@@ -827,12 +661,15 @@ body {
     });
 
     const sections = ['intro', 'h1a', 'h1b', 'h2', 'h3', 'h4', 'h5'];
-
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           document.querySelectorAll('.nav-item').forEach(a => {
-            a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+            if (entry.target.id === 'intro') {
+              a.classList.toggle('active', a.getAttribute('data-page') === 'heuristics');
+            } else {
+              a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+            }
           });
         }
       });
@@ -844,6 +681,5 @@ body {
     });
   </script>
 
-
-
-</body></html>
+</body>
+</html>
