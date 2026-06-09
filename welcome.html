@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://masedawg1.github.io/all_llm_pod/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALL-LLLM POD | Mason Thompson</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="./ALL-LLLM POD _ Mason Thompson_files/css2" rel="stylesheet">
+
+  <style>
+    :root {
+      --green: #0A84FF;
+      --green-dim: rgba(10, 132, 255, 0.12);
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --border: #e4e4e4;
+      --code-bg: #0d1117;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --faint: #8c8c8c;
+      --nav-width: 220px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: var(--nav-width);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 0;
+      overflow-y: auto;
+    }
+
+    .nav-logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-item {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 7px 24px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: var(--bg);
+      border-left-color: var(--border);
+    }
+
+    .nav-item.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: var(--green-dim);
+    }
+
+    main {
+      flex: 1;
+      padding: 56px 64px 120px;
+      max-width: 860px;
+    }
+
+       .site-banner {
+      margin: 0 0 18px 0;
+      width: 100%;
+      display: block;
+      border: 0;
+      background: var(--code-bg);
+      cursor: zoom-in;
+      padding: 0;
+    }
+    
+        .site-banner img {
+      display: block;
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      object-position: center 22%;
+    }
+    
+    .banner-caption {
+      display: none;
+    }
+
+    .banner-caption {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: -28px 0 36px 0;
+      text-transform: uppercase;
+    }
+
+    .page-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .lead {
+      font-size: 14px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      max-width: 720px;
+      margin-bottom: 52px;
+    }
+
+    .lead strong {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .pipeline-table {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      background: var(--code-bg);
+      color: #c9d1d9;
+      padding: 28px 32px;
+      border-radius: 4px;
+      overflow-x: auto;
+      white-space: pre;
+      margin-bottom: 52px;
+    }
+
+    .pipeline-table .section-header {
+      color: #0A84FF;
+      font-weight: 600;
+    }
+
+    .tabs-wrapper {
+      margin-bottom: 52px;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .tab-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+    }
+
+    .tab-panel {
+      padding-top: 24px;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .demo-video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .video-section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .video-name {
+      position: absolute;
+      bottom: 6px;
+      left: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .youtube-teaser {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 32px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 4px;
+    }
+
+    .youtube-copy h2 {
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+
+    .youtube-copy p:not(.video-section-label) {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .youtube-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--code-bg);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .youtube-frame iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .video-cell {
+      background: var(--code-bg);
+      border: 1px solid #2a2a2a;
+      border-radius: 4px;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+
+    .video-cell:hover {
+      border-color: var(--green);
+    }
+
+    .video-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .play-icon {
+      font-size: 28px;
+      color: rgba(255,255,255,0.3);
+      transition: color 0.15s;
+    }
+
+    .video-cell:hover .play-icon {
+      color: var(--green);
+    }
+
+    .video-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 14px;
+      border-top: 1px solid #1e1e1e;
+    }
+
+    .video-lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, 0.96);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1001;
+      cursor: zoom-out;
+      padding: 32px;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .video-lightbox.is-open {
+      display: flex;
+    }
+
+    .video-lightbox video {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 4px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+
+    .video-lightbox-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .video-lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 3px;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.92em;
+      background: var(--green-dim);
+      border: 1px solid rgba(10, 132, 255, 0.18);
+      border-radius: 3px;
+      padding: 2px 6px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+
+    .footer {
+      margin-top: 72px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: zoom-out;
+      padding: 32px;
+    }
+
+    .lightbox.is-open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 3px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 3px;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        padding: 24px 20px 80px;
+      }
+    
+      .site-banner {
+        margin: 0 0 16px 0;
+        width: 100%;
+      }
+    
+      .site-banner img {
+        height: 110px;
+      }
+
+      .youtube-teaser,
+      .demo-video-grid,
+      .video-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+<script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
+
+<body>
+
+  <nav id="shared-nav">
+
+
+
+<title>ALL-LLLM POD Navigation</title>
+
+<style>
+:root {
+  --green: #0A84FF;
+  --green-dim: rgba(10,132,255,.12);
+  --border: #e4e4e4;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --faint: #8c8c8c;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+}
+
+nav {
+  width: 220px;
+  padding: 32px 0;
+  border-right: 1px solid var(--border);
+  min-height: 100vh;
+  background: #fff;
+}
+
+.nav-logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+  padding: 0 24px 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding: 18px 24px 8px;
+}
+
+.nav-item {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 7px 24px;
+  border-left: 2px solid transparent;
+  transition: all .15s ease;
+}
+
+.nav-item:hover {
+  color: var(--text);
+  background: #f9f9f9;
+  border-left-color: var(--border);
+}
+
+.nav-item.active {
+  color: var(--green);
+  border-left-color: var(--green);
+  background: var(--green-dim);
+}
+</style>
+
+
+
+
+
+<nav>
+
+  <div class="nav-logo">ALL-LLLM POD</div>
+
+  <div class="nav-section-label">Pages</div>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/index.html" class="nav-item active" data-page="index">
+    1. Overview
+  </a>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/architecture.html" class="nav-item" data-page="architecture">
+    2. Architecture
+  </a>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/metrics.html" class="nav-item" data-page="performance">
+    3. Model Performance
+  </a>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/chasing_ghosts.html" class="nav-item" data-page="chasing-ghosts">
+    4. Deep Dive: Ghost Audio
+  </a>
+
+</nav>
+
+
+
+</nav>
+
+  <main>
+
+    <button type="button" class="site-banner" aria-label="Enlarge ALL-LLLM POD cast art" onclick="openLightbox(&#39;all-llm-pod-wide.png&#39;, &#39;ALL-LLLM PODcast cast art&#39;)">
+
+      <img src="./ALL-LLLM POD _ Mason Thompson_files/all-llm-pod.png" alt="ALL-LLLM PODcast cast: satirical portraits of Chamath, JCal, Sacks, and Friedberg">
+    </button>
+
+    <p class="banner-caption">
+      Click to enlarge · Satirical ALL-In personas
+    </p>
+
+    <p class="page-eyebrow">Multi-Agent Local LLM System</p>
+
+    <h1>ALL-LLLM POD</h1>
+
+     <p class="lead">
+      Hey, everybody! 
+      <br>Welcome to the number one <strong>ALL-LLLM POD</strong>: a technically serious generative AI system built around an intentionally unserious premise: conversational chatbot parodies of the <i>All-In Podcast</i> hosts (aka: Besties).
+      <br><br>
+      The Besties are reconstructed from 560+ episodes using two parallel pipelines. The <strong>audio pipeline</strong> handles VAD, ASR, diarization, speaker classification, and human-in-the-loop transcript repair. The <strong>video pipeline</strong> extracts non-verbal patterns — posture, movement, gaze, and expression — through face and body recognition.
+    <br><br>
+      See the left navbar for the big picture. More detailed looks at helper apps and supporting workflows are in <a href="https://masedawg1.github.io/all_llm_pod/important_sidequests.html" class="inline-tag">
+        Important Sidequests ↗
+      </a>.
+    </p>
+
+    <div class="tabs-wrapper">
+      <div class="tab-bar" role="tablist" aria-label="Overview media tabs">
+        <button id="btn-pipeline" class="tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="tab-pipeline" onclick="switchTab(&#39;pipeline&#39;)">Pipeline</button>
+        <button id="btn-videos" class="tab-btn" type="button" role="tab" aria-selected="false" aria-controls="tab-videos" onclick="switchTab(&#39;videos&#39;)">Demo Videos</button>
+      </div>
+
+      <!-- TAB 1: AI Pipelines -->
+      <div class="tab-panel" id="tab-pipeline" role="tabpanel" aria-labelledby="btn-pipeline">
+        <pre class="pipeline-table">+-----------------------------+----------------------+----------------------------+
+| PIPELINE STAGE              | TOOL / LIBRARY       | FUNCTION                   |
++-----------------------------+----------------------+----------------------------+
+|            AUDIO PIPELINE                                                       |
++-----------------------------+----------------------+----------------------------+
+| VAD                         | Pyannote (library)   | Detects speech activity    |
+|                             |                      | boundaries; runs inside    |
+|                             |                      | WhisperX prior to ASR      |
++-----------------------------+----------------------+----------------------------+
+| ASR / Transcription         | WhisperX (library)   | Converts audio to          |
+|                             |                      | structured text with       |
+|                             |                      | word-level timestamps      |
++-----------------------------+----------------------+----------------------------+
+| UEM Generation              | WhisperX (library)   | Writes segment timestamps  |
+|                             |                      | to UEM; boundaries are     |
+|                             |                      | VAD-informed by Pyannote   |
++-----------------------------+----------------------+----------------------------+
+| Diarization (constrained)   | NeMo (toolkit)       | Answers "who spoke here"   |
+|                             |                      | within Pyannote VAD +      |
+|                             |                      | WhisperX timestamp windows |
++-----------------------------+----------------------+----------------------------+
+| Speaker Classification      | NeMo (toolkit)       | Assigns embedding IDs to   |
+|                             |                      | diarized segments          |
++-----------------------------+----------------------+----------------------------+
+| HITL Classification         | Streamlit (framework)| Human maps embedding IDs   |
+|                             |                      | to named speakers via      |
+|                             |                      | audio playback review      |
++-----------------------------+----------------------+----------------------------+
+| Transcript Forensics        | Streamlit (framework)| Heuristic pass catches     |
+|                             |                      | ASR errors and segment     |
+|                             |                      | boundary errors; blind to  |
+|                             |                      | errors of omission         |
++-----------------------------+----------------------+----------------------------+
+| Transcript Mining           | Python / terminal    | Extracts recurring         |
+|                             |                      | arguments, reasoning       |
+|                             |                      | patterns, long-term views  |
++-----------------------------+----------------------+----------------------------+
+|            VIDEO PIPELINE                                                       |
++-----------------------------+----------------------+----------------------------+
+| Face &amp; Body Recognition     | InsightFace, OpenCV  | Identifies speakers        |
+|                             | (libraries)          | visually across video      |
++-----------------------------+----------------------+----------------------------+
+| Non-Verbal Extraction       | MediaPipe (library), | Captures posture,          |
+|                             | ONNX Runtime (GPU)   | movement, gaze, expression |
++-----------------------------+----------------------+----------------------------+
+| Voice / TTS                 | F5-TTS (library)     | Synthesizes speaker voice  |
+|                             |                      | for inference and playback |
++-----------------------------+----------------------+----------------------------+</pre>
+      </div>
+
+      <!-- TAB 2: Demo Videos -->
+      <div class="tab-panel" id="tab-videos" role="tabpanel" aria-labelledby="btn-videos" style="display:none;">
+        <div class="youtube-teaser">
+          <div class="youtube-copy">
+            <p class="video-section-label">Exemplar Teaser</p>
+            <h2>ALL-LLLM POD teaser</h2>
+            <p>
+         The premise? Unserious. The pipeline? Very real. 
+            </p>
+          </div>
+          <div class="youtube-frame">
+            <iframe src="./ALL-LLLM POD _ Mason Thompson_files/KyH0rGQVerg.html" title="ALL-LLLM POD teaser" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
+            </iframe>
+          </div>
+        </div>
+
+        <div class="demo-video-grid">
+          <!-- V1 -->
+          <div>
+            <p class="video-section-label">V1 — Mistral-7B</p>
+            <div class="video-grid">
+              <button class="video-cell" type="button" onclick="openVideoLightbox(&#39;sacksv1.mp4&#39;, &#39;Sacks v1&#39;)">
+                <div class="video-thumb">
+                  <div class="video-name">Sacks</div>
+                  <div class="play-icon">▶</div>
+                </div>
+                <div class="video-label">Sacks v1</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox(&#39;chamathv1.mp4&#39;, &#39;Chamath v1&#39;)">
+                <div class="video-thumb">
+                  <div class="video-name">Chamath</div>
+                  <div class="play-icon">▶</div>
+                </div>
+                <div class="video-label">Chamath v1</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox(&#39;jcalv1.mp4&#39;, &#39;JCal v1&#39;)">
+                <div class="video-thumb">
+                  <div class="video-name">JCal</div>
+                  <div class="play-icon">▶</div>
+                </div>
+                <div class="video-label">JCal v1</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox(&#39;friedbergv1.mp4&#39;, &#39;Friedberg v1&#39;)">
+                <div class="video-thumb">
+                  <div class="video-name">Friedberg</div>
+                  <div class="play-icon">▶</div>
+                </div>
+                <div class="video-label">Friedberg v1</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- V2 -->
+          <div>
+            <p class="video-section-label">V2 — Qwen3-30B MoE Abliterated</p>
+            <div class="video-grid">
+              <button class="video-cell" type="button" onclick="openVideoLightbox(&#39;sacksv2.mp4&#39;, &#39;Sacks v2&#39;)">
+                <div class="video-thumb">
+                  <div class="video-name">Sacks</div>
+                  <div class="play-icon">▶</div>
+                </div>
+                <div class="video-label">Sacks v2</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox(&#39;chamathv2.mp4&#39;, &#39;Chamath v2&#39;)">
+                <div class="video-thumb">
+                  <div class="video-name">Chamath</div>
+                  <div class="play-icon">▶</div>
+                </div>
+                <div class="video-label">Chamath v2</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox(&#39;jcalv2.mp4&#39;, &#39;JCal v2&#39;)">
+                <div class="video-thumb">
+                  <div class="video-name">JCal</div>
+                  <div class="play-icon">▶</div>
+                </div>
+                <div class="video-label">JCal v2</div>
+              </button>
+              <button class="video-cell" type="button" onclick="openVideoLightbox(&#39;friedbergv2.mp4&#39;, &#39;Friedberg v2&#39;)">
+                <div class="video-thumb">
+                  <div class="video-name">Friedberg</div>
+                  <div class="play-icon">▶</div>
+                </div>
+                <div class="video-label">Friedberg v2</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Mason Thompson · Berkeley, California</div>
+
+  </main>
+
+  <div class="lightbox" id="architectureLightbox" role="dialog" aria-modal="true" onclick="closeLightbox()">
+
+    <button type="button" class="lightbox-close" onclick="closeLightbox()">
+      Close ×
+    </button>
+
+    <img id="lightboxImage" src="https://masedawg1.github.io/all_llm_pod/index.html" alt="">
+  </div>
+
+  <script>
+    var _lastFocused = null;
+
+    function openLightbox(src, alt) {
+      var lightbox = document.getElementById('architectureLightbox');
+      var image = document.getElementById('lightboxImage');
+
+      image.src = src;
+      image.alt = alt || '';
+
+      lightbox.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+
+      _lastFocused = document.activeElement;
+      lightbox.querySelector('.lightbox-close').focus();
+    }
+
+    function closeLightbox() {
+      var lightbox = document.getElementById('architectureLightbox');
+
+      lightbox.classList.remove('is-open');
+      document.body.style.overflow = '';
+
+      if (_lastFocused && typeof _lastFocused.focus === 'function') {
+        _lastFocused.focus();
+        _lastFocused = null;
+      }
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    });
+  </script>
+
+  <div class="video-lightbox" id="videoLightbox" onclick="closeVideoLightbox()">
+    <button type="button" class="video-lightbox-close" onclick="closeVideoLightbox()">Close ×</button>
+    <video id="lightboxVideo" controls=""></video>
+    <div class="video-lightbox-label" id="lightboxVideoLabel"></div>
+  </div>
+
+  <script>
+    function switchTab(name) {
+      var pipeline = document.getElementById('tab-pipeline');
+      var videos = document.getElementById('tab-videos');
+      var btnPipeline = document.getElementById('btn-pipeline');
+      var btnVideos = document.getElementById('btn-videos');
+      var showPipeline = name === 'pipeline';
+
+      pipeline.style.display = showPipeline ? 'block' : 'none';
+      videos.style.display = showPipeline ? 'none' : 'block';
+
+      btnPipeline.classList.toggle('active', showPipeline);
+      btnVideos.classList.toggle('active', !showPipeline);
+      btnPipeline.setAttribute('aria-selected', showPipeline ? 'true' : 'false');
+      btnVideos.setAttribute('aria-selected', showPipeline ? 'false' : 'true');
+    }
+
+    function openVideoLightbox(src, label) {
+      var lb = document.getElementById('videoLightbox');
+      var vid = document.getElementById('lightboxVideo');
+      var lbl = document.getElementById('lightboxVideoLabel');
+      vid.src = src;
+      lbl.textContent = label;
+      lb.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      vid.play();
+    }
+
+    function closeVideoLightbox() {
+      var lb = document.getElementById('videoLightbox');
+      var vid = document.getElementById('lightboxVideo');
+      vid.pause();
+      vid.src = '';
+      lb.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeVideoLightbox();
+        closeLightbox();
+      }
+    });
+  </script>
+
+  <script src="./ALL-LLLM POD _ Mason Thompson_files/nav-loader.js" data-page="index"></script>
+
+
+
+</body></html>
