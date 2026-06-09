@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Important Side Quests | ALL-LLLM POD</title>
+  <title>Important Sidequests | ALL-LLLM POD</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,11 +23,7 @@
       --nav-width: 220px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -51,72 +47,10 @@
       overflow-y: auto;
     }
 
-    .nav-logo {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--green);
-      padding: 0 24px 28px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-item {
-      display: block;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 7px 24px;
-      border-left: 2px solid transparent;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-    }
-
-    .nav-item:hover {
-      color: var(--text);
-      background: var(--bg);
-      border-left-color: var(--border);
-    }
-
-    .nav-item.active {
-      color: var(--green);
-      border-left-color: var(--green);
-      background: var(--green-dim);
-    }
-
     main {
       flex: 1;
       padding: 56px 64px 120px;
       max-width: 860px;
-    }
-
-    .site-banner {
-      margin: 0 0 18px 0;
-      width: 100%;
-      display: block;
-      border: 0;
-      background: var(--code-bg);
-      cursor: zoom-in;
-      padding: 0;
-    }
-
-    .site-banner img {
-      display: block;
-      width: 100%;
-      height: 210px;
-      object-fit: cover;
-      object-position: center 22%;
-    }
-
-    .banner-caption {
-      display: none;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      margin: -28px 0 36px 0;
-      text-transform: uppercase;
     }
 
     .page-eyebrow {
@@ -145,244 +79,17 @@
       margin-bottom: 44px;
     }
 
-    .lead strong {
-      font-weight: 600;
-      color: var(--text);
-    }
+    .lead strong { font-weight: 600; color: var(--text); }
 
-    .accordion-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 52px;
-    }
-
-    details.sidequest {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    details.sidequest[open] {
-      border-color: rgba(10, 132, 255, 0.45);
-      box-shadow: 0 0 0 3px var(--green-dim);
-    }
-
-    details.sidequest summary {
-      list-style: none;
-      cursor: pointer;
-      padding: 18px 20px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
-      align-items: center;
-      user-select: none;
-    }
-
-    details.sidequest summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .sidequest-kicker {
+    code {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 6px;
-    }
-
-    .sidequest-title {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-      color: var(--text);
-      margin-bottom: 5px;
-    }
-
-    .sidequest-deck {
-      font-size: 13px;
-      line-height: 1.55;
-      color: var(--muted);
-      max-width: 660px;
-    }
-
-    .accordion-icon {
-      width: 28px;
-      height: 28px;
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--green);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 16px;
-      line-height: 1;
-      transition: transform 0.15s, background 0.15s, border-color 0.15s;
-    }
-
-    details.sidequest[open] .accordion-icon {
-      transform: rotate(45deg);
+      font-size: 0.92em;
       background: var(--green-dim);
-      border-color: var(--green);
-    }
-
-    .sidequest-body {
-      border-top: 1px solid var(--border);
-      padding: 22px 24px 26px;
-      font-size: 14px;
-      line-height: 1.75;
-      color: #333;
-    }
-
-    .sidequest-body p {
-      margin-bottom: 16px;
-    }
-
-    .sidequest-body p:last-child {
-      margin-bottom: 0;
-    }
-
-    .sidequest-body ul {
-      margin: 0 0 18px 18px;
-    }
-
-    .sidequest-body li {
-      margin-bottom: 8px;
-    }
-
-    .mono-list {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      line-height: 1.7;
-      background: var(--code-bg);
-      color: #c9d1d9;
-      padding: 18px 20px;
-      border-radius: 4px;
-      overflow-x: auto;
-      white-space: pre-wrap;
-      margin: 18px 0 0;
-    }
-
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 16px;
-    }
-
-    .tag {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--green);
-      background: var(--green-dim);
-      border: 1px solid rgba(10, 132, 255, 0.22);
-      border-radius: 999px;
-      padding: 4px 8px;
-    }
-
-    .footer {
-      margin-top: 72px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--faint);
-    }
-
-    .lightbox {
-      position: fixed;
-      inset: 0;
-      background: rgba(13, 17, 23, 0.92);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      cursor: zoom-out;
-      padding: 32px;
-    }
-
-    .lightbox.is-open {
-      display: flex;
-    }
-
-    .lightbox img {
-      max-width: 100%;
-      max-height: 100%;
+      border: 1px solid rgba(10, 132, 255, 0.18);
       border-radius: 3px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    }
-
-    .lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 24px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.7);
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 3px;
-      padding: 6px 14px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 768px) {
-      body {
-        display: block;
-      }
-
-      nav {
-        position: relative;
-        width: 100%;
-        height: auto;
-        border-right: 0;
-        border-bottom: 1px solid var(--border);
-        padding: 18px 0;
-      }
-
-      main {
-        padding: 24px 20px 80px;
-      }
-
-      .site-banner {
-        margin: 0 0 16px 0;
-        width: 100%;
-      }
-
-      .site-banner img {
-        height: 110px;
-      }
-
-      details.sidequest summary {
-        padding: 16px;
-        grid-template-columns: 1fr auto;
-      }
-
-      .sidequest-body {
-        padding: 18px 18px 22px;
-      }
-    }
-  
-
-    .section-kicker {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 12px;
+      padding: 2px 6px;
+      color: var(--text);
+      white-space: nowrap;
     }
 
     .accordion-list {
@@ -390,6 +97,7 @@
       flex-direction: column;
       gap: 12px;
       margin-top: 36px;
+      margin-bottom: 52px;
     }
 
     .accordion {
@@ -405,6 +113,11 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
     }
 
+    .accordion[open] {
+      border-color: rgba(10, 132, 255, 0.45);
+      box-shadow: 0 0 0 3px var(--green-dim);
+    }
+
     .accordion summary {
       list-style: none;
       cursor: pointer;
@@ -413,11 +126,10 @@
       grid-template-columns: 1fr auto;
       gap: 20px;
       align-items: center;
+      user-select: none;
     }
 
-    .accordion summary::-webkit-details-marker {
-      display: none;
-    }
+    .accordion summary::-webkit-details-marker { display: none; }
 
     .accordion-title {
       display: block;
@@ -435,16 +147,35 @@
       color: var(--muted);
     }
 
-    .accordion-icon {
+    .sidequest-meta {
+      display: block;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 18px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-top: 8px;
+    }
+
+    .accordion-icon {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--green);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 16px;
       line-height: 1;
-      transition: transform 0.15s;
+      transition: transform 0.15s, background 0.15s, border-color 0.15s;
     }
 
     .accordion[open] .accordion-icon {
       transform: rotate(45deg);
+      background: var(--green-dim);
+      border-color: var(--green);
     }
 
     .accordion-body {
@@ -461,6 +192,48 @@
       margin-top: 18px;
     }
 
+    .video-card {
+      display: inline-block;
+      margin: 18px 0 4px;
+      max-width: 320px;
+      width: 100%;
+      text-decoration: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      transition: all .15s ease;
+    }
+
+    .video-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    }
+
+    .video-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .video-card-caption { padding: 10px 12px; }
+
+    .video-card-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .video-card-subtitle {
+      margin-top: 4px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--green);
+    }
+
     .learn-more {
       display: inline-block;
       margin-top: 18px;
@@ -475,64 +248,59 @@
       transition: border-color 0.15s, color 0.15s;
     }
 
-    .learn-more:hover {
-      border-bottom-color: var(--green);
-    }
+    .learn-more:hover { border-bottom-color: var(--green); }
 
-    .sidequest-meta {
+    .footer {
+      margin-top: 72px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--faint);
-      margin-top: 8px;
     }
 
     @media (max-width: 768px) {
-      body {
-        display: block;
-      }
+      body { display: block; }
 
       nav {
         position: relative;
         width: 100%;
         height: auto;
-        border-right: none;
+        border-right: 0;
         border-bottom: 1px solid var(--border);
+        padding: 18px 0;
       }
 
-      .accordion summary {
-        padding: 18px;
-      }
-
-      .accordion-body {
-        padding: 0 18px 20px;
-      }
+      main { padding: 24px 20px 80px; }
+      .accordion summary { padding: 18px; }
+      .accordion-body { padding: 0 18px 20px; }
     }
-
   </style>
 </head>
 
 <body>
 
-<nav id="shared-nav">
+  <nav id="shared-nav">
     <noscript>
       <div class="nav-logo">ALL-LLLM POD</div>
       <a class="nav-item" href="index.html">Overview</a>
       <a class="nav-item" href="architecture.html">Architecture</a>
       <a class="nav-item" href="metrics.html">Model Performance</a>
+      <a class="nav-item" href="heuristics.html">Heuristic Repair</a>
       <a class="nav-item" href="chasing_ghosts.html">Deep Dive: Ghost Audio</a>
     </noscript>
   </nav>
 
-
   <main>
     <p class="page-eyebrow">ALL-LLLM POD</p>
 
-    <h1>Important Side Quests</h1>
+    <h1>Important Sidequests</h1>
 
     <p class="lead">
-      Many of the most interesting engineering problems in <strong>ALL-LLM POD</strong> were not directly related to the chatbot itself. These side projects emerged while solving practical problems around transcription, speaker attribution, retrieval, dataset quality, and operational scale.
+      Many of the most interesting engineering problems in <strong>ALL-LLLM POD</strong> were not directly related to the chatbot itself.
+      These side projects emerged while solving practical problems around transcription, speaker attribution, retrieval, dataset quality, and operational scale.
       <br><br>
       Together, they form much of the infrastructure that makes the main application possible.
     </p>
@@ -548,78 +316,79 @@
           </span>
           <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
+
         <div class="accordion-body">
-<p>
-Named after Nvidia NeMo's phenomenal speaker embeddings, Clownfish was created as a human-in-the-loop labeling tool that combines transcripts, audio snippets, and NeMo diarization output to map real-world identities to diarized speaker IDs.
-</p>
+          <p>
+            Named after NVIDIA NeMo's speaker embeddings, Clownfish was created as a human-in-the-loop labeling tool that combines transcripts,
+            audio snippets, and NeMo diarization output to map real-world identities to diarized <code>speaker_id</code> values.
+          </p>
 
-<p>
-These mappings transform anonymous speaker labels into known participants across the corpus. The same workflow also enables large-scale extraction of speaker-specific audio, creating clean datasets for downstream applications such as voice cloning, speaker classification, and persona generation.
-</p>
+          <p>
+            These mappings transform anonymous speaker labels into known participants across the corpus. The same workflow also enables large-scale
+            extraction of speaker-specific audio, creating clean datasets for downstream applications such as voice cloning, speaker classification,
+            and persona generation.
+          </p>
 
-<a href="https://www.youtube.com/watch?v=UPnnOCWqiAw" target="_blank"
-style="display:inline-block; position:relative; max-width:400px; margin:4px 0 18px 0;"> <img src="https://img.youtube.com/vi/UPnnOCWqiAw/mqdefault.jpg"
-    alt="Early Clownfish v1 demo"
-    style="width:100%; border:1px solid #e4e4e4; border-radius:4px; display:block;"> <span style="
- position:absolute;
- top:50%; left:50%;
- transform:translate(-50%,-50%);
- width:48px; height:48px;
- background:rgba(0,0,0,0.65);
- border-radius:50%;
- display:flex; align-items:center; justify-content:center;
- pointer-events:none;
-"> <span style="
-   display:inline-block;
-   width:0; height:0;
-   border-style:solid;
-   border-width:9px 0 9px 18px;
-   border-color:transparent transparent transparent #ffffff;
-   margin-left:3px;
- "></span> </span> </a>
+          <a class="video-card"
+             href="https://www.youtube.com/watch?v=UPnnOCWqiAw"
+             target="_blank"
+             rel="noopener">
+            <img
+              src="https://img.youtube.com/vi/UPnnOCWqiAw/mqdefault.jpg"
+              alt="Early Clownfish v1 demo">
+            <div class="video-card-caption">
+              <div class="video-card-title">Early Clownfish v1 Demo</div>
+              <div class="video-card-subtitle">Human-in-the-loop speaker mapping ↗</div>
+            </div>
+          </a>
 
-<p>
-As of June 2026, Clownfish's latest evolution is its transformation into a remote operations layer for the corpus, capable of discovering and queueing new content, orchestrating transcription and diarization pipelines, and supporting downstream human-in-the-loop review workflows from any device, including PC, Mac, iPhone, and browser.
-</p>
+          <p>
+            As of June 2026, Clownfish had evolved into a remote operations layer for the corpus: discovering and queueing new content,
+            orchestrating transcription and diarization pipelines, and supporting downstream review workflows from PC, Mac, iPhone, and browser.
+          </p>
 
-
-          
-          
-          
           <a class="learn-more" href="clownfish_v2.html">Learn More &rarr;</a>
         </div>
       </details>
 
-
       <details class="accordion">
         <summary>
           <span>
-            <span class="accordion-title">Transcript Forensics & Repair</span>
+            <span class="accordion-title">Transcript Forensics &amp; Repair</span>
             <span class="accordion-subtitle">Brody: human-in-the-loop transcript quality control.</span>
             <span class="sidequest-meta">Transcript QA · lexical repair · HITL</span>
           </span>
           <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
+
         <div class="accordion-body">
-          <p>Automated pipelines produce remarkably good transcripts—until they don't. Brody provides forensic tooling for identifying attribution errors, transcript corruption, segmentation mistakes, and other edge cases that can silently degrade downstream datasets.</p>
-          <a class="learn-more" href="https://masedawg1.github.io/all_llm_pod/heuristics.html">Learn More &rarr;</a>
+          <p>
+            Automated pipelines produce remarkably good transcripts — until they do not. Brody provides forensic tooling for identifying attribution
+            errors, transcript corruption, segmentation mistakes, and other edge cases that can silently degrade downstream datasets.
+          </p>
+
+          <a class="learn-more" href="heuristics.html">Learn More &rarr;</a>
         </div>
       </details>
-
-
 
       <details class="accordion">
         <summary>
           <span>
-            <span class="accordion-title">Memory & Retrieval</span>
+            <span class="accordion-title">Memory &amp; Retrieval</span>
             <span class="accordion-subtitle">Mining years of conversation for recurring arguments.</span>
             <span class="sidequest-meta">Argument mining · retrieval · persona memory</span>
           </span>
           <span class="accordion-icon" aria-hidden="true">+</span>
         </summary>
+
         <div class="accordion-body">
-<p>Transcripts are excellent for speaker mimicry, but I wanted to mine them further for argument structures, recurring positions, and episode-level narrative arcs. The long-term goal was to generate "Black Mirror" episodes: synthetic conversations grounded in the hosts' historical reasoning patterns rather than simply their speaking style.</p>
-          <a class="learn-more" href="https://masedawg1.github.io/all_llm_pod/arguments.html">Learn More &rarr;</a>
+          <p>
+            Transcripts are useful for speaker mimicry, but I also wanted to mine them for argument structures, recurring positions,
+            and episode-level narrative arcs. The long-term goal was to generate "Black Mirror" episodes: synthetic conversations grounded
+            in the hosts' historical reasoning patterns rather than simply their surface-level speaking style.
+          </p>
+
+          <a class="learn-more" href="arguments.html">Learn More &rarr;</a>
         </div>
       </details>
 
@@ -627,7 +396,6 @@ As of June 2026, Clownfish's latest evolution is its transformation into a remot
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
   </main>
-
 
   <script src="nav-loader.js" data-page="important_sidequests"></script>
 
