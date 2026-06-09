@@ -29,6 +29,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
+      overflow-x: hidden;
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -79,6 +80,7 @@
     .nav-item.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
 
     main {
+      min-width: 0;
       flex: 1;
       padding: 56px 64px 120px;
       max-width: 920px;
@@ -333,27 +335,14 @@
       .beam-branches { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
-      nav { display: none; }
-      main { padding: 32px 24px 80px; }
+      main { padding: 64px 20px 80px; }
     }
   </style>
 </head>
 
 <body>
 
-<nav id="shared-nav">
-  <noscript>
-    <div class="nav-fallback">
-      <div class="nav-logo">ALL-LLM Pod</div>
-      <a class="nav-item" href="overview.html">Overview</a>
-      <a class="nav-item" href="architecture.html">Architecture</a>
-      <a class="nav-item active" href="chasing_ghosts.html">Chasing Ghosts</a>
-      <a class="nav-item" href="voice_classifier.html">Transcription</a>
-      <a class="nav-item" href="heuristics.html">HITL</a>
-      <a class="nav-item" href="performance.html">Metrics &amp; Media</a>
-    </div>
-  </noscript>
-</nav>
+<nav id="shared-nav"></nav>
 
 <main>
 
@@ -653,7 +642,7 @@ The ground-truth path <code>"Oh, my god."</code> lost by <code>5.75 percentage p
   });
 </script>
 
-<script src="nav-loader.js" data-page="chasing_ghosts"></script>
+<script src="https://pdf-sorcerer.github.io/all_lllm_pod/nav-loader.js" data-page="chasing-ghosts"></script>
 
 </body>
 </html>
