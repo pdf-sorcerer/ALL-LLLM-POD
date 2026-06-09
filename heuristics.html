@@ -22,9 +22,9 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    #shared-nav { display: flex; }
 
     body {
-      overflow-x: hidden;
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -32,19 +32,7 @@
       min-height: 100vh;
     }
 
-    nav {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: var(--nav-width);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 32px 0;
-      overflow-y: auto;
-    }
+    #shared-
 
     .nav-logo {
       font-family: 'IBM Plex Mono', monospace;
@@ -104,7 +92,6 @@
     }
 
     main {
-      min-width: 0;
       flex: 1;
       padding: 56px 64px 120px;
       max-width: 860px;
@@ -418,9 +405,10 @@
     }
 
     @media (max-width: 768px) {
+      
 
       main {
-        padding: 64px 20px 80px;
+        padding: 32px 24px 80px;
       }
 
       .diff {
@@ -428,15 +416,109 @@
       }
     }
   </style>
-</head>
+<script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
 
 <body>
 
-  <nav id="shared-nav"></nav>
+  <nav id="shared-nav">
 
 
 
-<div class="nav-section-label">On This Page</div><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#intro" class="nav-item">Intro</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h1a" class="nav-item">1a. ellipsis boundary</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h1b" class="nav-item">1b. speaker sandwich</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h2" class="nav-item">2. self-reference</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h3" class="nav-item">3. lowercase cont.</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h4" class="nav-item">4. backchannel bleed</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h5" class="nav-item">5. blob</a></nav>
+<title>ALL-LLLM POD Navigation</title>
+
+<style>
+:root {
+  --green: #0A84FF;
+  --green-dim: rgba(10,132,255,.12);
+  --border: #e4e4e4;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --faint: #8c8c8c;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+}
+
+
+
+.nav-logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+  padding: 0 24px 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding: 18px 24px 8px;
+}
+
+.nav-item {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 7px 24px;
+  border-left: 2px solid transparent;
+  transition: all .15s ease;
+}
+
+.nav-item:hover {
+  color: var(--text);
+  background: #f9f9f9;
+  border-left-color: var(--border);
+}
+
+.nav-item.active {
+  color: var(--green);
+  border-left-color: var(--green);
+  background: var(--green-dim);
+}
+</style>
+
+
+
+
+
+<nav>
+
+  <div class="nav-logo">ALL-LLLM POD</div>
+
+  <div class="nav-section-label">Pages</div>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/index.html" class="nav-item active" data-page="index">
+    1. Overview
+  </a>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/architecture.html" class="nav-item" data-page="architecture">
+    2. Architecture
+  </a>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/metrics.html" class="nav-item" data-page="performance">
+    3. Model Performance
+  </a>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/chasing_ghosts.html" class="nav-item" data-page="chasing-ghosts">
+    4. Deep Dive: Ghost Audio
+  </a>
+
+</nav>
+
+
+
+
 
   <main>
     <div id="intro">
@@ -735,7 +817,7 @@
     ];
   </script>
 
-  <script src="https://pdf-sorcerer.github.io/all_lllm_pod/nav-loader.js" data-page="heuristics"></script>
+  <script src="./ALL-LLM Pod _ Heuristics_files/nav-loader.js" data-page="heuristics"></script>
 
   <script>
     document.querySelectorAll('.block').forEach(block => {
