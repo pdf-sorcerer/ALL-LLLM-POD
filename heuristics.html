@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
+<!-- saved from url=(0055)https://masedawg1.github.io/all_llm_pod/heuristics.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALL-LLM Pod | Heuristics</title>
   <style>
@@ -394,6 +394,18 @@
   color: var(--green);
 }
 
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.92em;
+      background: var(--green-dim);
+      border: 1px solid rgba(10, 132, 255, 0.18);
+      border-radius: 3px;
+      padding: 2px 6px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+
     .footer {
       margin-top: 80px;
       font-family: 'IBM Plex Mono', monospace;
@@ -415,11 +427,115 @@
       }
     }
   </style>
-</head>
+<script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
 
 <body>
 
-  <nav id="shared-nav"></nav>
+  <nav id="shared-nav">
+
+
+
+<title>ALL-LLLM POD Navigation</title>
+
+<style>
+:root {
+  --green: #0A84FF;
+  --green-dim: rgba(10,132,255,.12);
+  --border: #e4e4e4;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --faint: #8c8c8c;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+}
+
+nav {
+  width: 220px;
+  padding: 32px 0;
+  border-right: 1px solid var(--border);
+  min-height: 100vh;
+  background: #fff;
+}
+
+.nav-logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green);
+  padding: 0 24px 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding: 18px 24px 8px;
+}
+
+.nav-item {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 7px 24px;
+  border-left: 2px solid transparent;
+  transition: all .15s ease;
+}
+
+.nav-item:hover {
+  color: var(--text);
+  background: #f9f9f9;
+  border-left-color: var(--border);
+}
+
+.nav-item.active {
+  color: var(--green);
+  border-left-color: var(--green);
+  background: var(--green-dim);
+}
+</style>
+
+
+
+
+
+<nav>
+
+  <div class="nav-logo">ALL-LLLM POD</div>
+
+  <div class="nav-section-label">Pages</div>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/welcome" class="nav-item active" data-page="welcome">
+    1. Overview
+  </a>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/architecture.html" class="nav-item" data-page="architecture">
+    2. Architecture
+  </a>
+
+  <a href="https://masedawg1.github.io/all_llm_pod/metrics.html" class="nav-item" data-page="performance">
+    3. Model Performance
+  </a>
+
+  </a>
+    <a href="https://masedawg1.github.io/all_llm_pod/about.html" class="nav-item" data-page="about">
+    4. About
+
+</nav>
+
+
+
+<div class="nav-section-label">On This Page</div><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#intro" class="nav-item">Intro</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h1a" class="nav-item">1a. ellipsis boundary</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h1b" class="nav-item">1b. speaker sandwich</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h2" class="nav-item">2. self-reference</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h3" class="nav-item">3. lowercase cont.</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h4" class="nav-item">4. backchannel bleed</a><a href="https://masedawg1.github.io/all_llm_pod/heuristics.html#h5" class="nav-item">5. blob</a></nav>
 
   <main>
     <div id="intro">
@@ -428,7 +544,7 @@
 
       <p class="lead">
         Transcripts were generated in an AI production pipeline using WhisperX, with NeMo adapted to operate within WhisperX's segment-level timestamps.
-        In other words, WhisperX determined <em>what</em> speech existed and <em>when</em> it occurred, while NeMo's diarization process&mdash;identifying <em>who</em> spoke&mdash;was made secondary to those boundaries.
+        In other words, WhisperX determined <em>what</em> speech existed and <em>when</em> it occurred, while NeMo's diarization process—identifying <em>who</em> spoke—was made secondary to those boundaries.
       </p>
 
       <p class="lead">
@@ -444,13 +560,9 @@
 
   <br><br>
 
-  <a class="video-card"
-     href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1"
-     target="_blank">
+  <a class="video-card" href="https://www.loom.com/share/41f39185e6f240e9a7c712f33e77bef1" target="_blank">
 
-    <img
-      src="loom.png"
-      alt="Episode 115 HITL Review">
+    <img src="./ALL-LLM Pod _ Heuristics_files/loom.png" alt="Episode 115 HITL Review">
 
     <div class="video-card-caption">
       <div class="video-card-title">
@@ -689,7 +801,7 @@
 
       <div class="block-body">
         <div class="block-why">
-          A single NeMo <code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green);">speaker_id</code> absorbs a long, multi-speaker passage — multiple speakers collapsed into one label.
+          A single NeMo <code style="font-family:&#39;IBM Plex Mono&#39;,monospace;font-size:11px;color:var(--green);">speaker_id</code> absorbs a long, multi-speaker passage — multiple speakers collapsed into one label.
           The fingerprint is a segment spanning 20+ seconds attributed to a single speaker, containing speech that clearly belongs to several.
           In the example below, a 20-second wall of text assigned to Jcal was split across three speakers on review.
           <br><br>
@@ -702,13 +814,13 @@
         </div>
 
         <a class="video-thumb" href="https://youtu.be/seg-lbqHcwo" target="_blank">
-          <img src="https://img.youtube.com/vi/seg-lbqHcwo/mqdefault.jpg" alt="Blob repair example">
+          <img src="./ALL-LLM Pod _ Heuristics_files/mqdefault.jpg" alt="Blob repair example">
         </a>
       </div>
     </div>
 
     <div class="footer">Mason Thompson · Berkeley, California</div>
-  </main>
+  </div></main>
 
   <script>
     window.NAV_ANCHORS = [
@@ -722,7 +834,7 @@
     ];
   </script>
 
-  <script src="nav-loader.js" data-page="heuristics"></script>
+  <script src="./ALL-LLM Pod _ Heuristics_files/nav-loader.js" data-page="heuristics"></script>
 
   <script>
     document.querySelectorAll('.block').forEach(block => {
@@ -749,5 +861,6 @@
     });
   </script>
 
-</body>
-</html>
+
+
+</body></html>
