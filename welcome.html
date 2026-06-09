@@ -31,9 +31,11 @@
       color: var(--text);
       display: flex;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    nav {
+    /* ── DESKTOP NAV ── */
+    #shared-nav {
       position: sticky;
       top: 0;
       height: 100vh;
@@ -79,22 +81,14 @@
       transition: color 0.15s, border-color 0.15s, background 0.15s;
     }
 
-    .nav-item:hover {
-      color: var(--text);
-      background: var(--bg);
-      border-left-color: var(--border);
-    }
-
-    .nav-item.active {
-      color: var(--green);
-      border-left-color: var(--green);
-      background: var(--green-dim);
-    }
+    .nav-item:hover { color: var(--text); background: var(--bg); border-left-color: var(--border); }
+    .nav-item.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
 
     main {
       flex: 1;
       padding: 56px 64px 120px;
       max-width: 860px;
+      min-width: 0;
     }
 
     .site-banner {
@@ -135,22 +129,9 @@
       margin-bottom: 12px;
     }
 
-    h1 {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: 14px;
-    }
+    h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 14px; }
 
-    .lead {
-      font-size: 14px;
-      line-height: 1.75;
-      color: #3a3a3a;
-      max-width: 720px;
-      margin-bottom: 52px;
-    }
-
+    .lead { font-size: 14px; line-height: 1.75; color: #3a3a3a; max-width: 720px; margin-bottom: 52px; }
     .lead strong { font-weight: 600; color: var(--text); }
 
     .inline-tag {
@@ -164,7 +145,6 @@
       text-decoration: none;
       white-space: nowrap;
     }
-
     .inline-tag:hover { background: rgba(10, 132, 255, 0.20); }
 
     code {
@@ -202,13 +182,8 @@
       margin-bottom: -1px;
       transition: color 0.15s, border-color 0.15s;
     }
-
     .tab-btn:hover { color: var(--text); }
-
-    .tab-btn.active {
-      color: var(--green);
-      border-bottom-color: var(--green);
-    }
+    .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
 
     .tab-panel { padding-top: 24px; }
 
@@ -223,6 +198,7 @@
       overflow-x: auto;
       white-space: pre;
       margin-bottom: 52px;
+      max-width: 100%;
     }
 
     .youtube-teaser {
@@ -237,18 +213,8 @@
       border-radius: 4px;
     }
 
-    .youtube-copy h2 {
-      font-size: 18px;
-      line-height: 1.25;
-      letter-spacing: -0.01em;
-      margin-bottom: 10px;
-    }
-
-    .youtube-copy p:not(.video-section-label) {
-      font-size: 13px;
-      line-height: 1.65;
-      color: var(--muted);
-    }
+    .youtube-copy h2 { font-size: 18px; line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 10px; }
+    .youtube-copy p:not(.video-section-label) { font-size: 13px; line-height: 1.65; color: var(--muted); }
 
     .youtube-frame {
       position: relative;
@@ -258,27 +224,10 @@
       border-radius: 4px;
       overflow: hidden;
     }
+    .youtube-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-    .youtube-frame iframe {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-
-    .demo-video-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-top: 24px;
-    }
-
-    .video-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
+    .demo-video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+    .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
     .video-section-label {
       font-family: 'IBM Plex Mono', monospace;
@@ -301,8 +250,8 @@
       text-align: left;
       overflow: hidden;
       transition: border-color 0.15s;
+      width: 100%;
     }
-
     .video-cell:hover { border-color: var(--green); }
 
     .video-thumb {
@@ -314,102 +263,85 @@
       justify-content: center;
       position: relative;
     }
-
     .video-name {
-      position: absolute;
-      bottom: 6px;
-      left: 8px;
+      position: absolute; bottom: 6px; left: 8px;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.5);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font-size: 10px; font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.06em; text-transform: uppercase;
     }
-
-    .play-icon {
-      font-size: 28px;
-      color: rgba(255, 255, 255, 0.3);
-      transition: color 0.15s;
-    }
-
+    .play-icon { font-size: 28px; color: rgba(255,255,255,0.3); transition: color 0.15s; }
     .video-cell:hover .play-icon { color: var(--green); }
-
     .video-label {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 10px 14px;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); padding: 10px 14px;
       border-top: 1px solid #1e1e1e;
     }
 
     .video-lightbox {
-      position: fixed;
-      inset: 0;
-      background: rgba(13, 17, 23, 0.96);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      cursor: zoom-out;
-      padding: 32px;
-      flex-direction: column;
-      gap: 16px;
+      position: fixed; inset: 0;
+      background: rgba(13,17,23,0.96);
+      display: none; align-items: center; justify-content: center;
+      z-index: 2000; cursor: zoom-out; padding: 32px;
+      flex-direction: column; gap: 16px;
     }
-
     .video-lightbox.is-open { display: flex; }
-
-    .video-lightbox video {
-      max-width: 100%;
-      max-height: 80vh;
-      border-radius: 4px;
-      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
-    }
-
-    .video-lightbox-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.5);
-    }
-
+    .video-lightbox video { max-width: 100%; max-height: 80vh; border-radius: 4px; box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+    .video-lightbox-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
     .video-lightbox-close {
-      position: absolute;
-      top: 20px;
-      right: 24px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.7);
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 3px;
-      padding: 6px 14px;
-      cursor: pointer;
+      position: absolute; top: 20px; right: 24px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.7); background: transparent;
+      border: 1px solid rgba(255,255,255,0.25); border-radius: 3px;
+      padding: 6px 14px; cursor: pointer;
     }
 
     .footer {
-      margin-top: 72px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--faint);
+      margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--border);
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint);
     }
 
+    /* ── MOBILE ── */
     @media (max-width: 768px) {
-      nav { display: none; }
-      main { padding: 24px 20px 80px; }
-      .site-banner { margin: 0 0 16px 0; }
+      /* Nav hidden off-screen — nav-loader.js handles the drawer */
+      #shared-nav {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 260px !important;
+        z-index: 10001 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.25s ease !important;
+        overflow-y: auto !important;
+        box-shadow: 2px 0 12px rgba(0,0,0,0.12) !important;
+        /* override the desktop sticky/flex behaviour */
+        flex-shrink: 0 !important;
+      }
+      #shared-nav.open {
+        transform: translateX(0) !important;
+      }
+
+      main {
+        padding: 64px 20px 80px;
+        width: 100%;
+        max-width: 100%;
+      }
+
       .site-banner img { height: 110px; }
-      .youtube-teaser, .demo-video-grid, .video-grid { grid-template-columns: 1fr; }
+
+      /* Fix tab content overflow */
+      .tabs-wrapper { overflow: hidden; }
+      .tab-panel { overflow-x: auto; }
+      .pipeline-table { font-size: 9px; padding: 16px; }
+
+      .youtube-teaser,
+      .demo-video-grid,
+      .video-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -419,15 +351,11 @@
 
   <main>
     <div class="site-banner">
-      <img
-        src="all-llm-pod-wide.png"
-        alt="ALL-LLLM POD cast: satirical portraits of Chamath, JCal, Sacks, and Friedberg">
+      <img src="all-llm-pod-wide.png" alt="ALL-LLLM POD cast: satirical portraits of Chamath, JCal, Sacks, and Friedberg">
     </div>
 
     <p class="banner-caption">Satirical ALL-In personas</p>
-
     <p class="page-eyebrow">Multi-Agent Local LLM System</p>
-
     <h1>ALL-LLLM POD</h1>
 
     <p class="lead">
@@ -503,9 +431,8 @@
           <div class="youtube-copy">
             <p class="video-section-label"></p>
             <h2>ALL-LLLM POD</h2>
-            <p>Premise? Satirical. Pipeline? Real.</p>          
+            <p>Premise? Satirical. Pipeline? Real.</p>
           </div>
-
           <div class="youtube-frame">
             <iframe
               src="https://www.youtube.com/embed/KyH0rGQVerg"
@@ -538,7 +465,6 @@
               </button>
             </div>
           </div>
-
           <div>
             <p class="video-section-label">App v2 on Qwen3-30B MoE Abliterated</p>
             <div class="video-grid">
@@ -576,49 +502,40 @@
   <script>
     function switchTab(name) {
       const pipeline = document.getElementById('tab-pipeline');
-      const videos = document.getElementById('tab-videos');
-      const btnPipeline = document.getElementById('btn-pipeline');
-      const btnVideos = document.getElementById('btn-videos');
-      const showPipeline = name === 'pipeline';
-
-      pipeline.style.display = showPipeline ? 'block' : 'none';
-      videos.style.display = showPipeline ? 'none' : 'block';
-
-      btnPipeline.classList.toggle('active', showPipeline);
-      btnVideos.classList.toggle('active', !showPipeline);
-      btnPipeline.setAttribute('aria-selected', showPipeline ? 'true' : 'false');
-      btnVideos.setAttribute('aria-selected', showPipeline ? 'false' : 'true');
+      const videos   = document.getElementById('tab-videos');
+      const btnP     = document.getElementById('btn-pipeline');
+      const btnV     = document.getElementById('btn-videos');
+      const showP    = name === 'pipeline';
+      pipeline.style.display = showP ? 'block' : 'none';
+      videos.style.display   = showP ? 'none'  : 'block';
+      btnP.classList.toggle('active', showP);
+      btnV.classList.toggle('active', !showP);
+      btnP.setAttribute('aria-selected', showP ? 'true' : 'false');
+      btnV.setAttribute('aria-selected', showP ? 'false' : 'true');
     }
 
     function openVideoLightbox(src, label) {
-      const lb = document.getElementById('videoLightbox');
+      const lb  = document.getElementById('videoLightbox');
       const vid = document.getElementById('lightboxVideo');
-      const lbl = document.getElementById('lightboxVideoLabel');
-
+      document.getElementById('lightboxVideoLabel').textContent = label;
       vid.src = src;
-      lbl.textContent = label;
       lb.classList.add('is-open');
       document.body.style.overflow = 'hidden';
       vid.play();
     }
 
     function closeVideoLightbox() {
-      const lb = document.getElementById('videoLightbox');
       const vid = document.getElementById('lightboxVideo');
-
-      vid.pause();
-      vid.src = '';
-      lb.classList.remove('is-open');
+      vid.pause(); vid.src = '';
+      document.getElementById('videoLightbox').classList.remove('is-open');
       document.body.style.overflow = '';
     }
 
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeVideoLightbox();
-      }
+      if (e.key === 'Escape') closeVideoLightbox();
     });
   </script>
 
-  <script src="nav-loader.js" data-page="index"></script>
+  <script src="nav-loader.js" data-page="welcome"></script>
 </body>
 </html>
