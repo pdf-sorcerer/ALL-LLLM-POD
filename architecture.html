@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Runtime Architecture | ALL-LLM Pod</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com/">
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-  <link href="./Runtime Architecture _ ALL-LLM Pod_files/css2" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -15,6 +16,7 @@
       --bg: #f9f9f9;
       --surface: #ffffff;
       --border: #e4e4e4;
+      --code-bg: #0d1117;
       --text: #1a1a1a;
       --muted: #6b6b6b;
       --faint: #8c8c8c;
@@ -23,86 +25,26 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html {
+      overflow-y: scroll;
+      scrollbar-gutter: stable;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
       min-height: 100vh;
-    }
-
-    nav {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      width: var(--nav-width);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 32px 0;
-      overflow-y: auto;
-    }
-
-    .nav-logo {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--green);
-      padding: 0 24px 28px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-section-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--faint);
-      padding: 20px 24px 8px;
-    }
-
-    .nav-item {
-      display: block;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 7px 24px;
-      border-left: 2px solid transparent;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
-    }
-
-    .nav-item:hover {
-      color: var(--text);
-      background: var(--bg);
-      border-left-color: var(--border);
-    }
-
-    .nav-item.active {
-      color: var(--green);
-      border-left-color: var(--green);
-      background: var(--green-dim);
-    }
-
-    .nav-footer {
-      margin-top: auto;
-      padding: 20px 24px 0;
-      border-top: 1px solid var(--border);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--faint);
-      line-height: 1.6;
+      overflow-x: hidden;
     }
 
     main {
       flex: 1;
+      width: 100%;
       padding: 56px 64px 120px;
       max-width: 860px;
+      min-width: 0;
     }
 
     .page-eyebrow {
@@ -135,10 +77,10 @@
       display: flex;
       align-items: baseline;
       gap: 16px;
+      margin-top: 52px;
       margin-bottom: 14px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
-      margin-top: 52px;
     }
 
     h2 {
@@ -206,7 +148,7 @@
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 2000;
       cursor: zoom-out;
       padding: 32px;
     }
@@ -249,7 +191,6 @@
       white-space: nowrap;
     }
 
-
     .footer {
       margin-top: 80px;
       padding-top: 24px;
@@ -269,226 +210,131 @@
     .footer a {
       color: var(--muted);
       text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
     }
 
     .footer a:hover {
       color: var(--green);
+      border-bottom-color: var(--green-dim);
     }
 
     @media (max-width: 768px) {
-      nav { display: none; }
-      main { padding: 32px 24px 80px; }
-      .footer { flex-direction: column; align-items: flex-start; }
+      main {
+        padding: 64px 20px 80px;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
-<script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
+</head>
 
-<body style="">
+<body>
+  <nav id="shared-nav"></nav>
 
-<nav id="shared-nav">
+  <main>
+    <p class="page-eyebrow">System Runtime</p>
+    <h1>Runtime Architecture</h1>
 
+    <p class="lead">
+      This page summarizes the systems involved to interact with the chatbots.
+    </p>
 
+    <div class="architecture-block">
+      <button
+        type="button"
+        class="architecture-thumb"
+        aria-label="Enlarge ALL-LLM Pod runtime architecture diagram"
+        onclick="openLightbox('architecture-discord.png', 'ALL-LLM Pod runtime architecture diagram enlarged')">
+        <img
+          src="architecture-discord.png"
+          alt="ALL-LLM Pod runtime architecture showing iOS client, Windows orchestration server, Apple Silicon inference runtime, transcript systems, memory systems, and Discord integration">
+      </button>
+      <p class="architecture-caption">Click to enlarge · Runtime topology and infrastructure boundaries</p>
+    </div>
 
-<title>ALL-LLLM POD Navigation</title>
+    <div class="section-heading">
+      <h2>Operational Flow</h2>
+    </div>
 
-<style>
-:root {
-  --green: #0A84FF;
-  --green-dim: rgba(10,132,255,.12);
-  --border: #e4e4e4;
-  --text: #1a1a1a;
-  --muted: #6b6b6b;
-  --faint: #8c8c8c;
-}
+    <p class="body">
+      <strong>iOS</strong><br>
+      SwiftUI app with a FaceTime-style interface. Handles transcript display, streamed TTS playback, and persona animation. The phone doesn't do inference — it's a frontend. Audio and text generation happen on the server.
+    </p>
 
-body {
-  margin: 0;
-  font-family: Inter, sans-serif;
-}
+    <p class="body">
+      <strong>Windows Orchestration</strong><br>
+      This is where most of the work happens: WhisperX for speech-to-text, F5-TTS for audio generation, websocket routing, memory injection, queue management, and runtime state. Most timing problems originate here.
+    </p>
 
-nav {
-  width: 220px;
-  padding: 32px 0;
-  border-right: 1px solid var(--border);
-  min-height: 100vh;
-  background: #fff;
-}
+    <p class="body">
+      <strong>Apple Silicon Inference (M4 MacBook Pro)</strong><br>
+      Qwen3 30B MoE runs locally via omlx, kept resident in unified memory with prompt caching enabled. Both the Windows server and the iOS client can talk to it directly.
+    </p>
 
-.nav-logo {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--green);
-  padding: 0 24px 28px;
-  border-bottom: 1px solid var(--border);
-}
+    <p class="body">
+      <strong>Discord</strong><br>
+      Discord adds multi-user access without changing anything underneath. Impressive setup time, ~30 minutes.
+    </p>
 
-.nav-section-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--faint);
-  padding: 18px 24px 8px;
-}
+    <div class="section-heading">
+      <h2>Bottlenecks</h2>
+    </div>
 
-.nav-item {
-  display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--muted);
-  text-decoration: none;
-  padding: 7px 24px;
-  border-left: 2px solid transparent;
-  transition: all .15s ease;
-}
+    <p class="body">
+      <strong>Queue pressure</strong><br>
+      Inference and TTS are serialized. One user at a time works fine. Each additional user adds queue depth and wait time. This is the most obvious constraint on the system.
+    </p>
 
-.nav-item:hover {
-  color: var(--text);
-  background: #f9f9f9;
-  border-left-color: var(--border);
-}
+    <p class="body">
+      <strong>Timing</strong><br>
+      The pipeline is ASR → inference → TTS → playback → UI animation. That's a long chain. Small delays at any step compound. Keeping transcript state, audio, and animation synchronized is the main coordination problem, and it lives on the Windows server.
+    </p>
 
-.nav-item.active {
-  color: var(--green);
-  border-left-color: var(--green);
-  background: var(--green-dim);
-}
-</style>
+    <p class="body">
+      <strong>Model residency</strong><br>
+      Keeping Qwen3 loaded avoids cold-start delays, but it holds memory permanently. The tradeoffs are memory pressure, what happens if the runtime crashes, and how prompt cache invalidation is handled when context changes.
+    </p>
 
+    <div class="footer">
+      <span>Mason Thompson · Berkeley, California</span>
+      <a href="https://pdf-sorcerer.github.io/alp/metrics.html">Model Performance →</a>
+      <a href="https://pdf-sorcerer.github.io/alp/chasing_ghosts.html">Ghost Audio →</a>
+    </div>
+  </main>
 
+  <div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
+    <button type="button" class="lightbox-close" onclick="closeLightbox()">Close ×</button>
+    <img id="lightboxImage" src="architecture-discord.png" alt="ALL-LLM Pod runtime architecture diagram enlarged">
+  </div>
 
+  <script>
+    function openLightbox(src, alt) {
+      const lightbox = document.getElementById('architectureLightbox');
+      const image = document.getElementById('lightboxImage');
 
+      image.src = src;
+      image.alt = alt || 'Architecture diagram enlarged';
 
-<nav>
+      lightbox.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
 
-  <div class="nav-logo">ALL-LLLM POD</div>
+    function closeLightbox() {
+      document.getElementById('architectureLightbox').classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
 
-  <div class="nav-section-label">Pages</div>
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
 
-  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/index.html" class="nav-item active" data-page="index">
-    1. Overview
-  </a>
-
-  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/architecture.html" class="nav-item active" data-page="architecture">
-    2. Architecture
-  </a>
-
-  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/metrics.html" class="nav-item" data-page="performance">
-    3. Model Performance
-  </a>
-
-  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/chasing_ghosts.html" class="nav-item" data-page="chasing-ghosts">
-    4. Deep Dive: Ghost Audio
-  </a>
-
-</nav>
-
-
-
-</nav>
-
-<main>
-
-<p class="page-eyebrow">System Runtime</p>
-
-<h1>Runtime Architecture</h1>
-
-<p class="lead">
- This page summarizes the systems involved to interact with the chatbots
-</p>
-
-<div class="architecture-block">
-    <button type="button" class="architecture-thumb" aria-label="Enlarge ALL-LLM Pod runtime architecture diagram" onclick="openLightbox(&#39;architecture-discord.png&#39;, &#39;ALL-LLM Pod runtime architecture diagram enlarged&#39;)">
-        <img src="architecture-discord.png" alt="ALL-LLM Pod runtime architecture showing iOS client, Windows orchestration server, Apple Silicon inference runtime, transcript systems, memory systems, and Discord integration">
-    </button>
-    <p class="architecture-caption">Click to enlarge · Runtime topology and infrastructure boundaries</p>
-</div>
-
-<div class="section-heading">
-    <h2>Operational Flow</h2>
-</div>
-
-<p class="body">
-  <strong>iOS</strong><br>
-  SwiftUI app with a FaceTime-style interface. Handles transcript display, streamed TTS playback, and persona animation. The phone doesn't do inference — it's a frontend. Audio and text generation happen on the server.
-</p>
-
-<p class="body">
-  <strong>Windows Orchestration</strong><br>
-  This is where most of the work happens: WhisperX for speech-to-text, F5-TTS for audio generation, websocket routing, memory injection, queue management, and runtime state. Most timing problems originate here.
-</p>
-
-<p class="body">
-  <strong>Apple Silicon Inference (M4 MacBook Pro)</strong><br>
-  Qwen3 30B MOE runs locally via omlx, kept resident in unified memory with prompt caching enabled. Both the Windows server and the iOS client can talk to it directly. 
-</p>
-
-<p class="body">
-  <strong>Discord</strong><br>
-Discord adds multi-user access without changing anything underneath. Impressive setup time, ~30 minutes. 
-</p>
-
-<div class="section-heading">
-    <h2>Bottlenecks</h2>
-</div>
-
-<p class="body">
-  <strong>Queue pressure</strong><br>
-  Inference and TTS are serialized. One user at a time works fine. Each additional user adds queue depth and wait time. This is the most obvious constraint on the system.
-</p>
-
-<p class="body">
-  <strong>Timing</strong><br>
-  The pipeline is ASR → inference → TTS → playback → UI animation. That's a long chain. Small delays at any step compound. Keeping transcript state, audio, and animation synchronized is the main coordination problem, and it lives on the Windows server.
-</p>
-
-<p class="body">
-  <strong>Model residency</strong><br>
-  Keeping Qwen3 loaded avoids cold-start delays, but it holds memory permanently. The tradeoffs are memory pressure, what happens if the runtime crashes, and how prompt cache invalidation is handled when context changes.
-</p>
-
-
-<div class="footer">
-  <span>Mason Thompson · Berkeley, California</span>
-  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/forensics.html">Transcript Fidelity →</a>
-  <a href="https://pdf-sorcerer.github.io/all_lllm_pod/chasing_ghosts.html">Ghost Audio →</a>
-</div>
-
-</main>
-
-<div class="lightbox" id="architectureLightbox" onclick="closeLightbox()">
-  <button type="button" class="lightbox-close" onclick="closeLightbox()">Close ×</button>
-  <img id="lightboxImage" src="architecture-discord.png" alt="ALL-LLM Pod runtime architecture diagram enlarged">
-</div>
-
-<script>
-  function openLightbox(src, alt) {
-    const lightbox = document.getElementById('architectureLightbox');
-    const image = document.getElementById('lightboxImage');
-
-    image.src = src;
-    image.alt = alt || 'Architecture diagram enlarged';
-
-    lightbox.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeLightbox() {
-    document.getElementById('architectureLightbox').classList.remove('is-open');
-    document.body.style.overflow = '';
-  }
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeLightbox();
-  });
-</script>
-
-<script src="./Runtime Architecture _ ALL-LLM Pod_files/nav-loader.js" data-page="architecture"></script>
-
-
-
-</body></html>
+  <script src="https://pdf-sorcerer.github.io/alp/nav-loader.js" data-page="architecture"></script>
+</body>
+</html>
