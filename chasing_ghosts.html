@@ -350,12 +350,42 @@
   <h1>Ghost Audio</h1>
 
 <p class="lead">
-  This page is an investigation into why audible speech went untranscribed, and the effort to build tooling to find and recover AI-driven omissions at scale across the episode corpus. If uncorrected, these omissions distort model training data — resulting in the model learning patterns and relationships that are not ground-truth.
-</p>
+<p><strong>What:</strong>: This page investigates why speech went untranscribed—a phenomenon I call <em>Ghost Audio</em>—and the effort to build tooling capable of finding and recovering these omissions across the entire 
+  All-In Podcast episode corpus.</p> 
+  <p><strong>Why:</strong> Ghost Audio quietly distorts dialogue flow, causal relationships, and conversational patterns that downstream models learn from. 
+  Because the resulting transcripts often appear clean and complete, these omissions can persist undetected while subtly altering the historical record.</p>
+<details class="accordion-block">
+  <summary><span>Why Omissions Matter: Featuring <em>The Empire Strikes Back (1980)</em></span></summary>
 
-  <p class="lead">
-    <em>This is a running log more than a final report. Different recordings of the same episode — <code>YouTube</code> vs <code>Libsyn</code> — have different acoustic properties that produce different transcripts. An adjacent <code>PyTorch Whisper</code> pipeline exposed decoder behavior that the production <code>CTranslate2</code> runtime could not, revealing a candidate detection signal for Ghost Audio across the corpus. The tradeoff was roughly <code>10× compute</code> compared with a standard production pass.</em>
-  </p>
+
+  <div class="video-block"> <video controls> <source src="ghost.mp4" type="video/mp4"> </video> <div class="video-caption">SOURCE VIDEO · THE EMPIRE STRIKES BACK (1980)</div> </div>
+
+  <div class="comparison-grid">
+    <div class="comparison-card">
+      <h3>Movie Screenplay</h3>
+      <div class="transcript-box">
+        <p><strong>Vader:</strong> "If only you knew the power of the dark side. Obi-Wan never told you what happened to your father."</p>
+        <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
+        <p class="ghost-line"><strong>Vader:</strong> "No. I am your father."</p>
+        <p><strong>Luke:</strong> "No. No. That's not true! That's impossible!"</p>
+      </div>
+    </div>
+
+    <div class="comparison-card">
+      <h3>Ghost Audio Transcript</h3>
+      <div class="transcript-box">
+        <p><strong>Vader:</strong> "If only you knew the power of the dark side. Obi-Wan never told you what happened to your father."</p>
+        <p><strong>Luke:</strong> "He told me enough. He told me you killed him!"</p>
+        <p><strong>Luke:</strong> "No. No. That's not true! That's impossible!"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p>This is a staged example, but the impact is the same: ghost audio removes an entire segment of content from the transcript, quietly altering the intent and meaning of the speech around it.</p>
+    <p>Here, the transcript still reads cleanly. Nothing appears broken. Yet the central reveal disappears. A downstream model never learns that Vader says he is Luke's father, and may instead infer that Luke is reacting to his own accusation rather than to new information from Vader.</p>
+  </div>
+</details>
 
   <div class="section-heading">
     <h2>Discovery</h2>
